@@ -2,253 +2,257 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Facção — Controle de Produção</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  :root {
-    --bg:        #F0EDE8;
-    --surface:   #FAFAF8;
-    --card:      #FFFFFF;
-    --border:    #E2DDD8;
-    --border2:   #C8C2BB;
-    --text:      #1A1714;
-    --muted:     #7A746E;
-    --accent:    #2B5CE6;
-    --accent-h:  #1A44CC;
-    --green:     #1A7A4A;
-    --green-bg:  #EAF5EF;
-    --red:       #C0392B;
-    --red-bg:    #FDECEA;
-    --amber:     #A05C00;
-    --amber-bg:  #FEF6E7;
-    --blue-bg:   #EBF0FD;
-    --radius:    10px;
-    --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
-  }
+:root {
+  --bg:       #F0EDE8;
+  --surface:  #FAFAF8;
+  --card:     #FFFFFF;
+  --border:   #E2DDD8;
+  --text:     #1A1714;
+  --muted:    #7A746E;
+  --accent:   #2B5CE6;
+  --green:    #1A7A4A;
+  --green-bg: #EAF5EF;
+  --red:      #C0392B;
+  --red-bg:   #FDECEA;
+  --amber:    #A05C00;
+  --amber-bg: #FEF6E7;
+  --blue-bg:  #EBF0FD;
+  --nav-h:    64px;
+  --header-h: 52px;
+}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+html, body { height: 100%; overflow: hidden; }
 
-  /* ── Header ── */
-  header {
-    background: var(--text);
-    color: #fff;
-    padding: 0 32px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo { font-size: 15px; font-weight: 600; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: grid; place-items: center; font-size: 14px; }
-  .header-date { font-size: 12px; color: #888; font-family: 'DM Mono', monospace; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
 
-  /* ── Layout ── */
-  .shell { display: flex; min-height: calc(100vh - 56px); }
+/* ── Header ── */
+header {
+  height: var(--header-h);
+  background: var(--text);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.logo { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+.logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 7px; display: grid; place-items: center; font-size: 15px; }
+.header-date { font-size: 11px; color: #888; font-family: 'DM Mono', monospace; }
 
-  /* ── Sidebar nav ── */
-  nav {
-    width: 200px;
-    flex-shrink: 0;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 20px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .nav-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; padding: 0 8px; margin: 12px 0 6px; }
-  .nav-label:first-child { margin-top: 0; }
-  .nav-btn {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; border-radius: 7px;
-    border: none; background: none; cursor: pointer;
-    font-family: inherit; font-size: 13.5px; font-weight: 400;
-    color: var(--muted); text-align: left; width: 100%;
-    transition: all .15s;
-  }
-  .nav-btn:hover { background: var(--border); color: var(--text); }
-  .nav-btn.active { background: var(--accent); color: #fff; font-weight: 500; }
-  .nav-btn .icon { font-size: 16px; flex-shrink: 0; }
+/* ── Scroll area ── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 16px calc(var(--nav-h) + 16px);
+}
 
-  /* ── Main content ── */
-  main { flex: 1; padding: 28px 32px; overflow-y: auto; }
-  .page { display: none; animation: fadeIn .2s ease; }
-  .page.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+/* ── Bottom nav ── */
+.bottom-nav {
+  height: var(--nav-h);
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 8px 4px;
+  transition: color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item .nav-icon { font-size: 20px; line-height: 1; }
+.nav-item.active { color: var(--accent); }
+.nav-item.active .nav-icon { transform: scale(1.1); }
 
-  .page-title { font-size: 20px; font-weight: 600; letter-spacing: -.4px; margin-bottom: 4px; }
-  .page-sub   { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+/* ── Pages ── */
+.page { display: none; animation: fadeIn .2s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ── Cards ── */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: var(--shadow);
-  }
-  .card + .card { margin-top: 16px; }
-  .card-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 16px; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 2px; }
+.page-sub   { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
-  /* ── Form ── */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
-  label { font-size: 12px; font-weight: 500; color: var(--muted); }
-  input[type=text], input[type=number], input[type=date] {
-    padding: 9px 12px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text);
-    background: var(--surface);
-    transition: border-color .15s, box-shadow .15s;
-    outline: none;
-  }
-  input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(43,92,230,.1); }
-  input.mono { font-family: 'DM Mono', monospace; letter-spacing: .5px; text-transform: uppercase; }
+/* ── Cards ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.card-title {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .7px; margin-bottom: 16px;
+}
 
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    padding: 9px 18px; border-radius: 7px; border: none; cursor: pointer;
-    font-family: inherit; font-size: 13.5px; font-weight: 500;
-    transition: all .15s; white-space: nowrap;
-  }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: var(--accent-h); }
-  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { background: var(--border); }
-  .btn-success { background: var(--green); color: #fff; }
-  .btn-success:hover { background: #145c38; }
-  .btn-sm { padding: 6px 12px; font-size: 12.5px; }
+/* ── Form ── */
+.form-group { margin-bottom: 16px; }
+.form-group:last-child { margin-bottom: 0; }
+label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+input[type=text], input[type=number], input[type=date] {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 16px; /* 16px evita zoom no iOS */
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input:focus { border-color: var(--accent); }
+input.mono { font-family: 'DM Mono', monospace; letter-spacing: .5px; text-transform: uppercase; }
 
-  .form-actions { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+/* ── Buttons ── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 15px;
+  border-radius: 12px; border: none; cursor: pointer;
+  font-family: inherit; font-size: 16px; font-weight: 600;
+  transition: opacity .15s; -webkit-tap-highlight-color: transparent;
+}
+.btn:active { opacity: .8; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
+.btn-success  { background: var(--green);  color: #fff; }
+.btn-row { display: flex; gap: 10px; }
+.btn-row .btn { flex: 1; }
 
-  /* ── Feedback ── */
-  .feedback {
-    display: none; padding: 10px 14px; border-radius: 7px;
-    font-size: 13px; font-weight: 500;
-  }
-  .feedback.show { display: flex; align-items: center; gap: 8px; }
-  .feedback.ok   { background: var(--green-bg); color: var(--green); }
-  .feedback.err  { background: var(--red-bg);   color: var(--red);   }
-  .feedback.warn { background: var(--amber-bg); color: var(--amber); }
+/* ── Feedback ── */
+.feedback {
+  display: none; padding: 13px 16px; border-radius: 10px;
+  font-size: 14px; font-weight: 500; margin-top: 14px;
+}
+.feedback.show { display: flex; align-items: center; gap: 8px; }
+.feedback.ok   { background: var(--green-bg); color: var(--green); }
+.feedback.err  { background: var(--red-bg);   color: var(--red);   }
+.feedback.warn { background: var(--amber-bg); color: var(--amber); }
 
-  /* ── Status badges ── */
-  .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 9px; border-radius: 20px;
-    font-size: 11.5px; font-weight: 600;
-  }
-  .badge-green  { background: var(--green-bg);  color: var(--green);  }
-  .badge-blue   { background: var(--blue-bg);   color: var(--accent); }
-  .badge-amber  { background: var(--amber-bg);  color: var(--amber);  }
-  .badge::before { content: '●'; font-size: 8px; }
+/* ── Badges ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 99px;
+  font-size: 12px; font-weight: 700;
+}
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-blue  { background: var(--blue-bg);  color: var(--accent); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+.badge::before { content: '●'; font-size: 7px; }
 
-  /* ── Métricas ── */
-  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
-  .metric {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-  }
-  .metric-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
-  .metric-value { font-size: 28px; font-weight: 600; letter-spacing: -1px; line-height: 1; }
-  .metric-value.green { color: var(--green); }
-  .metric-value.red   { color: var(--red);   }
-  .metric-value.amber { color: var(--amber); }
-  .metric-unit  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+/* ── Métricas 2x2 ── */
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.metric-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.metric-value { font-size: 30px; font-weight: 700; letter-spacing: -1px; line-height: 1.1; }
+.metric-value.green { color: var(--green); }
+.metric-value.red   { color: var(--red);   }
+.metric-value.amber { color: var(--amber); }
+.metric-unit  { font-size: 11px; color: var(--muted); }
 
-  /* ── Progress bar ── */
-  .progress-wrap { margin: 8px 0 4px; }
-  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .progress-track { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
-  .progress-bar   { height: 100%; background: var(--green); border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+/* ── Progress ── */
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+.progress-track { height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-bar   { height: 100%; background: var(--green); border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
 
-  /* ── Tabela ── */
-  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead { background: var(--surface); }
-  th {
-    padding: 10px 14px; text-align: left;
-    font-size: 11px; font-weight: 600; color: var(--muted);
-    text-transform: uppercase; letter-spacing: .5px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer; user-select: none; white-space: nowrap;
-  }
-  th:hover { color: var(--text); }
-  th .sort-icon { margin-left: 4px; opacity: .4; }
-  th.sorted .sort-icon { opacity: 1; }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface); }
-  .td-mono { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
-  tbody tr { cursor: pointer; transition: background .1s; }
+/* ── Summary cards ── */
+.summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.sum-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 12px; text-align: center; }
+.sum-card .val { font-size: 26px; font-weight: 700; letter-spacing: -1px; }
+.sum-card .lbl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
 
-  /* ── Search bar ── */
-  .search-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 0 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    width: 240px;
-  }
-  .search-bar input {
-    border: none; background: none; padding: 8px 0;
-    outline: none; font-family: inherit; font-size: 13.5px;
-    color: var(--text); width: 100%;
-  }
-  .search-bar .icon { color: var(--muted); font-size: 15px; }
+/* ── Lista de OPs ── */
+.op-list { display: flex; flex-direction: column; gap: 2px; }
+.op-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.op-row:last-child { border-bottom: none; }
+.op-row:active { opacity: .7; }
+.op-row-left { flex: 1; min-width: 0; }
+.op-num { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; }
+.op-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.op-row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.op-pct { font-size: 12px; color: var(--muted); font-weight: 500; }
+.mini-bar { width: 80px; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.mini-bar-fill { height: 100%; background: var(--green); border-radius: 99px; }
 
-  /* ── Consulta resultado ── */
-  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-  .result-op { font-size: 22px; font-weight: 700; letter-spacing: -.5px; font-family: 'DM Mono', monospace; }
-  .result-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .result-info { font-size: 12px; color: var(--muted); margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px; }
+/* ── Consulta resultado ── */
+.result-op   { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 700; }
+.result-date { font-size: 12px; color: var(--muted); margin-top: 2px; margin-bottom: 12px; }
+.result-info { font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 16px; line-height: 1.8; }
 
-  /* ── Empty state ── */
-  .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; }
-  .empty-text { font-size: 13.5px; }
+/* ── Busca ── */
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-wrap input { padding-left: 42px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
 
-  /* ── Toolbar ── */
-  .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+/* ── Empty ── */
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-icon { font-size: 40px; margin-bottom: 10px; }
+.empty-text { font-size: 14px; }
 
-  /* ── Stat resumo ── */
-  .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-  .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; }
-  .summary-card .val { font-size: 26px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
-  .summary-card .lbl { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
-
-  /* ── Divisor ── */
-  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
-
-  /* responsivo básico */
-  @media (max-width: 700px) {
-    nav { display: none; }
-    main { padding: 16px; }
-    .metrics { grid-template-columns: 1fr 1fr; }
-    .summary { grid-template-columns: 1fr; }
-    .form-grid, .form-grid.cols3 { grid-template-columns: 1fr; }
-  }
+/* ── Desktop overrides ── */
+@media (min-width: 640px) {
+  .scroll-area { padding: 24px 24px calc(var(--nav-h) + 24px); max-width: 600px; margin: 0 auto; }
+  .summary { gap: 14px; }
+  .metrics { gap: 14px; }
+  input[type=text], input[type=number], input[type=date] { font-size: 15px; }
+  .btn { font-size: 15px; padding: 13px; }
+}
 </style>
 </head>
 <body>
@@ -256,193 +260,152 @@
 <header>
   <div class="logo">
     <div class="logo-icon">✂</div>
-    Facção — Controle de Produção
+    Facção
   </div>
   <span class="header-date" id="hdrDate"></span>
 </header>
 
-<div class="shell">
-  <nav>
-    <span class="nav-label">Menu</span>
-    <button class="nav-btn active" onclick="goTo('dashboard')" id="nav-dashboard">
-      <span class="icon">📊</span> Dashboard
-    </button>
-    <button class="nav-btn" onclick="goTo('cadastro')" id="nav-cadastro">
-      <span class="icon">📋</span> Cadastrar OP
-    </button>
-    <button class="nav-btn" onclick="goTo('producao')" id="nav-producao">
-      <span class="icon">🔧</span> Produção
-    </button>
-    <button class="nav-btn" onclick="goTo('consulta')" id="nav-consulta">
-      <span class="icon">🔍</span> Consultar OP
-    </button>
-    <button class="nav-btn" onclick="goTo('lista')" id="nav-lista">
-      <span class="icon">📄</span> Todas as OPs
-    </button>
-  </nav>
+<div class="scroll-area">
 
-  <main>
+  <!-- ══ DASHBOARD ══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub">Visão geral da produção</div>
+    <div class="summary" id="dash-summary"></div>
+    <div class="card">
+      <div class="card-title">OPs recentes</div>
+      <div id="dash-recentes"></div>
+    </div>
+  </div>
 
-    <!-- ══════════════════ DASHBOARD ══════════════════ -->
-    <div class="page active" id="page-dashboard">
-      <div class="page-title">Dashboard</div>
-      <div class="page-sub">Visão geral da produção</div>
-
-      <div class="summary" id="dash-summary"></div>
-
-      <div class="card">
-        <div class="card-title">OPs recentes</div>
-        <div id="dash-recentes"></div>
+  <!-- ══ CADASTRO ══ -->
+  <div class="page" id="page-cadastro">
+    <div class="page-title">Cadastrar OP</div>
+    <div class="page-sub">Registre um novo corte</div>
+    <div class="card">
+      <div class="card-title">Dados do corte</div>
+      <div class="form-group">
+        <label for="cad-op">Número da OP</label>
+        <input id="cad-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off" inputmode="text">
       </div>
+      <div class="form-group">
+        <label for="cad-data">Data de chegada</label>
+        <input id="cad-data" type="date">
+      </div>
+      <div class="form-group">
+        <label for="cad-qtd">Quantidade recebida</label>
+        <input id="cad-qtd" type="number" min="1" placeholder="Ex: 200" inputmode="numeric">
+      </div>
+      <button class="btn btn-primary" onclick="cadastrarOP()">Cadastrar OP</button>
+      <div class="feedback" id="fb-cadastro"></div>
+    </div>
+  </div>
+
+  <!-- ══ PRODUÇÃO ══ -->
+  <div class="page" id="page-producao">
+    <div class="page-title">Produção</div>
+    <div class="page-sub">Registre o que foi produzido</div>
+
+    <div class="card">
+      <div class="card-title">Localizar OP</div>
+      <div class="form-group">
+        <label for="prod-op">Número da OP</label>
+        <input id="prod-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off" inputmode="text">
+      </div>
+      <button class="btn btn-secondary" onclick="carregarOP()">Carregar OP</button>
     </div>
 
-    <!-- ══════════════════ CADASTRO ══════════════════ -->
-    <div class="page" id="page-cadastro">
-      <div class="page-title">Cadastrar OP</div>
-      <div class="page-sub">Registre um novo corte no sistema</div>
-
+    <div id="prod-status-card" style="display:none">
       <div class="card">
-        <div class="card-title">Dados do corte</div>
-        <div class="form-grid cols3">
-          <div class="form-group">
-            <label for="cad-op">Número da OP *</label>
-            <input id="cad-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off">
-          </div>
-          <div class="form-group">
-            <label for="cad-data">Data de chegada *</label>
-            <input id="cad-data" type="date">
-          </div>
-          <div class="form-group">
-            <label for="cad-qtd">Quantidade recebida *</label>
-            <input id="cad-qtd" type="number" min="1" placeholder="Ex: 200">
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-primary" onclick="cadastrarOP()">Cadastrar OP</button>
-          <div class="feedback" id="fb-cadastro"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══════════════════ PRODUÇÃO ══════════════════ -->
-    <div class="page" id="page-producao">
-      <div class="page-title">Registrar Produção</div>
-      <div class="page-sub">Informe o que foi produzido e a quebra</div>
-
-      <div class="card">
-        <div class="card-title">Localizar OP</div>
-        <div style="display:flex;gap:10px;align-items:flex-end">
-          <div class="form-group" style="flex:1;max-width:260px">
-            <label for="prod-op">Número da OP</label>
-            <input id="prod-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off">
-          </div>
-          <button class="btn btn-secondary" onclick="carregarOP()">Carregar</button>
-        </div>
-      </div>
-
-      <div class="card" id="prod-status-card" style="display:none">
         <div class="card-title">Status atual</div>
         <div id="prod-status-body"></div>
-        <hr class="divider">
-        <div class="card-title">Lançar produção</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="prod-qtd">Quantidade produzida</label>
-            <input id="prod-qtd" type="number" min="0" value="0">
-          </div>
-          <div class="form-group">
-            <label for="prod-qbr">Quantidade de quebra</label>
-            <input id="prod-qbr" type="number" min="0" value="0">
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-success" onclick="registrarProducao()">Registrar produção</button>
-          <div class="feedback" id="fb-producao"></div>
-        </div>
       </div>
-    </div>
-
-    <!-- ══════════════════ CONSULTA ══════════════════ -->
-    <div class="page" id="page-consulta">
-      <div class="page-title">Consultar OP</div>
-      <div class="page-sub">Veja o status completo de uma ordem de produção</div>
-
       <div class="card">
-        <div style="display:flex;gap:10px;align-items:flex-end">
-          <div class="form-group" style="flex:1;max-width:260px">
-            <label for="cons-op">Número da OP</label>
-            <input id="cons-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off">
-          </div>
-          <button class="btn btn-primary" onclick="consultarOP()">Consultar</button>
+        <div class="card-title">Lançar produção</div>
+        <div class="form-group">
+          <label for="prod-qtd">Quantidade produzida</label>
+          <input id="prod-qtd" type="number" min="0" value="0" inputmode="numeric">
         </div>
-      </div>
-
-      <div id="cons-resultado"></div>
-    </div>
-
-    <!-- ══════════════════ LISTA ══════════════════ -->
-    <div class="page" id="page-lista">
-      <div class="page-title">Todas as OPs</div>
-      <div class="page-sub">Histórico completo de cortes</div>
-
-      <div class="toolbar">
-        <div class="search-bar">
-          <span class="icon">🔎</span>
-          <input id="filtro-lista" type="text" placeholder="Filtrar..." oninput="renderLista()">
+        <div class="form-group">
+          <label for="prod-qbr">Quantidade de quebra</label>
+          <input id="prod-qbr" type="number" min="0" value="0" inputmode="numeric">
         </div>
-        <button class="btn btn-secondary btn-sm" onclick="renderLista()">↻ Atualizar</button>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th onclick="sortLista('numero_op')">OP <span class="sort-icon">↕</span></th>
-              <th onclick="sortLista('data_chegada')">Chegada <span class="sort-icon">↕</span></th>
-              <th onclick="sortLista('qtd_recebida')">Recebido <span class="sort-icon">↕</span></th>
-              <th onclick="sortLista('qtd_produzida')">Produzido <span class="sort-icon">↕</span></th>
-              <th onclick="sortLista('qtd_quebra')">Quebra <span class="sort-icon">↕</span></th>
-              <th onclick="sortLista('restante')">Restante <span class="sort-icon">↕</span></th>
-              <th onclick="sortLista('pct')">Concluído <span class="sort-icon">↕</span></th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="lista-tbody"></tbody>
-        </table>
-        <div id="lista-empty" class="empty" style="display:none">
-          <div class="empty-icon">📭</div>
-          <div class="empty-text">Nenhuma OP encontrada</div>
-        </div>
+        <button class="btn btn-success" onclick="registrarProducao()">✔ Registrar produção</button>
+        <div class="feedback" id="fb-producao"></div>
       </div>
     </div>
+  </div>
 
-  </main>
-</div>
+  <!-- ══ CONSULTA ══ -->
+  <div class="page" id="page-consulta">
+    <div class="page-title">Consultar OP</div>
+    <div class="page-sub">Status completo de uma ordem</div>
+    <div class="card">
+      <div class="form-group">
+        <label for="cons-op">Número da OP</label>
+        <input id="cons-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off" inputmode="text">
+      </div>
+      <button class="btn btn-primary" onclick="consultarOP()">🔍 Consultar</button>
+    </div>
+    <div id="cons-resultado"></div>
+  </div>
+
+  <!-- ══ LISTA ══ -->
+  <div class="page" id="page-lista">
+    <div class="page-title">Todas as OPs</div>
+    <div class="page-sub">Histórico completo</div>
+    <div class="search-wrap">
+      <span class="search-icon">🔎</span>
+      <input id="filtro-lista" type="text" placeholder="Filtrar por OP ou status..." oninput="renderLista()" inputmode="text">
+    </div>
+    <div class="card">
+      <div class="op-list" id="lista-ops"></div>
+      <div class="empty" id="lista-empty" style="display:none">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">Nenhuma OP encontrada</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /scroll-area -->
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="goTo('dashboard')" id="nav-dashboard">
+    <span class="nav-icon">📊</span>
+    <span>Início</span>
+  </button>
+  <button class="nav-item" onclick="goTo('cadastro')" id="nav-cadastro">
+    <span class="nav-icon">📋</span>
+    <span>Cadastro</span>
+  </button>
+  <button class="nav-item" onclick="goTo('producao')" id="nav-producao">
+    <span class="nav-icon">🔧</span>
+    <span>Produção</span>
+  </button>
+  <button class="nav-item" onclick="goTo('consulta')" id="nav-consulta">
+    <span class="nav-icon">🔍</span>
+    <span>Consulta</span>
+  </button>
+  <button class="nav-item" onclick="goTo('lista')" id="nav-lista">
+    <span class="nav-icon">📄</span>
+    <span>Todas</span>
+  </button>
+</nav>
 
 <script>
-// ══════════════════════════════════════════════════════
-// STORAGE — persiste no navegador
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════
 const CHAVE = 'faccao_ops_v1';
+function carregar() { try { return JSON.parse(localStorage.getItem(CHAVE)) || []; } catch { return []; } }
+function salvar(ops) { localStorage.setItem(CHAVE, JSON.stringify(ops)); }
 
-function carregar() {
-  try { return JSON.parse(localStorage.getItem(CHAVE)) || []; }
-  catch { return []; }
-}
-function salvar(ops) {
-  localStorage.setItem(CHAVE, JSON.stringify(ops));
-}
-
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // HELPERS
-// ══════════════════════════════════════════════════════
-function restante(op) {
-  return Math.max(0, op.qtd_recebida - op.qtd_produzida - op.qtd_quebra);
-}
-function pct(op) {
-  if (!op.qtd_recebida) return 0;
-  return Math.round((op.qtd_produzida / op.qtd_recebida) * 100);
-}
+// ══════════════════════════════════════════════════
+function restante(op) { return Math.max(0, op.qtd_recebida - op.qtd_produzida - op.qtd_quebra); }
+function pct(op) { if (!op.qtd_recebida) return 0; return Math.round((op.qtd_produzida / op.qtd_recebida) * 100); }
 function statusOp(op) {
   if (op.qtd_produzida === 0 && op.qtd_quebra === 0) return 'Aguardando';
   if (restante(op) === 0) return 'Concluída';
@@ -452,11 +415,7 @@ function badgeStatus(st) {
   const cls = { 'Concluída': 'badge-green', 'Em produção': 'badge-blue', 'Aguardando': 'badge-amber' };
   return `<span class="badge ${cls[st] || 'badge-amber'}">${st}</span>`;
 }
-function fmtData(iso) {
-  if (!iso) return '—';
-  const [y, m, d] = iso.split('-');
-  return `${d}/${m}/${y}`;
-}
+function fmtData(iso) { if (!iso) return '—'; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
 function now() { return new Date().toLocaleString('pt-BR'); }
 function feedback(id, msg, tipo) {
   const el = document.getElementById(id);
@@ -464,110 +423,95 @@ function feedback(id, msg, tipo) {
   el.innerHTML = msg;
   if (tipo === 'ok') setTimeout(() => el.classList.remove('show'), 4000);
 }
-function miniProgress(v) {
-  return `<div class="progress-track" style="height:6px;border-radius:99px;background:var(--border)">
-    <div class="progress-bar" style="width:${v}%"></div></div>`;
-}
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // NAVEGAÇÃO
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function goTo(pg) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + pg).classList.add('active');
   document.getElementById('nav-' + pg).classList.add('active');
+  document.querySelector('.scroll-area').scrollTop = 0;
   if (pg === 'dashboard') renderDash();
   if (pg === 'lista')     renderLista();
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // DASHBOARD
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function renderDash() {
   const ops = carregar();
   const total     = ops.length;
-  const concluidas  = ops.filter(o => statusOp(o) === 'Concluída').length;
-  const emProd      = ops.filter(o => statusOp(o) === 'Em produção').length;
+  const concluidas = ops.filter(o => statusOp(o) === 'Concluída').length;
+  const emProd     = ops.filter(o => statusOp(o) === 'Em produção').length;
 
   document.getElementById('dash-summary').innerHTML = `
-    <div class="summary-card"><div class="val">${total}</div><div class="lbl">Total de OPs</div></div>
-    <div class="summary-card"><div class="val" style="color:var(--green)">${concluidas}</div><div class="lbl">Concluídas</div></div>
-    <div class="summary-card"><div class="val" style="color:var(--accent)">${emProd}</div><div class="lbl">Em produção</div></div>
-  `;
+    <div class="sum-card"><div class="val">${total}</div><div class="lbl">Total</div></div>
+    <div class="sum-card"><div class="val" style="color:var(--green)">${concluidas}</div><div class="lbl">Prontas</div></div>
+    <div class="sum-card"><div class="val" style="color:var(--accent)">${emProd}</div><div class="lbl">Em prod.</div></div>`;
 
-  const recentes = [...ops].reverse().slice(0, 5);
+  const recentes = [...ops].reverse().slice(0, 6);
   if (!recentes.length) {
     document.getElementById('dash-recentes').innerHTML =
-      '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhuma OP cadastrada ainda</div></div>';
+      `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhuma OP cadastrada ainda</div></div>`;
     return;
   }
-
-  document.getElementById('dash-recentes').innerHTML = `
-    <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead><tr>
-        <th style="text-align:left;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">OP</th>
-        <th style="text-align:left;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Progresso</th>
-        <th style="text-align:right;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Status</th>
-      </tr></thead>
-      <tbody>
-        ${recentes.map(o => `
-          <tr onclick="abrirConsulta('${o.numero_op}')" style="cursor:pointer">
-            <td style="padding:10px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-weight:500">${o.numero_op}</td>
-            <td style="padding:10px 0;border-bottom:1px solid var(--border);width:50%">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div style="flex:1">${miniProgress(pct(o))}</div>
-                <span style="font-size:12px;color:var(--muted);min-width:32px">${pct(o)}%</span>
-              </div>
-            </td>
-            <td style="padding:10px 0;border-bottom:1px solid var(--border);text-align:right">${badgeStatus(statusOp(o))}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`;
+  document.getElementById('dash-recentes').innerHTML =
+    `<div class="op-list">${recentes.map(o => opRowHTML(o)).join('')}</div>`;
 }
 
-// ══════════════════════════════════════════════════════
+function opRowHTML(o) {
+  const p = pct(o);
+  const st = statusOp(o);
+  return `<div class="op-row" onclick="abrirConsulta('${o.numero_op}')">
+    <div class="op-row-left">
+      <div class="op-num">${o.numero_op}</div>
+      <div class="op-date">${fmtData(o.data_chegada)} · ${o.qtd_recebida} peças</div>
+    </div>
+    <div class="op-row-right">
+      ${badgeStatus(st)}
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="mini-bar"><div class="mini-bar-fill" style="width:${p}%"></div></div>
+        <span class="op-pct">${p}%</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════
 // CADASTRO
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function cadastrarOP() {
   const op  = document.getElementById('cad-op').value.trim().toUpperCase();
   const dt  = document.getElementById('cad-data').value;
   const qtd = parseInt(document.getElementById('cad-qtd').value);
 
-  if (!op)       return feedback('fb-cadastro', '⚠ Informe o número da OP.', 'err');
-  if (!dt)       return feedback('fb-cadastro', '⚠ Informe a data de chegada.', 'err');
+  if (!op)        return feedback('fb-cadastro', '⚠ Informe o número da OP.', 'err');
+  if (!dt)        return feedback('fb-cadastro', '⚠ Informe a data de chegada.', 'err');
   if (!qtd || qtd <= 0) return feedback('fb-cadastro', '⚠ Quantidade deve ser maior que zero.', 'err');
 
   const ops = carregar();
   if (ops.find(o => o.numero_op === op))
-    return feedback('fb-cadastro', `⚠ A OP "${op}" já existe no sistema.`, 'err');
+    return feedback('fb-cadastro', `⚠ A OP "${op}" já existe.`, 'err');
 
-  ops.push({
-    numero_op: op,
-    data_chegada: dt,
-    qtd_recebida: qtd,
-    qtd_produzida: 0,
-    qtd_quebra: 0,
-    criado_em: now(),
-    atualizado_em: now(),
-  });
+  ops.push({ numero_op: op, data_chegada: dt, qtd_recebida: qtd,
+             qtd_produzida: 0, qtd_quebra: 0, criado_em: now(), atualizado_em: now() });
   salvar(ops);
-
-  feedback('fb-cadastro', `✔ OP "${op}" cadastrada com sucesso!`, 'ok');
+  feedback('fb-cadastro', `✔ OP "${op}" cadastrada!`, 'ok');
   document.getElementById('cad-op').value = '';
   document.getElementById('cad-qtd').value = '';
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // PRODUÇÃO
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 let opCarregada = null;
 
 function carregarOP() {
   const num = document.getElementById('prod-op').value.trim().toUpperCase();
   if (!num) return;
-  const ops = carregar();
-  const op = ops.find(o => o.numero_op === num);
+  const op = carregar().find(o => o.numero_op === num);
   if (!op) {
     document.getElementById('prod-status-card').style.display = 'none';
     return feedback('fb-producao', `⚠ OP "${num}" não encontrada.`, 'err');
@@ -577,36 +521,32 @@ function carregarOP() {
   document.getElementById('prod-status-card').style.display = 'block';
   document.getElementById('prod-qtd').value = 0;
   document.getElementById('prod-qbr').value = 0;
+  document.getElementById('fb-producao').classList.remove('show');
 }
 
 function renderStatusProd(op) {
-  const st = statusOp(op);
+  const p = pct(op);
   document.getElementById('prod-status-body').innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700">${op.numero_op}</span>
-      ${badgeStatus(st)}
+      ${badgeStatus(statusOp(op))}
     </div>
-    <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+    <div class="metrics">
       <div class="metric"><div class="metric-label">Recebido</div><div class="metric-value">${op.qtd_recebida}</div><div class="metric-unit">peças</div></div>
       <div class="metric"><div class="metric-label">Produzido</div><div class="metric-value green">${op.qtd_produzida}</div><div class="metric-unit">peças</div></div>
       <div class="metric"><div class="metric-label">Quebra</div><div class="metric-value red">${op.qtd_quebra}</div><div class="metric-unit">peças</div></div>
       <div class="metric"><div class="metric-label">Restante</div><div class="metric-value amber">${restante(op)}</div><div class="metric-unit">peças</div></div>
     </div>
-    <div class="progress-wrap">
-      <div class="progress-label"><span>Progresso</span><span>${pct(op)}%</span></div>
-      <div class="progress-track"><div class="progress-bar" style="width:${pct(op)}%"></div></div>
-    </div>`;
+    <div class="progress-label"><span>Progresso</span><span style="font-weight:700">${p}%</span></div>
+    <div class="progress-track"><div class="progress-bar" style="width:${p}%"></div></div>`;
 }
 
 function registrarProducao() {
   if (!opCarregada) return;
   const qtdP = parseInt(document.getElementById('prod-qtd').value) || 0;
   const qtdQ = parseInt(document.getElementById('prod-qbr').value) || 0;
-
-  if (qtdP < 0 || qtdQ < 0)
-    return feedback('fb-producao', '⚠ Quantidades não podem ser negativas.', 'err');
-  if (qtdP === 0 && qtdQ === 0)
-    return feedback('fb-producao', '⚠ Informe ao menos uma quantidade.', 'warn');
+  if (qtdP < 0 || qtdQ < 0) return feedback('fb-producao', '⚠ Quantidades não podem ser negativas.', 'err');
+  if (qtdP === 0 && qtdQ === 0) return feedback('fb-producao', '⚠ Informe ao menos uma quantidade.', 'warn');
 
   const ops = carregar();
   const idx = ops.findIndex(o => o.numero_op === opCarregada.numero_op);
@@ -614,26 +554,23 @@ function registrarProducao() {
 
   const novoP = ops[idx].qtd_produzida + qtdP;
   const novoQ = ops[idx].qtd_quebra    + qtdQ;
-
   if (novoP + novoQ > ops[idx].qtd_recebida)
-    return feedback('fb-producao',
-      `⚠ Total (${novoP + novoQ}) ultrapassa o recebido (${ops[idx].qtd_recebida}).`, 'err');
+    return feedback('fb-producao', `⚠ Total (${novoP + novoQ}) ultrapassa o recebido (${ops[idx].qtd_recebida}).`, 'err');
 
   ops[idx].qtd_produzida = novoP;
   ops[idx].qtd_quebra    = novoQ;
   ops[idx].atualizado_em = now();
   salvar(ops);
-
   opCarregada = ops[idx];
   renderStatusProd(ops[idx]);
   document.getElementById('prod-qtd').value = 0;
   document.getElementById('prod-qbr').value = 0;
-  feedback('fb-producao', `✔ Produção registrada! Restante: ${restante(ops[idx])} peças.`, 'ok');
+  feedback('fb-producao', `✔ Registrado! Restante: ${restante(ops[idx])} peças.`, 'ok');
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // CONSULTA
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function abrirConsulta(num) {
   document.getElementById('cons-op').value = num;
   goTo('consulta');
@@ -641,145 +578,78 @@ function abrirConsulta(num) {
 }
 
 function consultarOP() {
-  const num = document.getElementById('cons-op').value.trim().toUpperCase();
+  const num  = document.getElementById('cons-op').value.trim().toUpperCase();
   const cont = document.getElementById('cons-resultado');
   if (!num) { cont.innerHTML = ''; return; }
 
   const op = carregar().find(o => o.numero_op === num);
   if (!op) {
-    cont.innerHTML = `<div class="card" style="margin-top:16px">
-      <div class="feedback show err">⚠ OP "${num}" não encontrada no sistema.</div></div>`;
+    cont.innerHTML = `<div class="card"><div class="feedback show err">⚠ OP "${num}" não encontrada.</div></div>`;
     return;
   }
 
-  const st = statusOp(op);
   const p  = pct(op);
-
+  const st = statusOp(op);
   cont.innerHTML = `
-    <div class="card" style="margin-top:16px">
-      <div class="result-header">
-        <div>
-          <div class="result-op">${op.numero_op}</div>
-          <div class="result-date">Chegada: ${fmtData(op.data_chegada)}</div>
-        </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="result-op">${op.numero_op}</div>
         ${badgeStatus(st)}
       </div>
-
+      <div class="result-date">Chegada: ${fmtData(op.data_chegada)}</div>
       <div class="metrics">
-        <div class="metric">
-          <div class="metric-label">Recebido</div>
-          <div class="metric-value">${op.qtd_recebida}</div>
-          <div class="metric-unit">peças</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Produzido</div>
-          <div class="metric-value green">${op.qtd_produzida}</div>
-          <div class="metric-unit">peças</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Quebra</div>
-          <div class="metric-value red">${op.qtd_quebra}</div>
-          <div class="metric-unit">peças</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Restante</div>
-          <div class="metric-value amber">${restante(op)}</div>
-          <div class="metric-unit">peças</div>
-        </div>
+        <div class="metric"><div class="metric-label">Recebido</div><div class="metric-value">${op.qtd_recebida}</div><div class="metric-unit">peças</div></div>
+        <div class="metric"><div class="metric-label">Produzido</div><div class="metric-value green">${op.qtd_produzida}</div><div class="metric-unit">peças</div></div>
+        <div class="metric"><div class="metric-label">Quebra</div><div class="metric-value red">${op.qtd_quebra}</div><div class="metric-unit">peças</div></div>
+        <div class="metric"><div class="metric-label">Restante</div><div class="metric-value amber">${restante(op)}</div><div class="metric-unit">peças</div></div>
       </div>
-
-      <div class="progress-wrap">
-        <div class="progress-label">
-          <span style="font-weight:500">Progresso da produção</span>
-          <span style="font-weight:600">${p}%</span>
-        </div>
-        <div class="progress-track" style="height:10px">
-          <div class="progress-bar" style="width:${p}%"></div>
-        </div>
-      </div>
-
+      <div class="progress-label"><span style="font-weight:600">Progresso</span><span style="font-weight:700">${p}%</span></div>
+      <div class="progress-track" style="height:12px"><div class="progress-bar" style="width:${p}%"></div></div>
       <div class="result-info">
-        Cadastrado em: ${op.criado_em} &nbsp;·&nbsp; Última atualização: ${op.atualizado_em}
+        Cadastrado: ${op.criado_em}<br>
+        Atualizado: ${op.atualizado_em}
       </div>
     </div>`;
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // LISTA
-// ══════════════════════════════════════════════════════
-let sortCol = 'data_chegada', sortAsc = false;
-
-function sortLista(col) {
-  if (sortCol === col) sortAsc = !sortAsc;
-  else { sortCol = col; sortAsc = true; }
-  renderLista();
-}
-
+// ══════════════════════════════════════════════════
 function renderLista() {
   const filtro = (document.getElementById('filtro-lista')?.value || '').toLowerCase();
   let ops = carregar();
-
   if (filtro) {
     ops = ops.filter(o =>
       o.numero_op.toLowerCase().includes(filtro) ||
-      o.data_chegada.includes(filtro) ||
-      statusOp(o).toLowerCase().includes(filtro)
+      statusOp(o).toLowerCase().includes(filtro) ||
+      o.data_chegada.includes(filtro)
     );
   }
+  ops = ops.reverse();
 
-  ops = ops.sort((a, b) => {
-    let va, vb;
-    if (sortCol === 'restante') { va = restante(a); vb = restante(b); }
-    else if (sortCol === 'pct') { va = pct(a); vb = pct(b); }
-    else { va = a[sortCol]; vb = b[sortCol]; }
-    if (va < vb) return sortAsc ? -1 : 1;
-    if (va > vb) return sortAsc ? 1 : -1;
-    return 0;
-  });
-
-  const tbody = document.getElementById('lista-tbody');
-  const empty = document.getElementById('lista-empty');
+  const listaEl = document.getElementById('lista-ops');
+  const emptyEl = document.getElementById('lista-empty');
 
   if (!ops.length) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
+    listaEl.innerHTML = '';
+    emptyEl.style.display = 'block';
     return;
   }
-  empty.style.display = 'none';
-
-  tbody.innerHTML = ops.map(o => {
-    const st = statusOp(o);
-    const p  = pct(o);
-    return `<tr onclick="abrirConsulta('${o.numero_op}')">
-      <td class="td-mono">${o.numero_op}</td>
-      <td>${fmtData(o.data_chegada)}</td>
-      <td style="text-align:right">${o.qtd_recebida}</td>
-      <td style="text-align:right;color:var(--green);font-weight:500">${o.qtd_produzida}</td>
-      <td style="text-align:right;color:var(--red)">${o.qtd_quebra}</td>
-      <td style="text-align:right;color:var(--amber);font-weight:500">${restante(o)}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="flex:1;min-width:60px">${miniProgress(p)}</div>
-          <span style="font-size:12px;color:var(--muted);min-width:30px">${p}%</span>
-        </div>
-      </td>
-      <td>${badgeStatus(st)}</td>
-    </tr>`;
-  }).join('');
+  emptyEl.style.display = 'none';
+  listaEl.innerHTML = ops.map(o => opRowHTML(o)).join('');
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 document.getElementById('hdrDate').textContent =
-  new Date().toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+  new Date().toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
 
-// Atalho Enter nos campos de busca
-document.getElementById('prod-op').addEventListener('keydown', e => e.key==='Enter' && carregarOP());
-document.getElementById('cons-op').addEventListener('keydown', e => e.key==='Enter' && consultarOP());
-document.getElementById('cad-op').addEventListener('keydown',  e => e.key==='Enter' && document.getElementById('cad-data').focus());
-document.getElementById('cad-data').addEventListener('keydown',e => e.key==='Enter' && document.getElementById('cad-qtd').focus());
-document.getElementById('cad-qtd').addEventListener('keydown', e => e.key==='Enter' && cadastrarOP());
+document.getElementById('cad-data').value = new Date().toISOString().split('T')[0];
+
+document.getElementById('prod-op').addEventListener('keydown',  e => e.key==='Enter' && carregarOP());
+document.getElementById('cons-op').addEventListener('keydown',  e => e.key==='Enter' && consultarOP());
+document.getElementById('cad-qtd').addEventListener('keydown',  e => e.key==='Enter' && cadastrarOP());
 
 renderDash();
 </script>
