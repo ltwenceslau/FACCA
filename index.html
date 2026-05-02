@@ -1,697 +1,101 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sistema Facção</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema FacÃ§Ã£o</title>
   <style>
-    :root{
-      --bg:#f4f6f8;--card:#fff;--text:#1f2933;--muted:#667085;--line:#d9dee7;
-      --blue:#1769aa;--green:#1f8f4d;--red:#b42318;--amber:#b7791f;
-    }
+    :root{--bg:#f4f6f8;--card:#fff;--text:#1f2933;--muted:#667085;--line:#d9dee7;--blue:#1769aa;--red:#b42318}
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-    header{background:#fff;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2}
-    header h1{font-size:20px;margin:0}
-    header small{color:var(--muted)}
+    header{background:#fff;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;position:sticky;top:0;z-index:2}
+    h1{font-size:20px;margin:0} small,p{color:var(--muted)}
     .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 62px)}
     nav{background:#fff;border-right:1px solid var(--line);padding:14px}
-    nav button{width:100%;display:block;text-align:left;border:0;background:transparent;padding:11px;border-radius:6px;cursor:pointer;font-weight:700;color:var(--text)}
+    nav button{width:100%;text-align:left;border:0;background:transparent;padding:11px;border-radius:6px;cursor:pointer;font-weight:700}
     nav button.active,nav button:hover{background:#eaf3fb;color:var(--blue)}
     main{padding:18px;overflow:auto}
-    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
-    h2{margin:0 0 4px;font-size:24px}
-    p{margin:0;color:var(--muted)}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .top{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+    h2{margin:0 0 4px;font-size:24px}.actions{display:flex;gap:8px;flex-wrap:wrap}
     .btn{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:6px;cursor:pointer;font-weight:700}
-    .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-    .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+    .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.danger{background:var(--red);border-color:var(--red);color:#fff}
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
-    .card span{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
-    .card strong{font-size:24px}
-    .panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
-    .table-wrap{overflow:auto}
-    table{border-collapse:collapse;width:100%;min-width:760px}
-    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-    th{font-size:13px;color:var(--muted)}
-    .pill{display:inline-block;border-radius:999px;background:#eef8ff;color:#145c8f;font-weight:700;font-size:12px;padding:4px 8px}
-    dialog{border:0;border-radius:8px;box-shadow:0 20px 60px #0004;width:min(680px,92vw)}
-    dialog::backdrop{background:#0008}
-    form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    label{font-weight:700;font-size:13px}
+    .card,.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+    .card span{display:block;color:var(--muted);font-size:13px}.card strong{font-size:24px}
+    .table-wrap{overflow:auto} table{border-collapse:collapse;width:100%;min-width:760px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left} th{font-size:13px;color:var(--muted)}
+    .pill{border-radius:999px;background:#eef8ff;color:#145c8f;font-weight:700;font-size:12px;padding:4px 8px}
+    dialog{border:0;border-radius:8px;box-shadow:0 20px 60px #0004;width:min(680px,92vw)} dialog::backdrop{background:#0008}
+    form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px} label{font-weight:700;font-size:13px}
     input,select,textarea{width:100%;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:6px;font:inherit}
-    textarea{min-height:76px}
-    .full{grid-column:1/-1}
-    .form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+    textarea{min-height:76px}.full{grid-column:1/-1}.form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
     .empty{color:var(--muted);padding:18px}
-    @media(max-width:850px){
-      .layout{grid-template-columns:1fr}
-      nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}
-      nav button{white-space:nowrap;width:auto}
-      .grid{grid-template-columns:1fr 1fr}
-      form{grid-template-columns:1fr}
-      .top{flex-direction:column}
-    }
+    @media(max-width:850px){.layout{grid-template-columns:1fr}nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}nav button{white-space:nowrap;width:auto}.grid{grid-template-columns:1fr 1fr}form{grid-template-columns:1fr}.top{flex-direction:column}}
   </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>Sistema Facção</h1>
-    <small>Operação, estoque, financeiro, colaboradores e terceiros</small>
-  </div>
+  <div><h1>Sistema FacÃ§Ã£o</h1><small>OperaÃ§Ã£o, estoque, financeiro, colaboradores e terceiros</small></div>
   <button class="btn danger" onclick="resetar()">Limpar dados</button>
 </header>
-
-<div class="layout">
-  <nav id="menu"></nav>
-  <main id="app"></main>
-</div>
-
-<dialog id="modal">
-  <div id="modalContent"></div>
-</dialog>
-
+<div class="layout"><nav id="menu"></nav><main id="app"></main></div>
+<dialog id="modal"><div id="modalContent"></div></dialog>
 <script>
-const KEY = "sistema_faccao_dados_v1";
-
-const estadoPadrao = {
-  clientes: [],
-  modelos: [],
-  colaboradores: [],
-  terceiros: [],
-  ops: [],
-  entregas: [],
-  quebras: [],
-  insumosOp: [],
-  estoque: [],
-  movEstoque: [],
-  contas: [],
-  despesas: [],
-  baixas: [],
-  valesClientes: [],
-  valesColaboradores: [],
-  pagamentosColaboradores: [],
-  enviosTerceiros: [],
-  retornosTerceiros: [],
-  pagamentosTerceiros: [],
-  acertos: [],
-  historico: []
-};
-
-let db = carregar();
-let tela = "Dashboard";
-
-const telas = [
-  "Dashboard","Cadastros","Operação","Insumos OP","Estoque",
-  "Financeiro","Colaboradores","Terceiros","Acertos","Histórico"
-];
-
-function carregar(){
-  return JSON.parse(localStorage.getItem(KEY) || JSON.stringify(estadoPadrao));
-}
-
-function salvar(){
-  localStorage.setItem(KEY, JSON.stringify(db));
-}
-
-function id(lista){
-  return (db[lista].reduce((m,x)=>Math.max(m,x.id),0) || 0) + 1;
-}
-
-function hoje(){
-  return new Date().toISOString().slice(0,10);
-}
-
-function dinheiro(v){
-  return Number(v || 0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-}
-
-function hist(modulo, acao, obs=""){
-  db.historico.unshift({id:id("historico"), data:new Date().toLocaleString("pt-BR"), modulo, acao, obs});
-  salvar();
-}
-
-function resetar(){
-  if(confirm("Apagar todos os dados salvos neste navegador?")){
-    localStorage.removeItem(KEY);
-    db = carregar();
-    render();
-  }
-}
-
-function nome(lista, itemId){
-  return (db[lista].find(x=>x.id==itemId) || {}).nome || "";
-}
-
-function opCodigo(opId){
-  return (db.ops.find(x=>x.id==opId) || {}).codigo || "";
-}
-
-function totaisOp(opId){
-  const op = db.ops.find(x=>x.id==opId);
-  if(!op) return {entregue:0, quebra:0, saldo:0, valor:0};
-  const entregue = db.entregas.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);
-  const quebra = db.quebras.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);
-  const saldo = Number(op.recebido||0) - entregue - quebra;
-  const valor = Math.max(entregue - quebra, 0) * Number(op.valorPeca||0);
-  return {entregue, quebra, saldo, valor};
-}
-
-function atualizarConta(opId){
-  const total = totaisOp(opId).valor;
-  let conta = db.contas.find(x=>x.opId==opId);
-  if(!conta){
-    conta = {id:id("contas"), opId, valor:total, status:"Não pago"};
-    db.contas.push(conta);
-  } else {
-    conta.valor = total;
-  }
-  atualizarStatusConta(conta.id);
-}
-
-function saldoConta(contaId){
-  const conta = db.contas.find(x=>x.id==contaId);
-  const pago = db.baixas.filter(x=>x.contaId==contaId).reduce((s,x)=>s+Number(x.valor||0),0);
-  return Number(conta?.valor||0) - pago;
-}
-
-function atualizarStatusConta(contaId){
-  const conta = db.contas.find(x=>x.id==contaId);
-  if(!conta) return;
-  const saldo = saldoConta(contaId);
-  const pago = Number(conta.valor||0) - saldo;
-  conta.status = saldo <= 0 && conta.valor > 0 ? "Pago" : pago > 0 ? "Pago parcial" : "Não pago";
-}
-
-function atualizarStatusDespesa(despesaId){
-  const desp = db.despesas.find(x=>x.id==despesaId);
-  const pago = db.baixas.filter(x=>x.despesaId==despesaId).reduce((s,x)=>s+Number(x.valor||0),0);
-  desp.status = pago >= desp.valor ? "Pago" : pago > 0 ? "Pago parcial" : "Não pago";
-}
-
-function renderMenu(){
-  document.getElementById("menu").innerHTML = telas.map(t =>
-    `<button class="${t===tela?'active':''}" onclick="abrir('${t}')">${t}</button>`
-  ).join("");
-}
-
-function abrir(t){
-  tela = t;
-  render();
-}
-
-function page(titulo, subtitulo, botoes, conteudo){
-  app.innerHTML = `
-    <section class="top">
-      <div><h2>${titulo}</h2><p>${subtitulo||""}</p></div>
-      <div class="actions">${botoes||""}</div>
-    </section>
-    ${conteudo}
-  `;
-}
-
-function tabela(cols, rows){
-  if(!rows.length) return `<div class="panel empty">Nenhum registro encontrado.</div>`;
-  return `
-    <div class="panel table-wrap">
-      <table>
-        <thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>
-        <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c ?? ""}</td>`).join("")}</tr>`).join("")}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-function btn(txt, fn, cls="primary"){
-  return `<button class="btn ${cls}" onclick="${fn}">${txt}</button>`;
-}
-
-function selectOptions(lista, label="nome"){
-  return db[lista].map(x=>`<option value="${x.id}">${x[label]}</option>`).join("");
-}
-
-function abrirForm(titulo, campos, aoSalvar){
-  modalContent.innerHTML = `
-    <h2>${titulo}</h2>
-    <form id="formModal">
-      ${campos.map(c => {
-        const cls = c.full ? "full" : "";
-        if(c.type === "select"){
-          return `<label class="${cls}">${c.label}<select name="${c.name}">${c.options}</select></label>`;
-        }
-        if(c.type === "textarea"){
-          return `<label class="${cls}">${c.label}<textarea name="${c.name}">${c.value||""}</textarea></label>`;
-        }
-        return `<label class="${cls}">${c.label}<input type="${c.type||"text"}" name="${c.name}" value="${c.value||""}"></label>`;
-      }).join("")}
-      <div class="form-actions">
-        <button type="button" class="btn" onclick="modal.close()">Cancelar</button>
-        <button class="btn primary">Salvar</button>
-      </div>
-    </form>
-  `;
-  formModal.onsubmit = e => {
-    e.preventDefault();
-    const d = Object.fromEntries(new FormData(formModal).entries());
-    aoSalvar(d);
-    salvar();
-    modal.close();
-    render();
-  };
-  modal.showModal();
-}
-
-function render(){
-  renderMenu();
-  if(tela==="Dashboard") renderDashboard();
-  if(tela==="Cadastros") renderCadastros();
-  if(tela==="Operação") renderOperacao();
-  if(tela==="Insumos OP") renderInsumosOp();
-  if(tela==="Estoque") renderEstoque();
-  if(tela==="Financeiro") renderFinanceiro();
-  if(tela==="Colaboradores") renderColaboradores();
-  if(tela==="Terceiros") renderTerceiros();
-  if(tela==="Acertos") renderAcertos();
-  if(tela==="Histórico") renderHistorico();
-}
-
-function renderDashboard(){
-  const receber = db.contas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+saldoConta(x.id),0);
-  const pagar = db.despesas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+Number(x.valor||0),0);
-  const pend = db.insumosOp.filter(x=>x.bloqueia && !x.resolvida).length;
-
-  const cards = `
-    <section class="grid">
-      <div class="card"><span>OPs</span><strong>${db.ops.length}</strong></div>
-      <div class="card"><span>A receber</span><strong>${dinheiro(receber)}</strong></div>
-      <div class="card"><span>A pagar</span><strong>${dinheiro(pagar)}</strong></div>
-      <div class="card"><span>Pendências</span><strong>${pend}</strong></div>
-    </section>
-  `;
-
-  const rows = db.ops.slice().reverse().map(op => {
-    const t = totaisOp(op.id);
-    return [op.codigo, nome("clientes",op.clienteId), nome("modelos",op.modeloId), `<span class="pill">${op.status}</span>`, t.entregue, t.quebra, t.saldo, dinheiro(t.valor)];
-  });
-
-  page("Dashboard","Resumo geral dos módulos","", cards + tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor"], rows));
-}
-
-function renderCadastros(){
-  const botoes = [
-    btn("Novo cliente","formCliente()"),
-    btn("Novo modelo","formModelo()"),
-    btn("Novo colaborador","formColaborador()"),
-    btn("Novo terceiro","formTerceiro()")
-  ].join("");
-
-  const rows = [
-    ...db.clientes.map(x=>["Cliente",x.nome,x.telefone,x.status]),
-    ...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),x.status]),
-    ...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone,x.status]),
-    ...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone,x.status])
-  ];
-
-  page("Cadastros","Bases usadas pelo sistema",botoes,tabela(["Tipo","Nome","Telefone/Valor","Status"], rows));
-}
-
-function formCliente(){
-  abrirForm("Novo cliente",[
-    {label:"Nome",name:"nome"},
-    {label:"Telefone",name:"telefone"},
-    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.clientes.push({id:id("clientes"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});
-    hist("Cadastros","Cliente cadastrado",d.nome);
-  });
-}
-
-function formModelo(){
-  abrirForm("Novo modelo",[
-    {label:"Nome",name:"nome"},
-    {label:"Valor a receber por peça",name:"valorCliente",type:"number"},
-    {label:"Valor base terceiro por peça",name:"valorTerceiro",type:"number"},
-    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.modelos.push({id:id("modelos"),nome:d.nome,valorCliente:Number(d.valorCliente||0),valorTerceiro:Number(d.valorTerceiro||0),status:d.status,obs:d.obs});
-    hist("Cadastros","Modelo cadastrado",d.nome);
-  });
-}
-
-function formColaborador(){
-  abrirForm("Novo colaborador",[
-    {label:"Nome",name:"nome"},
-    {label:"Telefone",name:"telefone"},
-    {label:"Valor fixo pagamento",name:"valorFixo",type:"number"},
-    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.colaboradores.push({id:id("colaboradores"),nome:d.nome,telefone:d.telefone,valorFixo:Number(d.valorFixo||0),status:d.status,obs:d.obs});
-    hist("Cadastros","Colaborador cadastrado",d.nome);
-  });
-}
-
-function formTerceiro(){
-  abrirForm("Novo terceiro",[
-    {label:"Nome",name:"nome"},
-    {label:"Telefone",name:"telefone"},
-    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.terceiros.push({id:id("terceiros"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});
-    hist("Cadastros","Terceiro cadastrado",d.nome);
-  });
-}
-
-function renderOperacao(){
-  const botoes = [
-    btn("Nova OP","formOp()"),
-    btn("Registrar entrega","formEntrega()"),
-    btn("Registrar quebra","formQuebra()"),
-    btn("Finalizar OP","formFinalizarOp()")
-  ].join("");
-
-  const rows = db.ops.slice().reverse().map(op=>{
-    const t = totaisOp(op.id);
-    return [op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),`<span class="pill">${op.status}</span>`];
-  });
-
-  page("Operação / OPs","Controle de produção, entregas e quebras",botoes,tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status"],rows));
-}
-
-function formOp(){
-  abrirForm("Nova OP",[
-    {label:"Cliente",name:"clienteId",type:"select",options:selectOptions("clientes")},
-    {label:"Modelo",name:"modeloId",type:"select",options:selectOptions("modelos")},
-    {label:"Quantidade recebida",name:"recebido",type:"number"},
-    {label:"Grade",name:"grade"},
-    {label:"Entrada",name:"entrada",type:"date",value:hoje()},
-    {label:"Prazo",name:"prazo",type:"date",value:hoje()},
-    {label:"Valor por peça",name:"valorPeca",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const modelo = db.modelos.find(x=>x.id==d.modeloId);
-    const codigo = `OP-${String(id("ops")).padStart(5,"0")}`;
-    const valor = Number(d.valorPeca||0) || Number(modelo?.valorCliente||0);
-    db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});
-    hist("Operação","OP criada",codigo);
-  });
-}
-
-function formEntrega(){
-  abrirForm("Registrar entrega",[
-    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Quantidade",name:"qtd",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});
-    const op = db.ops.find(x=>x.id==d.opId);
-    const total = totaisOp(op.id);
-    op.status = total.saldo <= 0 ? "Entregue" : "Entregue parcial";
-    atualizarConta(op.id);
-    hist("Operação","Entrega registrada",`${op.codigo} - ${d.qtd}`);
-  });
-}
-
-function formQuebra(){
-  abrirForm("Registrar quebra",[
-    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Quantidade",name:"qtd",type:"number"},
-    {label:"Motivo",name:"motivo"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.quebras.push({id:id("quebras"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});
-    atualizarConta(Number(d.opId));
-    hist("Operação","Quebra registrada",d.qtd);
-  });
-}
-
-function formFinalizarOp(){
-  abrirForm("Finalizar OP",[
-    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
-    {label:"Observação final",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const pend = db.insumosOp.some(x=>x.opId==d.opId && x.bloqueia && !x.resolvida);
-    if(pend){ alert("Existe insumo da OP com pendência bloqueante."); return; }
-    const op = db.ops.find(x=>x.id==d.opId);
-    op.status = "Finalizada";
-    op.obs = (op.obs||"") + "\nFechamento: " + d.obs;
-    atualizarConta(op.id);
-    hist("Operação","OP finalizada",op.codigo);
-  });
-}
-
-function renderInsumosOp(){
-  const botoes = btn("Adicionar insumo da OP","formInsumoOp()");
-  const rows = db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,x.situacao,x.bloqueia?"Sim":"Não",x.resolvida?"Sim":"Não",x.obs]);
-  page("Insumos da OP","Materiais enviados pelo cliente",botoes,tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs"],rows));
-}
-
-function formInsumoOp(){
-  abrirForm("Insumo da OP",[
-    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
-    {label:"Item",name:"item"},
-    {label:"Esperado",name:"esperado",type:"number"},
-    {label:"Recebido",name:"recebido",type:"number"},
-    {label:"Situação",name:"situacao",type:"select",options:`<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>`},
-    {label:"Bloqueia produção",name:"bloqueia",type:"select",options:`<option value="0">Não</option><option value="1">Sim</option>`},
-    {label:"Pendência resolvida",name:"resolvida",type:"select",options:`<option value="1">Sim</option><option value="0">Não</option>`},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});
-    hist("Operação","Insumo da OP cadastrado",d.item);
-  });
-}
-
-function renderEstoque(){
-  const botoes = btn("Novo insumo","formEstoque()") + btn("Entrada / retirada","formMovEstoque()");
-  const rows = db.estoque.map(x=>[x.nome,x.codigo,x.cor,x.qtd,x.unidade,x.obs]);
-  page("Estoque interno","Controle manual de materiais",botoes,tabela(["Material","Código","Cor","Quantidade","Unidade","Obs"],rows));
-}
-
-function formEstoque(){
-  abrirForm("Novo insumo",[
-    {label:"Nome",name:"nome"},
-    {label:"Código",name:"codigo"},
-    {label:"Cor",name:"cor"},
-    {label:"Quantidade inicial",name:"qtd",type:"number"},
-    {label:"Unidade",name:"unidade"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.estoque.push({id:id("estoque"),nome:d.nome,codigo:d.codigo,cor:d.cor,qtd:Number(d.qtd||0),unidade:d.unidade,obs:d.obs});
-    hist("Estoque","Insumo cadastrado",d.nome);
-  });
-}
-
-function formMovEstoque(){
-  abrirForm("Movimentar estoque",[
-    {label:"Insumo",name:"insumoId",type:"select",options:selectOptions("estoque")},
-    {label:"Tipo",name:"tipo",type:"select",options:`<option>Entrada</option><option>Retirada</option>`},
-    {label:"Quantidade",name:"qtd",type:"number"},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const item = db.estoque.find(x=>x.id==d.insumoId);
-    const antes = Number(item.qtd||0);
-    const qtd = Number(d.qtd||0);
-    item.qtd = d.tipo==="Entrada" ? antes + qtd : antes - qtd;
-    db.movEstoque.push({id:id("movEstoque"),insumoId:item.id,tipo:d.tipo,qtd,data:d.data,antes,depois:item.qtd,obs:d.obs});
-    hist("Estoque",d.tipo,`${item.nome}: ${qtd}`);
-  });
-}
-
-function renderFinanceiro(){
-  const botoes = btn("Nova despesa","formDespesa()") + btn("Nova baixa","formBaixa()") + btn("Vale cliente","formValeCliente()");
-  const rows = [
-    ...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),c.status]),
-    ...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"",d.status]),
-    ...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),v.status])
-  ];
-  page("Financeiro","Contas, despesas, baixas e vales",botoes,tabela(["Tipo","Referência","Valor","Saldo","Status"],rows));
-}
-
-function formDespesa(){
-  abrirForm("Nova despesa",[
-    {label:"Descrição",name:"descricao"},
-    {label:"Fornecedor",name:"fornecedor"},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Valor",name:"valor",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:Number(d.valor||0),status:"Não pago",obs:d.obs});
-    hist("Financeiro","Despesa cadastrada",d.descricao);
-  });
-}
-
-function formBaixa(){
-  const contas = db.contas.map(c=>`<option value="C-${c.id}">Conta ${opCodigo(c.opId)}</option>`).join("");
-  const despesas = db.despesas.map(d=>`<option value="D-${d.id}">Despesa ${d.descricao}</option>`).join("");
-  abrirForm("Nova baixa",[
-    {label:"Conta ou despesa",name:"alvo",type:"select",options:contas+despesas},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Valor",name:"valor",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const [tipo, itemId] = d.alvo.split("-");
-    const valor = Number(d.valor||0);
-    if(tipo==="C"){
-      db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(itemId),data:d.data,valor,obs:d.obs});
-      atualizarStatusConta(Number(itemId));
-    } else {
-      db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(itemId),data:d.data,valor,obs:d.obs});
-      atualizarStatusDespesa(Number(itemId));
-    }
-    hist("Financeiro","Baixa lançada",dinheiro(valor));
-  });
-}
-
-function formValeCliente(){
-  abrirForm("Vale cliente",[
-    {label:"Cliente",name:"clienteId",type:"select",options:selectOptions("clientes")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Valor",name:"valor",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const valor = Number(d.valor||0);
-    db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});
-    hist("Financeiro","Vale cliente cadastrado",dinheiro(valor));
-  });
-}
-
-function renderColaboradores(){
-  const botoes = btn("Vale colaborador","formValeColaborador()") + btn("Pagamento","formPagamentoColaborador()");
-  const rows = [
-    ...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),v.status]),
-    ...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),"Pago"])
-  ];
-  page("Colaboradores","Vales e pagamentos",botoes,tabela(["Tipo","Colaborador","Valor","Saldo/Líquido","Status"],rows));
-}
-
-function formValeColaborador(){
-  abrirForm("Vale colaborador",[
-    {label:"Colaborador",name:"colaboradorId",type:"select",options:selectOptions("colaboradores")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Valor",name:"valor",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const valor = Number(d.valor||0);
-    db.valesColaboradores.push({id:id("valesColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});
-    hist("Financeiro","Vale colaborador cadastrado",dinheiro(valor));
-  });
-}
-
-function formPagamentoColaborador(){
-  abrirForm("Pagamento colaborador",[
-    {label:"Colaborador",name:"colaboradorId",type:"select",options:selectOptions("colaboradores")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Valor fixo",name:"fixo",type:"number"},
-    {label:"Comissão manual",name:"comissao",type:"number"},
-    {label:"Vales descontados",name:"vales",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const col = db.colaboradores.find(x=>x.id==d.colaboradorId);
-    const fixo = Number(d.fixo||0) || Number(col?.valorFixo||0);
-    const comissao = Number(d.comissao||0);
-    const vales = Number(d.vales||0);
-    const liquido = fixo + comissao - vales;
-    db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,fixo,comissao,vales,liquido,obs:d.obs});
-    hist("Financeiro","Pagamento colaborador",dinheiro(liquido));
-  });
-}
-
-function renderTerceiros(){
-  const botoes = btn("Envio","formEnvioTerceiro()") + btn("Retorno","formRetornoTerceiro()") + btn("Pagamento","formPagamentoTerceiro()");
-  const rows = [
-    ...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"",""]),
-    ...db.retornosTerceiros.map(r=>["Retorno",`Envio ${r.envioId}`,"",r.data,r.recebida,r.boa,r.problema]),
-    ...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"",p.data,"","",dinheiro(p.total)])
-  ];
-  page("Terceiros","Envios, retornos e pagamentos",botoes,tabela(["Tipo","Terceiro/Envio","OP","Data","Qtd","Boa","Problema/Valor"],rows));
-}
-
-function formEnvioTerceiro(){
-  abrirForm("Envio terceiro",[
-    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
-    {label:"Terceiro",name:"terceiroId",type:"select",options:selectOptions("terceiros")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Quantidade",name:"qtd",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.enviosTerceiros.push({id:id("enviosTerceiros"),opId:Number(d.opId),terceiroId:Number(d.terceiroId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});
-    hist("Operação","Envio terceiro",d.qtd);
-  });
-}
-
-function formRetornoTerceiro(){
-  const opts = db.enviosTerceiros.map(e=>`<option value="${e.id}">Envio ${e.id} - ${opCodigo(e.opId)}</option>`).join("");
-  abrirForm("Retorno terceiro",[
-    {label:"Envio",name:"envioId",type:"select",options:opts},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Recebida",name:"recebida",type:"number"},
-    {label:"Boa",name:"boa",type:"number"},
-    {label:"Problema",name:"problema",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    db.retornosTerceiros.push({id:id("retornosTerceiros"),envioId:Number(d.envioId),data:d.data,recebida:Number(d.recebida||0),boa:Number(d.boa||0),problema:Number(d.problema||0),obs:d.obs});
-    hist("Operação","Retorno terceiro",d.boa);
-  });
-}
-
-function formPagamentoTerceiro(){
-  abrirForm("Pagamento terceiro",[
-    {label:"Terceiro",name:"terceiroId",type:"select",options:selectOptions("terceiros")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Peças boas",name:"boa",type:"number"},
-    {label:"Valor por peça",name:"valorPeca",type:"number"},
-    {label:"Valor fixo",name:"fixo",type:"number"},
-    {label:"Valor manual",name:"manual",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const total = Number(d.boa||0)*Number(d.valorPeca||0)+Number(d.fixo||0)+Number(d.manual||0);
-    db.pagamentosTerceiros.push({id:id("pagamentosTerceiros"),terceiroId:Number(d.terceiroId),data:d.data,boa:Number(d.boa||0),valorPeca:Number(d.valorPeca||0),fixo:Number(d.fixo||0),manual:Number(d.manual||0),total,obs:d.obs});
-    hist("Financeiro","Pagamento terceiro",dinheiro(total));
-  });
-}
-
-function renderAcertos(){
-  const botoes = btn("Novo acerto","formAcerto()");
-  const rows = db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo)]);
-  page("Acertos quinzenais","Acerto manual por OP",botoes,tabela(["Cliente","OP","Data","Vale","Pago","Saldo"],rows));
-}
-
-function formAcerto(){
-  abrirForm("Novo acerto",[
-    {label:"Cliente",name:"clienteId",type:"select",options:selectOptions("clientes")},
-    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
-    {label:"Data",name:"data",type:"date",value:hoje()},
-    {label:"Vale aplicado",name:"vale",type:"number"},
-    {label:"Pago",name:"pago",type:"number"},
-    {label:"Observação",name:"obs",type:"textarea",full:true}
-  ], d => {
-    const opId = Number(d.opId);
-    atualizarConta(opId);
-    const conta = db.contas.find(x=>x.opId==opId);
-    const vale = Number(d.vale||0);
-    const pago = Number(d.pago||0);
-    if(vale) db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs});
-    if(pago) db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});
-    atualizarStatusConta(conta.id);
-    db.acertos.push({id:id("acertos"),clienteId:Number(d.clienteId),opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});
-    hist("Financeiro","Acerto quinzenal",opCodigo(opId));
-  });
-}
-
-function renderHistorico(){
-  const rows = db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs]);
-  page("Histórico","Últimas alterações registradas","",tabela(["Data","Módulo","Ação","Obs"],rows));
-}
-
+const KEY="sistema_faccao_dados_v1";
+const padrao={clientes:[],modelos:[],colaboradores:[],terceiros:[],ops:[],entregas:[],quebras:[],insumosOp:[],estoque:[],movEstoque:[],contas:[],despesas:[],baixas:[],valesClientes:[],valesColaboradores:[],pagamentosColaboradores:[],enviosTerceiros:[],retornosTerceiros:[],pagamentosTerceiros:[],acertos:[],historico:[]};
+let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(padrao)),tela="Dashboard";
+const telas=["Dashboard","Cadastros","OperaÃ§Ã£o","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","HistÃ³rico"];
+const salvar=()=>localStorage.setItem(KEY,JSON.stringify(db));
+const id=l=>(db[l].reduce((m,x)=>Math.max(m,x.id),0)||0)+1;
+const hoje=()=>new Date().toISOString().slice(0,10);
+const dinheiro=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const hist=(m,a,o="")=>{db.historico.unshift({id:id("historico"),data:new Date().toLocaleString("pt-BR"),modulo:m,acao:a,obs:o});salvar()};
+const nome=(l,i)=>(db[l].find(x=>x.id==i)||{}).nome||"";
+const opCodigo=i=>(db.ops.find(x=>x.id==i)||{}).codigo||"";
+function resetar(){if(confirm("Apagar todos os dados deste navegador?")){localStorage.removeItem(KEY);db=JSON.parse(JSON.stringify(padrao));render()}}
+function totaisOp(opId){const op=db.ops.find(x=>x.id==opId);if(!op)return{entregue:0,quebra:0,saldo:0,valor:0};const entregue=db.entregas.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);const quebra=db.quebras.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);const saldo=Number(op.recebido||0)-entregue-quebra;const valor=Math.max(entregue-quebra,0)*Number(op.valorPeca||0);return{entregue,quebra,saldo,valor}}
+function atualizarConta(opId){const total=totaisOp(opId).valor;let c=db.contas.find(x=>x.opId==opId);if(!c){c={id:id("contas"),opId,valor:total,status:"NÃ£o pago"};db.contas.push(c)}else c.valor=total;atualizarStatusConta(c.id)}
+function saldoConta(cid){const c=db.contas.find(x=>x.id==cid);const pago=db.baixas.filter(x=>x.contaId==cid).reduce((s,x)=>s+Number(x.valor||0),0);return Number(c?.valor||0)-pago}
+function atualizarStatusConta(cid){const c=db.contas.find(x=>x.id==cid);if(!c)return;const saldo=saldoConta(cid),pago=Number(c.valor||0)-saldo;c.status=saldo<=0&&c.valor>0?"Pago":pago>0?"Pago parcial":"NÃ£o pago"}
+function atualizarStatusDespesa(id){const d=db.despesas.find(x=>x.id==id);const p=db.baixas.filter(x=>x.despesaId==id).reduce((s,x)=>s+Number(x.valor||0),0);d.status=p>=d.valor?"Pago":p>0?"Pago parcial":"NÃ£o pago"}
+function renderMenu(){menu.innerHTML=telas.map(t=>`<button class="${t===tela?'active':''}" onclick="abrir('${t}')">${t}</button>`).join("")}
+function abrir(t){tela=t;render()}
+function page(t,s,b,c){app.innerHTML=`<section class="top"><div><h2>${t}</h2><p>${s||""}</p></div><div class="actions">${b||""}</div></section>${c}`}
+function tabela(cols,rows){if(!rows.length)return`<div class="panel empty">Nenhum registro.</div>`;return`<div class="panel table-wrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c??""}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+const btn=(txt,fn,cls="primary")=>`<button class="btn ${cls}" onclick="${fn}">${txt}</button>`;
+const opts=(l,label="nome")=>db[l].map(x=>`<option value="${x.id}">${x[label]}</option>`).join("");
+function abrirForm(titulo,campos,save){modalContent.innerHTML=`<h2>${titulo}</h2><form id="f">${campos.map(c=>c.type==="select"?`<label class="${c.full?'full':''}">${c.label}<select name="${c.name}">${c.options}</select></label>`:c.type==="textarea"?`<label class="${c.full?'full':''}">${c.label}<textarea name="${c.name}">${c.value||""}</textarea></label>`:`<label class="${c.full?'full':''}">${c.label}<input type="${c.type||"text"}" name="${c.name}" value="${c.value||""}"></label>`).join("")}<div class="form-actions"><button type="button" class="btn" onclick="modal.close()">Cancelar</button><button class="btn primary">Salvar</button></div></form>`;f.onsubmit=e=>{e.preventDefault();save(Object.fromEntries(new FormData(f).entries()));salvar();modal.close();render()};modal.showModal()}
+function render(){renderMenu();({Dashboard:renderDashboard,Cadastros:renderCadastros,"OperaÃ§Ã£o":renderOperacao,"Insumos OP":renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"HistÃ³rico":renderHistorico}[tela])()}
+function renderDashboard(){const receber=db.contas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+saldoConta(x.id),0),pagar=db.despesas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+Number(x.valor||0),0),pend=db.insumosOp.filter(x=>x.bloqueia&&!x.resolvida).length;const cards=`<section class="grid"><div class="card"><span>OPs</span><strong>${db.ops.length}</strong></div><div class="card"><span>A receber</span><strong>${dinheiro(receber)}</strong></div><div class="card"><span>A pagar</span><strong>${dinheiro(pagar)}</strong></div><div class="card"><span>PendÃªncias</span><strong>${pend}</strong></div></section>`;const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),`<span class="pill">${op.status}</span>`,t.entregue,t.quebra,t.saldo,dinheiro(t.valor)]});page("Dashboard","Resumo geral","",cards+tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor"],rows))}
+function renderCadastros(){const b=btn("Novo cliente","formCliente()")+btn("Novo modelo","formModelo()")+btn("Novo colaborador","formColaborador()")+btn("Novo terceiro","formTerceiro()");const rows=[...db.clientes.map(x=>["Cliente",x.nome,x.telefone,x.status]),...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),x.status]),...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone,x.status]),...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone,x.status])];page("Cadastros","Bases do sistema",b,tabela(["Tipo","Nome","Telefone/Valor","Status"],rows))}
+function formCliente(){abrirForm("Novo cliente",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.clientes.push({id:id("clientes"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Cliente cadastrado",d.nome)})}
+function formModelo(){abrirForm("Novo modelo",[{label:"Nome",name:"nome"},{label:"Valor cliente",name:"valorCliente",type:"number"},{label:"Valor terceiro",name:"valorTerceiro",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.modelos.push({id:id("modelos"),nome:d.nome,valorCliente:Number(d.valorCliente||0),valorTerceiro:Number(d.valorTerceiro||0),status:d.status,obs:d.obs});hist("Cadastros","Modelo cadastrado",d.nome)})}
+function formColaborador(){abrirForm("Novo colaborador",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Valor fixo",name:"valorFixo",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.colaboradores.push({id:id("colaboradores"),nome:d.nome,telefone:d.telefone,valorFixo:Number(d.valorFixo||0),status:d.status,obs:d.obs});hist("Cadastros","Colaborador cadastrado",d.nome)})}
+function formTerceiro(){abrirForm("Novo terceiro",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.terceiros.push({id:id("terceiros"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Terceiro cadastrado",d.nome)})}
+function renderOperacao(){const b=btn("Nova OP","formOp()")+btn("Registrar entrega","formEntrega()")+btn("Registrar quebra","formQuebra()")+btn("Finalizar OP","formFinalizarOp()");const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),`<span class="pill">${op.status}</span>`]});page("OperaÃ§Ã£o / OPs","ProduÃ§Ã£o, entregas e quebras",b,tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status"],rows))}
+function formOp(){abrirForm("Nova OP",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peÃ§a",name:"valorPeca",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),codigo=`OP-${String(id("ops")).padStart(5,"0")}`,valor=Number(d.valorPeca||0)||Number(m?.valorCliente||0);db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});hist("OperaÃ§Ã£o","OP criada",codigo)})}
+function formEntrega(){abrirForm("Registrar entrega",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==d.opId),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";atualizarConta(op.id);hist("OperaÃ§Ã£o","Entrega registrada",`${op.codigo} - ${d.qtd}`)})}
+function formQuebra(){abrirForm("Registrar quebra",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Motivo",name:"motivo"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.quebras.push({id:id("quebras"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});atualizarConta(Number(d.opId));hist("OperaÃ§Ã£o","Quebra registrada",d.qtd)})}
+function formFinalizarOp(){abrirForm("Finalizar OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"ObservaÃ§Ã£o final",name:"obs",type:"textarea",full:true}],d=>{const pend=db.insumosOp.some(x=>x.opId==d.opId&&x.bloqueia&&!x.resolvida);if(pend){alert("Existe insumo da OP com pendÃªncia bloqueante.");return}const op=db.ops.find(x=>x.id==d.opId);op.status="Finalizada";op.obs=(op.obs||"")+"\nFechamento: "+d.obs;atualizarConta(op.id);hist("OperaÃ§Ã£o","OP finalizada",op.codigo)})}
+function renderInsumosOp(){const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,x.situacao,x.bloqueia?"Sim":"NÃ£o",x.resolvida?"Sim":"NÃ£o",x.obs]);page("Insumos da OP","Materiais enviados pelo cliente",btn("Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","SituaÃ§Ã£o","Bloqueia","Resolvida","Obs"],rows))}
+function formInsumoOp(){abrirForm("Insumo da OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"SituaÃ§Ã£o",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produÃ§Ã£o",name:"bloqueia",type:"select",options:'<option value="0">NÃ£o</option><option value="1">Sim</option>'},{label:"PendÃªncia resolvida",name:"resolvida",type:"select",options:'<option value="1">Sim</option><option value="0">NÃ£o</option>'},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("OperaÃ§Ã£o","Insumo cadastrado",d.item)})}
+function renderEstoque(){const rows=db.estoque.map(x=>[x.nome,x.codigo,x.cor,x.qtd,x.unidade,x.obs]);page("Estoque interno","Controle manual",btn("Novo insumo","formEstoque()")+btn("Entrada / retirada","formMovEstoque()"),tabela(["Material","CÃ³digo","Cor","Quantidade","Unidade","Obs"],rows))}
+function formEstoque(){abrirForm("Novo insumo",[{label:"Nome",name:"nome"},{label:"CÃ³digo",name:"codigo"},{label:"Cor",name:"cor"},{label:"Quantidade inicial",name:"qtd",type:"number"},{label:"Unidade",name:"unidade"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.estoque.push({id:id("estoque"),nome:d.nome,codigo:d.codigo,cor:d.cor,qtd:Number(d.qtd||0),unidade:d.unidade,obs:d.obs});hist("Estoque","Insumo cadastrado",d.nome)})}
+function formMovEstoque(){abrirForm("Movimentar estoque",[{label:"Insumo",name:"insumoId",type:"select",options:opts("estoque")},{label:"Tipo",name:"tipo",type:"select",options:"<option>Entrada</option><option>Retirada</option>"},{label:"Quantidade",name:"qtd",type:"number"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const item=db.estoque.find(x=>x.id==d.insumoId),antes=Number(item.qtd||0),qtd=Number(d.qtd||0);item.qtd=d.tipo==="Entrada"?antes+qtd:antes-qtd;db.movEstoque.push({id:id("movEstoque"),insumoId:item.id,tipo:d.tipo,qtd,data:d.data,antes,depois:item.qtd,obs:d.obs});hist("Estoque",d.tipo,`${item.nome}: ${qtd}`)})}
+function renderFinanceiro(){const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),c.status]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"",d.status]),...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),v.status])];page("Financeiro","Contas, despesas, baixas e vales",btn("Nova despesa","formDespesa()")+btn("Nova baixa","formBaixa()")+btn("Vale cliente","formValeCliente()"),tabela(["Tipo","ReferÃªncia","Valor","Saldo","Status"],rows))}
+function formDespesa(){abrirForm("Nova despesa",[{label:"DescriÃ§Ã£o",name:"descricao"},{label:"Fornecedor",name:"fornecedor"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:Number(d.valor||0),status:"NÃ£o pago",obs:d.obs});hist("Financeiro","Despesa cadastrada",d.descricao)})}
+function formBaixa(){const c=db.contas.map(x=>`<option value="C-${x.id}">Conta ${opCodigo(x.opId)}</option>`).join(""),des=db.despesas.map(x=>`<option value="D-${x.id}">Despesa ${x.descricao}</option>`).join("");abrirForm("Nova baixa",[{label:"Conta ou despesa",name:"alvo",type:"select",options:c+des},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const[t,i]=d.alvo.split("-"),valor=Number(d.valor||0);if(t==="C"){db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusConta(Number(i))}else{db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusDespesa(Number(i))}hist("Financeiro","Baixa lanÃ§ada",dinheiro(valor))})}
+function formValeCliente(){abrirForm("Vale cliente",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale cliente",dinheiro(valor))})}
+function renderColaboradores(){const rows=[...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),v.status]),...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),"Pago"])];page("Colaboradores","Vales e pagamentos",btn("Vale colaborador","formValeColaborador()")+btn("Pagamento","formPagamentoColaborador()"),tabela(["Tipo","Colaborador","Valor","Saldo/LÃ­quido","Status"],rows))}
+function formValeColaborador(){abrirForm("Vale colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesColaboradores.push({id:id("valesColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale colaborador",dinheiro(valor))})}
+function formPagamentoColaborador(){abrirForm("Pagamento colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor fixo",name:"fixo",type:"number"},{label:"ComissÃ£o manual",name:"comissao",type:"number"},{label:"Vales descontados",name:"vales",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const col=db.colaboradores.find(x=>x.id==d.colaboradorId),fixo=Number(d.fixo||0)||Number(col?.valorFixo||0),comissao=Number(d.comissao||0),vales=Number(d.vales||0),liquido=fixo+comissao-vales;db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,fixo,comissao,vales,liquido,obs:d.obs});hist("Financeiro","Pagamento colaborador",dinheiro(liquido))})}
+function renderTerceiros(){const rows=[...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"",""]),...db.retornosTerceiros.map(r=>["Retorno",`Envio ${r.envioId}`,"",r.data,r.recebida,r.boa,r.problema]),...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"",p.data,"","",dinheiro(p.total)])];page("Terceiros","Envios, retornos e pagamentos",btn("Envio","formEnvioTerceiro()")+btn("Retorno","formRetornoTerceiro()")+btn("Pagamento","formPagamentoTerceiro()"),tabela(["Tipo","Terceiro/Envio","OP","Data","Qtd","Boa","Problema/Valor"],rows))}
+function formEnvioTerceiro(){abrirForm("Envio terceiro",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.enviosTerceiros.push({id:id("enviosTerceiros"),opId:Number(d.opId),terceiroId:Number(d.terceiroId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});hist("OperaÃ§Ã£o","Envio terceiro",d.qtd)})}
+function formRetornoTerceiro(){const o=db.enviosTerceiros.map(e=>`<option value="${e.id}">Envio ${e.id} - ${opCodigo(e.opId)}</option>`).join("");abrirForm("Retorno terceiro",[{label:"Envio",name:"envioId",type:"select",options:o},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Recebida",name:"recebida",type:"number"},{label:"Boa",name:"boa",type:"number"},{label:"Problema",name:"problema",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{db.retornosTerceiros.push({id:id("retornosTerceiros"),envioId:Number(d.envioId),data:d.data,recebida:Number(d.recebida||0),boa:Number(d.boa||0),problema:Number(d.problema||0),obs:d.obs});hist("OperaÃ§Ã£o","Retorno terceiro",d.boa)})}
+function formPagamentoTerceiro(){abrirForm("Pagamento terceiro",[{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"PeÃ§as boas",name:"boa",type:"number"},{label:"Valor por peÃ§a",name:"valorPeca",type:"number"},{label:"Valor fixo",name:"fixo",type:"number"},{label:"Valor manual",name:"manual",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const total=Number(d.boa||0)*Number(d.valorPeca||0)+Number(d.fixo||0)+Number(d.manual||0);db.pagamentosTerceiros.push({id:id("pagamentosTerceiros"),terceiroId:Number(d.terceiroId),data:d.data,boa:Number(d.boa||0),valorPeca:Number(d.valorPeca||0),fixo:Number(d.fixo||0),manual:Number(d.manual||0),total,obs:d.obs});hist("Financeiro","Pagamento terceiro",dinheiro(total))})}
+function renderAcertos(){const rows=db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo)]);page("Acertos quinzenais","Acerto manual por OP",btn("Novo acerto","formAcerto()"),tabela(["Cliente","OP","Data","Vale","Pago","Saldo"],rows))}
+function formAcerto(){abrirForm("Novo acerto",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado",name:"vale",type:"number"},{label:"Pago",name:"pago",type:"number"},{label:"ObservaÃ§Ã£o",name:"obs",type:"textarea",full:true}],d=>{const opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId),vale=Number(d.vale||0),pago=Number(d.pago||0);if(vale)db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs});if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId:Number(d.clienteId),opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
+function renderHistorico(){page("HistÃ³rico","Ãšltimas alteraÃ§Ãµes","",tabela(["Data","MÃ³dulo","AÃ§Ã£o","Obs"],db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs])))}
 render();
 </script>
 </body>
