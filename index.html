@@ -1,657 +1,698 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Facção — Controle de Produção</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-:root {
-  --bg:       #F0EDE8;
-  --surface:  #FAFAF8;
-  --card:     #FFFFFF;
-  --border:   #E2DDD8;
-  --text:     #1A1714;
-  --muted:    #7A746E;
-  --accent:   #2B5CE6;
-  --green:    #1A7A4A;
-  --green-bg: #EAF5EF;
-  --red:      #C0392B;
-  --red-bg:   #FDECEA;
-  --amber:    #A05C00;
-  --amber-bg: #FEF6E7;
-  --blue-bg:  #EBF0FD;
-  --nav-h:    64px;
-  --header-h: 52px;
-}
-
-html, body { height: 100%; overflow: hidden; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 15px;
-  line-height: 1.5;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── Header ── */
-header {
-  height: var(--header-h);
-  background: var(--text);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
-.logo { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 9px; }
-.logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 7px; display: grid; place-items: center; font-size: 15px; }
-.header-date { font-size: 11px; color: #888; font-family: 'DM Mono', monospace; }
-
-/* ── Scroll area ── */
-.scroll-area {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  padding: 16px 16px calc(var(--nav-h) + 16px);
-}
-
-/* ── Bottom nav ── */
-.bottom-nav {
-  height: var(--nav-h);
-  background: var(--card);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: stretch;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-family: inherit;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 500;
-  padding: 8px 4px;
-  transition: color .15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.nav-item .nav-icon { font-size: 20px; line-height: 1; }
-.nav-item.active { color: var(--accent); }
-.nav-item.active .nav-icon { transform: scale(1.1); }
-
-/* ── Pages ── */
-.page { display: none; animation: fadeIn .2s ease; }
-.page.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-.page-title { font-size: 22px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 2px; }
-.page-sub   { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
-
-/* ── Cards ── */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-.card-title {
-  font-size: 11px; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: .7px; margin-bottom: 16px;
-}
-
-/* ── Form ── */
-.form-group { margin-bottom: 16px; }
-.form-group:last-child { margin-bottom: 0; }
-label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
-input[type=text], input[type=number], input[type=date] {
-  width: 100%;
-  padding: 13px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 16px; /* 16px evita zoom no iOS */
-  color: var(--text);
-  background: var(--surface);
-  outline: none;
-  transition: border-color .15s;
-  -webkit-appearance: none;
-  appearance: none;
-}
-input:focus { border-color: var(--accent); }
-input.mono { font-family: 'DM Mono', monospace; letter-spacing: .5px; text-transform: uppercase; }
-
-/* ── Buttons ── */
-.btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 15px;
-  border-radius: 12px; border: none; cursor: pointer;
-  font-family: inherit; font-size: 16px; font-weight: 600;
-  transition: opacity .15s; -webkit-tap-highlight-color: transparent;
-}
-.btn:active { opacity: .8; }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-secondary { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
-.btn-success  { background: var(--green);  color: #fff; }
-.btn-row { display: flex; gap: 10px; }
-.btn-row .btn { flex: 1; }
-
-/* ── Feedback ── */
-.feedback {
-  display: none; padding: 13px 16px; border-radius: 10px;
-  font-size: 14px; font-weight: 500; margin-top: 14px;
-}
-.feedback.show { display: flex; align-items: center; gap: 8px; }
-.feedback.ok   { background: var(--green-bg); color: var(--green); }
-.feedback.err  { background: var(--red-bg);   color: var(--red);   }
-.feedback.warn { background: var(--amber-bg); color: var(--amber); }
-
-/* ── Badges ── */
-.badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 4px 10px; border-radius: 99px;
-  font-size: 12px; font-weight: 700;
-}
-.badge-green { background: var(--green-bg); color: var(--green); }
-.badge-blue  { background: var(--blue-bg);  color: var(--accent); }
-.badge-amber { background: var(--amber-bg); color: var(--amber); }
-.badge::before { content: '●'; font-size: 7px; }
-
-/* ── Métricas 2x2 ── */
-.metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 16px 0;
-}
-.metric {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-}
-.metric-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
-.metric-value { font-size: 30px; font-weight: 700; letter-spacing: -1px; line-height: 1.1; }
-.metric-value.green { color: var(--green); }
-.metric-value.red   { color: var(--red);   }
-.metric-value.amber { color: var(--amber); }
-.metric-unit  { font-size: 11px; color: var(--muted); }
-
-/* ── Progress ── */
-.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
-.progress-track { height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
-.progress-bar   { height: 100%; background: var(--green); border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
-
-/* ── Summary cards ── */
-.summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-.sum-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 12px; text-align: center; }
-.sum-card .val { font-size: 26px; font-weight: 700; letter-spacing: -1px; }
-.sum-card .lbl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
-
-/* ── Lista de OPs ── */
-.op-list { display: flex; flex-direction: column; gap: 2px; }
-.op-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 0; border-bottom: 1px solid var(--border);
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-}
-.op-row:last-child { border-bottom: none; }
-.op-row:active { opacity: .7; }
-.op-row-left { flex: 1; min-width: 0; }
-.op-num { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; }
-.op-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.op-row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
-.op-pct { font-size: 12px; color: var(--muted); font-weight: 500; }
-.mini-bar { width: 80px; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
-.mini-bar-fill { height: 100%; background: var(--green); border-radius: 99px; }
-
-/* ── Consulta resultado ── */
-.result-op   { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 700; }
-.result-date { font-size: 12px; color: var(--muted); margin-top: 2px; margin-bottom: 12px; }
-.result-info { font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 16px; line-height: 1.8; }
-
-/* ── Busca ── */
-.search-wrap { position: relative; margin-bottom: 14px; }
-.search-wrap input { padding-left: 42px; }
-.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
-
-/* ── Empty ── */
-.empty { text-align: center; padding: 40px 20px; color: var(--muted); }
-.empty-icon { font-size: 40px; margin-bottom: 10px; }
-.empty-text { font-size: 14px; }
-
-/* ── Desktop overrides ── */
-@media (min-width: 640px) {
-  .scroll-area { padding: 24px 24px calc(var(--nav-h) + 24px); max-width: 600px; margin: 0 auto; }
-  .summary { gap: 14px; }
-  .metrics { gap: 14px; }
-  input[type=text], input[type=number], input[type=date] { font-size: 15px; }
-  .btn { font-size: 15px; padding: 13px; }
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sistema Facção</title>
+  <style>
+    :root{
+      --bg:#f4f6f8;--card:#fff;--text:#1f2933;--muted:#667085;--line:#d9dee7;
+      --blue:#1769aa;--green:#1f8f4d;--red:#b42318;--amber:#b7791f;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:#fff;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2}
+    header h1{font-size:20px;margin:0}
+    header small{color:var(--muted)}
+    .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 62px)}
+    nav{background:#fff;border-right:1px solid var(--line);padding:14px}
+    nav button{width:100%;display:block;text-align:left;border:0;background:transparent;padding:11px;border-radius:6px;cursor:pointer;font-weight:700;color:var(--text)}
+    nav button.active,nav button:hover{background:#eaf3fb;color:var(--blue)}
+    main{padding:18px;overflow:auto}
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+    h2{margin:0 0 4px;font-size:24px}
+    p{margin:0;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:6px;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+    .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+    .card span{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+    .card strong{font-size:24px}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+    .table-wrap{overflow:auto}
+    table{border-collapse:collapse;width:100%;min-width:760px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{font-size:13px;color:var(--muted)}
+    .pill{display:inline-block;border-radius:999px;background:#eef8ff;color:#145c8f;font-weight:700;font-size:12px;padding:4px 8px}
+    dialog{border:0;border-radius:8px;box-shadow:0 20px 60px #0004;width:min(680px,92vw)}
+    dialog::backdrop{background:#0008}
+    form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    label{font-weight:700;font-size:13px}
+    input,select,textarea{width:100%;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:6px;font:inherit}
+    textarea{min-height:76px}
+    .full{grid-column:1/-1}
+    .form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+    .empty{color:var(--muted);padding:18px}
+    @media(max-width:850px){
+      .layout{grid-template-columns:1fr}
+      nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}
+      nav button{white-space:nowrap;width:auto}
+      .grid{grid-template-columns:1fr 1fr}
+      form{grid-template-columns:1fr}
+      .top{flex-direction:column}
+    }
+  </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">
-    <div class="logo-icon">✂</div>
-    Facção
+  <div>
+    <h1>Sistema Facção</h1>
+    <small>Operação, estoque, financeiro, colaboradores e terceiros</small>
   </div>
-  <span class="header-date" id="hdrDate"></span>
+  <button class="btn danger" onclick="resetar()">Limpar dados</button>
 </header>
 
-<div class="scroll-area">
+<div class="layout">
+  <nav id="menu"></nav>
+  <main id="app"></main>
+</div>
 
-  <!-- ══ DASHBOARD ══ -->
-  <div class="page active" id="page-dashboard">
-    <div class="page-title">Dashboard</div>
-    <div class="page-sub">Visão geral da produção</div>
-    <div class="summary" id="dash-summary"></div>
-    <div class="card">
-      <div class="card-title">OPs recentes</div>
-      <div id="dash-recentes"></div>
-    </div>
-  </div>
-
-  <!-- ══ CADASTRO ══ -->
-  <div class="page" id="page-cadastro">
-    <div class="page-title">Cadastrar OP</div>
-    <div class="page-sub">Registre um novo corte</div>
-    <div class="card">
-      <div class="card-title">Dados do corte</div>
-      <div class="form-group">
-        <label for="cad-op">Número da OP</label>
-        <input id="cad-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off" inputmode="text">
-      </div>
-      <div class="form-group">
-        <label for="cad-data">Data de chegada</label>
-        <input id="cad-data" type="date">
-      </div>
-      <div class="form-group">
-        <label for="cad-qtd">Quantidade recebida</label>
-        <input id="cad-qtd" type="number" min="1" placeholder="Ex: 200" inputmode="numeric">
-      </div>
-      <button class="btn btn-primary" onclick="cadastrarOP()">Cadastrar OP</button>
-      <div class="feedback" id="fb-cadastro"></div>
-    </div>
-  </div>
-
-  <!-- ══ PRODUÇÃO ══ -->
-  <div class="page" id="page-producao">
-    <div class="page-title">Produção</div>
-    <div class="page-sub">Registre o que foi produzido</div>
-
-    <div class="card">
-      <div class="card-title">Localizar OP</div>
-      <div class="form-group">
-        <label for="prod-op">Número da OP</label>
-        <input id="prod-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off" inputmode="text">
-      </div>
-      <button class="btn btn-secondary" onclick="carregarOP()">Carregar OP</button>
-    </div>
-
-    <div id="prod-status-card" style="display:none">
-      <div class="card">
-        <div class="card-title">Status atual</div>
-        <div id="prod-status-body"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Lançar produção</div>
-        <div class="form-group">
-          <label for="prod-qtd">Quantidade produzida</label>
-          <input id="prod-qtd" type="number" min="0" value="0" inputmode="numeric">
-        </div>
-        <div class="form-group">
-          <label for="prod-qbr">Quantidade de quebra</label>
-          <input id="prod-qbr" type="number" min="0" value="0" inputmode="numeric">
-        </div>
-        <button class="btn btn-success" onclick="registrarProducao()">✔ Registrar produção</button>
-        <div class="feedback" id="fb-producao"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ CONSULTA ══ -->
-  <div class="page" id="page-consulta">
-    <div class="page-title">Consultar OP</div>
-    <div class="page-sub">Status completo de uma ordem</div>
-    <div class="card">
-      <div class="form-group">
-        <label for="cons-op">Número da OP</label>
-        <input id="cons-op" type="text" class="mono" placeholder="Ex: OP-001" autocomplete="off" inputmode="text">
-      </div>
-      <button class="btn btn-primary" onclick="consultarOP()">🔍 Consultar</button>
-    </div>
-    <div id="cons-resultado"></div>
-  </div>
-
-  <!-- ══ LISTA ══ -->
-  <div class="page" id="page-lista">
-    <div class="page-title">Todas as OPs</div>
-    <div class="page-sub">Histórico completo</div>
-    <div class="search-wrap">
-      <span class="search-icon">🔎</span>
-      <input id="filtro-lista" type="text" placeholder="Filtrar por OP ou status..." oninput="renderLista()" inputmode="text">
-    </div>
-    <div class="card">
-      <div class="op-list" id="lista-ops"></div>
-      <div class="empty" id="lista-empty" style="display:none">
-        <div class="empty-icon">📭</div>
-        <div class="empty-text">Nenhuma OP encontrada</div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /scroll-area -->
-
-<!-- ══ BOTTOM NAV ══ -->
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="goTo('dashboard')" id="nav-dashboard">
-    <span class="nav-icon">📊</span>
-    <span>Início</span>
-  </button>
-  <button class="nav-item" onclick="goTo('cadastro')" id="nav-cadastro">
-    <span class="nav-icon">📋</span>
-    <span>Cadastro</span>
-  </button>
-  <button class="nav-item" onclick="goTo('producao')" id="nav-producao">
-    <span class="nav-icon">🔧</span>
-    <span>Produção</span>
-  </button>
-  <button class="nav-item" onclick="goTo('consulta')" id="nav-consulta">
-    <span class="nav-icon">🔍</span>
-    <span>Consulta</span>
-  </button>
-  <button class="nav-item" onclick="goTo('lista')" id="nav-lista">
-    <span class="nav-icon">📄</span>
-    <span>Todas</span>
-  </button>
-</nav>
+<dialog id="modal">
+  <div id="modalContent"></div>
+</dialog>
 
 <script>
-// ══════════════════════════════════════════════════
-// STORAGE
-// ══════════════════════════════════════════════════
-const CHAVE = 'faccao_ops_v1';
-function carregar() { try { return JSON.parse(localStorage.getItem(CHAVE)) || []; } catch { return []; } }
-function salvar(ops) { localStorage.setItem(CHAVE, JSON.stringify(ops)); }
+const KEY = "sistema_faccao_dados_v1";
 
-// ══════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════
-function restante(op) { return Math.max(0, op.qtd_recebida - op.qtd_produzida - op.qtd_quebra); }
-function pct(op) { if (!op.qtd_recebida) return 0; return Math.round((op.qtd_produzida / op.qtd_recebida) * 100); }
-function statusOp(op) {
-  if (op.qtd_produzida === 0 && op.qtd_quebra === 0) return 'Aguardando';
-  if (restante(op) === 0) return 'Concluída';
-  return 'Em produção';
-}
-function badgeStatus(st) {
-  const cls = { 'Concluída': 'badge-green', 'Em produção': 'badge-blue', 'Aguardando': 'badge-amber' };
-  return `<span class="badge ${cls[st] || 'badge-amber'}">${st}</span>`;
-}
-function fmtData(iso) { if (!iso) return '—'; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
-function now() { return new Date().toLocaleString('pt-BR'); }
-function feedback(id, msg, tipo) {
-  const el = document.getElementById(id);
-  el.className = `feedback show ${tipo}`;
-  el.innerHTML = msg;
-  if (tipo === 'ok') setTimeout(() => el.classList.remove('show'), 4000);
-}
+const estadoPadrao = {
+  clientes: [],
+  modelos: [],
+  colaboradores: [],
+  terceiros: [],
+  ops: [],
+  entregas: [],
+  quebras: [],
+  insumosOp: [],
+  estoque: [],
+  movEstoque: [],
+  contas: [],
+  despesas: [],
+  baixas: [],
+  valesClientes: [],
+  valesColaboradores: [],
+  pagamentosColaboradores: [],
+  enviosTerceiros: [],
+  retornosTerceiros: [],
+  pagamentosTerceiros: [],
+  acertos: [],
+  historico: []
+};
 
-// ══════════════════════════════════════════════════
-// NAVEGAÇÃO
-// ══════════════════════════════════════════════════
-function goTo(pg) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + pg).classList.add('active');
-  document.getElementById('nav-' + pg).classList.add('active');
-  document.querySelector('.scroll-area').scrollTop = 0;
-  if (pg === 'dashboard') renderDash();
-  if (pg === 'lista')     renderLista();
+let db = carregar();
+let tela = "Dashboard";
+
+const telas = [
+  "Dashboard","Cadastros","Operação","Insumos OP","Estoque",
+  "Financeiro","Colaboradores","Terceiros","Acertos","Histórico"
+];
+
+function carregar(){
+  return JSON.parse(localStorage.getItem(KEY) || JSON.stringify(estadoPadrao));
 }
 
-// ══════════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════════
-function renderDash() {
-  const ops = carregar();
-  const total     = ops.length;
-  const concluidas = ops.filter(o => statusOp(o) === 'Concluída').length;
-  const emProd     = ops.filter(o => statusOp(o) === 'Em produção').length;
+function salvar(){
+  localStorage.setItem(KEY, JSON.stringify(db));
+}
 
-  document.getElementById('dash-summary').innerHTML = `
-    <div class="sum-card"><div class="val">${total}</div><div class="lbl">Total</div></div>
-    <div class="sum-card"><div class="val" style="color:var(--green)">${concluidas}</div><div class="lbl">Prontas</div></div>
-    <div class="sum-card"><div class="val" style="color:var(--accent)">${emProd}</div><div class="lbl">Em prod.</div></div>`;
+function id(lista){
+  return (db[lista].reduce((m,x)=>Math.max(m,x.id),0) || 0) + 1;
+}
 
-  const recentes = [...ops].reverse().slice(0, 6);
-  if (!recentes.length) {
-    document.getElementById('dash-recentes').innerHTML =
-      `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhuma OP cadastrada ainda</div></div>`;
-    return;
+function hoje(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function dinheiro(v){
+  return Number(v || 0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+
+function hist(modulo, acao, obs=""){
+  db.historico.unshift({id:id("historico"), data:new Date().toLocaleString("pt-BR"), modulo, acao, obs});
+  salvar();
+}
+
+function resetar(){
+  if(confirm("Apagar todos os dados salvos neste navegador?")){
+    localStorage.removeItem(KEY);
+    db = carregar();
+    render();
   }
-  document.getElementById('dash-recentes').innerHTML =
-    `<div class="op-list">${recentes.map(o => opRowHTML(o)).join('')}</div>`;
 }
 
-function opRowHTML(o) {
-  const p = pct(o);
-  const st = statusOp(o);
-  return `<div class="op-row" onclick="abrirConsulta('${o.numero_op}')">
-    <div class="op-row-left">
-      <div class="op-num">${o.numero_op}</div>
-      <div class="op-date">${fmtData(o.data_chegada)} · ${o.qtd_recebida} peças</div>
+function nome(lista, itemId){
+  return (db[lista].find(x=>x.id==itemId) || {}).nome || "";
+}
+
+function opCodigo(opId){
+  return (db.ops.find(x=>x.id==opId) || {}).codigo || "";
+}
+
+function totaisOp(opId){
+  const op = db.ops.find(x=>x.id==opId);
+  if(!op) return {entregue:0, quebra:0, saldo:0, valor:0};
+  const entregue = db.entregas.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);
+  const quebra = db.quebras.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);
+  const saldo = Number(op.recebido||0) - entregue - quebra;
+  const valor = Math.max(entregue - quebra, 0) * Number(op.valorPeca||0);
+  return {entregue, quebra, saldo, valor};
+}
+
+function atualizarConta(opId){
+  const total = totaisOp(opId).valor;
+  let conta = db.contas.find(x=>x.opId==opId);
+  if(!conta){
+    conta = {id:id("contas"), opId, valor:total, status:"Não pago"};
+    db.contas.push(conta);
+  } else {
+    conta.valor = total;
+  }
+  atualizarStatusConta(conta.id);
+}
+
+function saldoConta(contaId){
+  const conta = db.contas.find(x=>x.id==contaId);
+  const pago = db.baixas.filter(x=>x.contaId==contaId).reduce((s,x)=>s+Number(x.valor||0),0);
+  return Number(conta?.valor||0) - pago;
+}
+
+function atualizarStatusConta(contaId){
+  const conta = db.contas.find(x=>x.id==contaId);
+  if(!conta) return;
+  const saldo = saldoConta(contaId);
+  const pago = Number(conta.valor||0) - saldo;
+  conta.status = saldo <= 0 && conta.valor > 0 ? "Pago" : pago > 0 ? "Pago parcial" : "Não pago";
+}
+
+function atualizarStatusDespesa(despesaId){
+  const desp = db.despesas.find(x=>x.id==despesaId);
+  const pago = db.baixas.filter(x=>x.despesaId==despesaId).reduce((s,x)=>s+Number(x.valor||0),0);
+  desp.status = pago >= desp.valor ? "Pago" : pago > 0 ? "Pago parcial" : "Não pago";
+}
+
+function renderMenu(){
+  document.getElementById("menu").innerHTML = telas.map(t =>
+    `<button class="${t===tela?'active':''}" onclick="abrir('${t}')">${t}</button>`
+  ).join("");
+}
+
+function abrir(t){
+  tela = t;
+  render();
+}
+
+function page(titulo, subtitulo, botoes, conteudo){
+  app.innerHTML = `
+    <section class="top">
+      <div><h2>${titulo}</h2><p>${subtitulo||""}</p></div>
+      <div class="actions">${botoes||""}</div>
+    </section>
+    ${conteudo}
+  `;
+}
+
+function tabela(cols, rows){
+  if(!rows.length) return `<div class="panel empty">Nenhum registro encontrado.</div>`;
+  return `
+    <div class="panel table-wrap">
+      <table>
+        <thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>
+        <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c ?? ""}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table>
     </div>
-    <div class="op-row-right">
-      ${badgeStatus(st)}
-      <div style="display:flex;align-items:center;gap:6px">
-        <div class="mini-bar"><div class="mini-bar-fill" style="width:${p}%"></div></div>
-        <span class="op-pct">${p}%</span>
+  `;
+}
+
+function btn(txt, fn, cls="primary"){
+  return `<button class="btn ${cls}" onclick="${fn}">${txt}</button>`;
+}
+
+function selectOptions(lista, label="nome"){
+  return db[lista].map(x=>`<option value="${x.id}">${x[label]}</option>`).join("");
+}
+
+function abrirForm(titulo, campos, aoSalvar){
+  modalContent.innerHTML = `
+    <h2>${titulo}</h2>
+    <form id="formModal">
+      ${campos.map(c => {
+        const cls = c.full ? "full" : "";
+        if(c.type === "select"){
+          return `<label class="${cls}">${c.label}<select name="${c.name}">${c.options}</select></label>`;
+        }
+        if(c.type === "textarea"){
+          return `<label class="${cls}">${c.label}<textarea name="${c.name}">${c.value||""}</textarea></label>`;
+        }
+        return `<label class="${cls}">${c.label}<input type="${c.type||"text"}" name="${c.name}" value="${c.value||""}"></label>`;
+      }).join("")}
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="modal.close()">Cancelar</button>
+        <button class="btn primary">Salvar</button>
       </div>
-    </div>
-  </div>`;
+    </form>
+  `;
+  formModal.onsubmit = e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(formModal).entries());
+    aoSalvar(d);
+    salvar();
+    modal.close();
+    render();
+  };
+  modal.showModal();
 }
 
-// ══════════════════════════════════════════════════
-// CADASTRO
-// ══════════════════════════════════════════════════
-function cadastrarOP() {
-  const op  = document.getElementById('cad-op').value.trim().toUpperCase();
-  const dt  = document.getElementById('cad-data').value;
-  const qtd = parseInt(document.getElementById('cad-qtd').value);
-
-  if (!op)        return feedback('fb-cadastro', '⚠ Informe o número da OP.', 'err');
-  if (!dt)        return feedback('fb-cadastro', '⚠ Informe a data de chegada.', 'err');
-  if (!qtd || qtd <= 0) return feedback('fb-cadastro', '⚠ Quantidade deve ser maior que zero.', 'err');
-
-  const ops = carregar();
-  if (ops.find(o => o.numero_op === op))
-    return feedback('fb-cadastro', `⚠ A OP "${op}" já existe.`, 'err');
-
-  ops.push({ numero_op: op, data_chegada: dt, qtd_recebida: qtd,
-             qtd_produzida: 0, qtd_quebra: 0, criado_em: now(), atualizado_em: now() });
-  salvar(ops);
-  feedback('fb-cadastro', `✔ OP "${op}" cadastrada!`, 'ok');
-  document.getElementById('cad-op').value = '';
-  document.getElementById('cad-qtd').value = '';
+function render(){
+  renderMenu();
+  if(tela==="Dashboard") renderDashboard();
+  if(tela==="Cadastros") renderCadastros();
+  if(tela==="Operação") renderOperacao();
+  if(tela==="Insumos OP") renderInsumosOp();
+  if(tela==="Estoque") renderEstoque();
+  if(tela==="Financeiro") renderFinanceiro();
+  if(tela==="Colaboradores") renderColaboradores();
+  if(tela==="Terceiros") renderTerceiros();
+  if(tela==="Acertos") renderAcertos();
+  if(tela==="Histórico") renderHistorico();
 }
 
-// ══════════════════════════════════════════════════
-// PRODUÇÃO
-// ══════════════════════════════════════════════════
-let opCarregada = null;
+function renderDashboard(){
+  const receber = db.contas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+saldoConta(x.id),0);
+  const pagar = db.despesas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+Number(x.valor||0),0);
+  const pend = db.insumosOp.filter(x=>x.bloqueia && !x.resolvida).length;
 
-function carregarOP() {
-  const num = document.getElementById('prod-op').value.trim().toUpperCase();
-  if (!num) return;
-  const op = carregar().find(o => o.numero_op === num);
-  if (!op) {
-    document.getElementById('prod-status-card').style.display = 'none';
-    return feedback('fb-producao', `⚠ OP "${num}" não encontrada.`, 'err');
-  }
-  opCarregada = op;
-  renderStatusProd(op);
-  document.getElementById('prod-status-card').style.display = 'block';
-  document.getElementById('prod-qtd').value = 0;
-  document.getElementById('prod-qbr').value = 0;
-  document.getElementById('fb-producao').classList.remove('show');
+  const cards = `
+    <section class="grid">
+      <div class="card"><span>OPs</span><strong>${db.ops.length}</strong></div>
+      <div class="card"><span>A receber</span><strong>${dinheiro(receber)}</strong></div>
+      <div class="card"><span>A pagar</span><strong>${dinheiro(pagar)}</strong></div>
+      <div class="card"><span>Pendências</span><strong>${pend}</strong></div>
+    </section>
+  `;
+
+  const rows = db.ops.slice().reverse().map(op => {
+    const t = totaisOp(op.id);
+    return [op.codigo, nome("clientes",op.clienteId), nome("modelos",op.modeloId), `<span class="pill">${op.status}</span>`, t.entregue, t.quebra, t.saldo, dinheiro(t.valor)];
+  });
+
+  page("Dashboard","Resumo geral dos módulos","", cards + tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor"], rows));
 }
 
-function renderStatusProd(op) {
-  const p = pct(op);
-  document.getElementById('prod-status-body').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700">${op.numero_op}</span>
-      ${badgeStatus(statusOp(op))}
-    </div>
-    <div class="metrics">
-      <div class="metric"><div class="metric-label">Recebido</div><div class="metric-value">${op.qtd_recebida}</div><div class="metric-unit">peças</div></div>
-      <div class="metric"><div class="metric-label">Produzido</div><div class="metric-value green">${op.qtd_produzida}</div><div class="metric-unit">peças</div></div>
-      <div class="metric"><div class="metric-label">Quebra</div><div class="metric-value red">${op.qtd_quebra}</div><div class="metric-unit">peças</div></div>
-      <div class="metric"><div class="metric-label">Restante</div><div class="metric-value amber">${restante(op)}</div><div class="metric-unit">peças</div></div>
-    </div>
-    <div class="progress-label"><span>Progresso</span><span style="font-weight:700">${p}%</span></div>
-    <div class="progress-track"><div class="progress-bar" style="width:${p}%"></div></div>`;
+function renderCadastros(){
+  const botoes = [
+    btn("Novo cliente","formCliente()"),
+    btn("Novo modelo","formModelo()"),
+    btn("Novo colaborador","formColaborador()"),
+    btn("Novo terceiro","formTerceiro()")
+  ].join("");
+
+  const rows = [
+    ...db.clientes.map(x=>["Cliente",x.nome,x.telefone,x.status]),
+    ...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),x.status]),
+    ...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone,x.status]),
+    ...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone,x.status])
+  ];
+
+  page("Cadastros","Bases usadas pelo sistema",botoes,tabela(["Tipo","Nome","Telefone/Valor","Status"], rows));
 }
 
-function registrarProducao() {
-  if (!opCarregada) return;
-  const qtdP = parseInt(document.getElementById('prod-qtd').value) || 0;
-  const qtdQ = parseInt(document.getElementById('prod-qbr').value) || 0;
-  if (qtdP < 0 || qtdQ < 0) return feedback('fb-producao', '⚠ Quantidades não podem ser negativas.', 'err');
-  if (qtdP === 0 && qtdQ === 0) return feedback('fb-producao', '⚠ Informe ao menos uma quantidade.', 'warn');
-
-  const ops = carregar();
-  const idx = ops.findIndex(o => o.numero_op === opCarregada.numero_op);
-  if (idx === -1) return;
-
-  const novoP = ops[idx].qtd_produzida + qtdP;
-  const novoQ = ops[idx].qtd_quebra    + qtdQ;
-  if (novoP + novoQ > ops[idx].qtd_recebida)
-    return feedback('fb-producao', `⚠ Total (${novoP + novoQ}) ultrapassa o recebido (${ops[idx].qtd_recebida}).`, 'err');
-
-  ops[idx].qtd_produzida = novoP;
-  ops[idx].qtd_quebra    = novoQ;
-  ops[idx].atualizado_em = now();
-  salvar(ops);
-  opCarregada = ops[idx];
-  renderStatusProd(ops[idx]);
-  document.getElementById('prod-qtd').value = 0;
-  document.getElementById('prod-qbr').value = 0;
-  feedback('fb-producao', `✔ Registrado! Restante: ${restante(ops[idx])} peças.`, 'ok');
+function formCliente(){
+  abrirForm("Novo cliente",[
+    {label:"Nome",name:"nome"},
+    {label:"Telefone",name:"telefone"},
+    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.clientes.push({id:id("clientes"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});
+    hist("Cadastros","Cliente cadastrado",d.nome);
+  });
 }
 
-// ══════════════════════════════════════════════════
-// CONSULTA
-// ══════════════════════════════════════════════════
-function abrirConsulta(num) {
-  document.getElementById('cons-op').value = num;
-  goTo('consulta');
-  consultarOP();
+function formModelo(){
+  abrirForm("Novo modelo",[
+    {label:"Nome",name:"nome"},
+    {label:"Valor a receber por peça",name:"valorCliente",type:"number"},
+    {label:"Valor base terceiro por peça",name:"valorTerceiro",type:"number"},
+    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.modelos.push({id:id("modelos"),nome:d.nome,valorCliente:Number(d.valorCliente||0),valorTerceiro:Number(d.valorTerceiro||0),status:d.status,obs:d.obs});
+    hist("Cadastros","Modelo cadastrado",d.nome);
+  });
 }
 
-function consultarOP() {
-  const num  = document.getElementById('cons-op').value.trim().toUpperCase();
-  const cont = document.getElementById('cons-resultado');
-  if (!num) { cont.innerHTML = ''; return; }
-
-  const op = carregar().find(o => o.numero_op === num);
-  if (!op) {
-    cont.innerHTML = `<div class="card"><div class="feedback show err">⚠ OP "${num}" não encontrada.</div></div>`;
-    return;
-  }
-
-  const p  = pct(op);
-  const st = statusOp(op);
-  cont.innerHTML = `
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div class="result-op">${op.numero_op}</div>
-        ${badgeStatus(st)}
-      </div>
-      <div class="result-date">Chegada: ${fmtData(op.data_chegada)}</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Recebido</div><div class="metric-value">${op.qtd_recebida}</div><div class="metric-unit">peças</div></div>
-        <div class="metric"><div class="metric-label">Produzido</div><div class="metric-value green">${op.qtd_produzida}</div><div class="metric-unit">peças</div></div>
-        <div class="metric"><div class="metric-label">Quebra</div><div class="metric-value red">${op.qtd_quebra}</div><div class="metric-unit">peças</div></div>
-        <div class="metric"><div class="metric-label">Restante</div><div class="metric-value amber">${restante(op)}</div><div class="metric-unit">peças</div></div>
-      </div>
-      <div class="progress-label"><span style="font-weight:600">Progresso</span><span style="font-weight:700">${p}%</span></div>
-      <div class="progress-track" style="height:12px"><div class="progress-bar" style="width:${p}%"></div></div>
-      <div class="result-info">
-        Cadastrado: ${op.criado_em}<br>
-        Atualizado: ${op.atualizado_em}
-      </div>
-    </div>`;
+function formColaborador(){
+  abrirForm("Novo colaborador",[
+    {label:"Nome",name:"nome"},
+    {label:"Telefone",name:"telefone"},
+    {label:"Valor fixo pagamento",name:"valorFixo",type:"number"},
+    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.colaboradores.push({id:id("colaboradores"),nome:d.nome,telefone:d.telefone,valorFixo:Number(d.valorFixo||0),status:d.status,obs:d.obs});
+    hist("Cadastros","Colaborador cadastrado",d.nome);
+  });
 }
 
-// ══════════════════════════════════════════════════
-// LISTA
-// ══════════════════════════════════════════════════
-function renderLista() {
-  const filtro = (document.getElementById('filtro-lista')?.value || '').toLowerCase();
-  let ops = carregar();
-  if (filtro) {
-    ops = ops.filter(o =>
-      o.numero_op.toLowerCase().includes(filtro) ||
-      statusOp(o).toLowerCase().includes(filtro) ||
-      o.data_chegada.includes(filtro)
-    );
-  }
-  ops = ops.reverse();
-
-  const listaEl = document.getElementById('lista-ops');
-  const emptyEl = document.getElementById('lista-empty');
-
-  if (!ops.length) {
-    listaEl.innerHTML = '';
-    emptyEl.style.display = 'block';
-    return;
-  }
-  emptyEl.style.display = 'none';
-  listaEl.innerHTML = ops.map(o => opRowHTML(o)).join('');
+function formTerceiro(){
+  abrirForm("Novo terceiro",[
+    {label:"Nome",name:"nome"},
+    {label:"Telefone",name:"telefone"},
+    {label:"Status",name:"status",type:"select",options:`<option>Ativo</option><option>Inativo</option>`},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.terceiros.push({id:id("terceiros"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});
+    hist("Cadastros","Terceiro cadastrado",d.nome);
+  });
 }
 
-// ══════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════
-document.getElementById('hdrDate').textContent =
-  new Date().toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+function renderOperacao(){
+  const botoes = [
+    btn("Nova OP","formOp()"),
+    btn("Registrar entrega","formEntrega()"),
+    btn("Registrar quebra","formQuebra()"),
+    btn("Finalizar OP","formFinalizarOp()")
+  ].join("");
 
-document.getElementById('cad-data').value = new Date().toISOString().split('T')[0];
+  const rows = db.ops.slice().reverse().map(op=>{
+    const t = totaisOp(op.id);
+    return [op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),`<span class="pill">${op.status}</span>`];
+  });
 
-document.getElementById('prod-op').addEventListener('keydown',  e => e.key==='Enter' && carregarOP());
-document.getElementById('cons-op').addEventListener('keydown',  e => e.key==='Enter' && consultarOP());
-document.getElementById('cad-qtd').addEventListener('keydown',  e => e.key==='Enter' && cadastrarOP());
+  page("Operação / OPs","Controle de produção, entregas e quebras",botoes,tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status"],rows));
+}
 
-renderDash();
+function formOp(){
+  abrirForm("Nova OP",[
+    {label:"Cliente",name:"clienteId",type:"select",options:selectOptions("clientes")},
+    {label:"Modelo",name:"modeloId",type:"select",options:selectOptions("modelos")},
+    {label:"Quantidade recebida",name:"recebido",type:"number"},
+    {label:"Grade",name:"grade"},
+    {label:"Entrada",name:"entrada",type:"date",value:hoje()},
+    {label:"Prazo",name:"prazo",type:"date",value:hoje()},
+    {label:"Valor por peça",name:"valorPeca",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const modelo = db.modelos.find(x=>x.id==d.modeloId);
+    const codigo = `OP-${String(id("ops")).padStart(5,"0")}`;
+    const valor = Number(d.valorPeca||0) || Number(modelo?.valorCliente||0);
+    db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});
+    hist("Operação","OP criada",codigo);
+  });
+}
+
+function formEntrega(){
+  abrirForm("Registrar entrega",[
+    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Quantidade",name:"qtd",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});
+    const op = db.ops.find(x=>x.id==d.opId);
+    const total = totaisOp(op.id);
+    op.status = total.saldo <= 0 ? "Entregue" : "Entregue parcial";
+    atualizarConta(op.id);
+    hist("Operação","Entrega registrada",`${op.codigo} - ${d.qtd}`);
+  });
+}
+
+function formQuebra(){
+  abrirForm("Registrar quebra",[
+    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Quantidade",name:"qtd",type:"number"},
+    {label:"Motivo",name:"motivo"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.quebras.push({id:id("quebras"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});
+    atualizarConta(Number(d.opId));
+    hist("Operação","Quebra registrada",d.qtd);
+  });
+}
+
+function formFinalizarOp(){
+  abrirForm("Finalizar OP",[
+    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
+    {label:"Observação final",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const pend = db.insumosOp.some(x=>x.opId==d.opId && x.bloqueia && !x.resolvida);
+    if(pend){ alert("Existe insumo da OP com pendência bloqueante."); return; }
+    const op = db.ops.find(x=>x.id==d.opId);
+    op.status = "Finalizada";
+    op.obs = (op.obs||"") + "\nFechamento: " + d.obs;
+    atualizarConta(op.id);
+    hist("Operação","OP finalizada",op.codigo);
+  });
+}
+
+function renderInsumosOp(){
+  const botoes = btn("Adicionar insumo da OP","formInsumoOp()");
+  const rows = db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,x.situacao,x.bloqueia?"Sim":"Não",x.resolvida?"Sim":"Não",x.obs]);
+  page("Insumos da OP","Materiais enviados pelo cliente",botoes,tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs"],rows));
+}
+
+function formInsumoOp(){
+  abrirForm("Insumo da OP",[
+    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
+    {label:"Item",name:"item"},
+    {label:"Esperado",name:"esperado",type:"number"},
+    {label:"Recebido",name:"recebido",type:"number"},
+    {label:"Situação",name:"situacao",type:"select",options:`<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>`},
+    {label:"Bloqueia produção",name:"bloqueia",type:"select",options:`<option value="0">Não</option><option value="1">Sim</option>`},
+    {label:"Pendência resolvida",name:"resolvida",type:"select",options:`<option value="1">Sim</option><option value="0">Não</option>`},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});
+    hist("Operação","Insumo da OP cadastrado",d.item);
+  });
+}
+
+function renderEstoque(){
+  const botoes = btn("Novo insumo","formEstoque()") + btn("Entrada / retirada","formMovEstoque()");
+  const rows = db.estoque.map(x=>[x.nome,x.codigo,x.cor,x.qtd,x.unidade,x.obs]);
+  page("Estoque interno","Controle manual de materiais",botoes,tabela(["Material","Código","Cor","Quantidade","Unidade","Obs"],rows));
+}
+
+function formEstoque(){
+  abrirForm("Novo insumo",[
+    {label:"Nome",name:"nome"},
+    {label:"Código",name:"codigo"},
+    {label:"Cor",name:"cor"},
+    {label:"Quantidade inicial",name:"qtd",type:"number"},
+    {label:"Unidade",name:"unidade"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.estoque.push({id:id("estoque"),nome:d.nome,codigo:d.codigo,cor:d.cor,qtd:Number(d.qtd||0),unidade:d.unidade,obs:d.obs});
+    hist("Estoque","Insumo cadastrado",d.nome);
+  });
+}
+
+function formMovEstoque(){
+  abrirForm("Movimentar estoque",[
+    {label:"Insumo",name:"insumoId",type:"select",options:selectOptions("estoque")},
+    {label:"Tipo",name:"tipo",type:"select",options:`<option>Entrada</option><option>Retirada</option>`},
+    {label:"Quantidade",name:"qtd",type:"number"},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const item = db.estoque.find(x=>x.id==d.insumoId);
+    const antes = Number(item.qtd||0);
+    const qtd = Number(d.qtd||0);
+    item.qtd = d.tipo==="Entrada" ? antes + qtd : antes - qtd;
+    db.movEstoque.push({id:id("movEstoque"),insumoId:item.id,tipo:d.tipo,qtd,data:d.data,antes,depois:item.qtd,obs:d.obs});
+    hist("Estoque",d.tipo,`${item.nome}: ${qtd}`);
+  });
+}
+
+function renderFinanceiro(){
+  const botoes = btn("Nova despesa","formDespesa()") + btn("Nova baixa","formBaixa()") + btn("Vale cliente","formValeCliente()");
+  const rows = [
+    ...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),c.status]),
+    ...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"",d.status]),
+    ...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),v.status])
+  ];
+  page("Financeiro","Contas, despesas, baixas e vales",botoes,tabela(["Tipo","Referência","Valor","Saldo","Status"],rows));
+}
+
+function formDespesa(){
+  abrirForm("Nova despesa",[
+    {label:"Descrição",name:"descricao"},
+    {label:"Fornecedor",name:"fornecedor"},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Valor",name:"valor",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:Number(d.valor||0),status:"Não pago",obs:d.obs});
+    hist("Financeiro","Despesa cadastrada",d.descricao);
+  });
+}
+
+function formBaixa(){
+  const contas = db.contas.map(c=>`<option value="C-${c.id}">Conta ${opCodigo(c.opId)}</option>`).join("");
+  const despesas = db.despesas.map(d=>`<option value="D-${d.id}">Despesa ${d.descricao}</option>`).join("");
+  abrirForm("Nova baixa",[
+    {label:"Conta ou despesa",name:"alvo",type:"select",options:contas+despesas},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Valor",name:"valor",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const [tipo, itemId] = d.alvo.split("-");
+    const valor = Number(d.valor||0);
+    if(tipo==="C"){
+      db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(itemId),data:d.data,valor,obs:d.obs});
+      atualizarStatusConta(Number(itemId));
+    } else {
+      db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(itemId),data:d.data,valor,obs:d.obs});
+      atualizarStatusDespesa(Number(itemId));
+    }
+    hist("Financeiro","Baixa lançada",dinheiro(valor));
+  });
+}
+
+function formValeCliente(){
+  abrirForm("Vale cliente",[
+    {label:"Cliente",name:"clienteId",type:"select",options:selectOptions("clientes")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Valor",name:"valor",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const valor = Number(d.valor||0);
+    db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});
+    hist("Financeiro","Vale cliente cadastrado",dinheiro(valor));
+  });
+}
+
+function renderColaboradores(){
+  const botoes = btn("Vale colaborador","formValeColaborador()") + btn("Pagamento","formPagamentoColaborador()");
+  const rows = [
+    ...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),v.status]),
+    ...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),"Pago"])
+  ];
+  page("Colaboradores","Vales e pagamentos",botoes,tabela(["Tipo","Colaborador","Valor","Saldo/Líquido","Status"],rows));
+}
+
+function formValeColaborador(){
+  abrirForm("Vale colaborador",[
+    {label:"Colaborador",name:"colaboradorId",type:"select",options:selectOptions("colaboradores")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Valor",name:"valor",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const valor = Number(d.valor||0);
+    db.valesColaboradores.push({id:id("valesColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});
+    hist("Financeiro","Vale colaborador cadastrado",dinheiro(valor));
+  });
+}
+
+function formPagamentoColaborador(){
+  abrirForm("Pagamento colaborador",[
+    {label:"Colaborador",name:"colaboradorId",type:"select",options:selectOptions("colaboradores")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Valor fixo",name:"fixo",type:"number"},
+    {label:"Comissão manual",name:"comissao",type:"number"},
+    {label:"Vales descontados",name:"vales",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const col = db.colaboradores.find(x=>x.id==d.colaboradorId);
+    const fixo = Number(d.fixo||0) || Number(col?.valorFixo||0);
+    const comissao = Number(d.comissao||0);
+    const vales = Number(d.vales||0);
+    const liquido = fixo + comissao - vales;
+    db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,fixo,comissao,vales,liquido,obs:d.obs});
+    hist("Financeiro","Pagamento colaborador",dinheiro(liquido));
+  });
+}
+
+function renderTerceiros(){
+  const botoes = btn("Envio","formEnvioTerceiro()") + btn("Retorno","formRetornoTerceiro()") + btn("Pagamento","formPagamentoTerceiro()");
+  const rows = [
+    ...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"",""]),
+    ...db.retornosTerceiros.map(r=>["Retorno",`Envio ${r.envioId}`,"",r.data,r.recebida,r.boa,r.problema]),
+    ...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"",p.data,"","",dinheiro(p.total)])
+  ];
+  page("Terceiros","Envios, retornos e pagamentos",botoes,tabela(["Tipo","Terceiro/Envio","OP","Data","Qtd","Boa","Problema/Valor"],rows));
+}
+
+function formEnvioTerceiro(){
+  abrirForm("Envio terceiro",[
+    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
+    {label:"Terceiro",name:"terceiroId",type:"select",options:selectOptions("terceiros")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Quantidade",name:"qtd",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.enviosTerceiros.push({id:id("enviosTerceiros"),opId:Number(d.opId),terceiroId:Number(d.terceiroId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});
+    hist("Operação","Envio terceiro",d.qtd);
+  });
+}
+
+function formRetornoTerceiro(){
+  const opts = db.enviosTerceiros.map(e=>`<option value="${e.id}">Envio ${e.id} - ${opCodigo(e.opId)}</option>`).join("");
+  abrirForm("Retorno terceiro",[
+    {label:"Envio",name:"envioId",type:"select",options:opts},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Recebida",name:"recebida",type:"number"},
+    {label:"Boa",name:"boa",type:"number"},
+    {label:"Problema",name:"problema",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    db.retornosTerceiros.push({id:id("retornosTerceiros"),envioId:Number(d.envioId),data:d.data,recebida:Number(d.recebida||0),boa:Number(d.boa||0),problema:Number(d.problema||0),obs:d.obs});
+    hist("Operação","Retorno terceiro",d.boa);
+  });
+}
+
+function formPagamentoTerceiro(){
+  abrirForm("Pagamento terceiro",[
+    {label:"Terceiro",name:"terceiroId",type:"select",options:selectOptions("terceiros")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Peças boas",name:"boa",type:"number"},
+    {label:"Valor por peça",name:"valorPeca",type:"number"},
+    {label:"Valor fixo",name:"fixo",type:"number"},
+    {label:"Valor manual",name:"manual",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const total = Number(d.boa||0)*Number(d.valorPeca||0)+Number(d.fixo||0)+Number(d.manual||0);
+    db.pagamentosTerceiros.push({id:id("pagamentosTerceiros"),terceiroId:Number(d.terceiroId),data:d.data,boa:Number(d.boa||0),valorPeca:Number(d.valorPeca||0),fixo:Number(d.fixo||0),manual:Number(d.manual||0),total,obs:d.obs});
+    hist("Financeiro","Pagamento terceiro",dinheiro(total));
+  });
+}
+
+function renderAcertos(){
+  const botoes = btn("Novo acerto","formAcerto()");
+  const rows = db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo)]);
+  page("Acertos quinzenais","Acerto manual por OP",botoes,tabela(["Cliente","OP","Data","Vale","Pago","Saldo"],rows));
+}
+
+function formAcerto(){
+  abrirForm("Novo acerto",[
+    {label:"Cliente",name:"clienteId",type:"select",options:selectOptions("clientes")},
+    {label:"OP",name:"opId",type:"select",options:selectOptions("ops","codigo")},
+    {label:"Data",name:"data",type:"date",value:hoje()},
+    {label:"Vale aplicado",name:"vale",type:"number"},
+    {label:"Pago",name:"pago",type:"number"},
+    {label:"Observação",name:"obs",type:"textarea",full:true}
+  ], d => {
+    const opId = Number(d.opId);
+    atualizarConta(opId);
+    const conta = db.contas.find(x=>x.opId==opId);
+    const vale = Number(d.vale||0);
+    const pago = Number(d.pago||0);
+    if(vale) db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs});
+    if(pago) db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});
+    atualizarStatusConta(conta.id);
+    db.acertos.push({id:id("acertos"),clienteId:Number(d.clienteId),opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});
+    hist("Financeiro","Acerto quinzenal",opCodigo(opId));
+  });
+}
+
+function renderHistorico(){
+  const rows = db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs]);
+  page("Histórico","Últimas alterações registradas","",tabela(["Data","Módulo","Ação","Obs"],rows));
+}
+
+render();
 </script>
 </body>
 </html>
