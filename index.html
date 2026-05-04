@@ -6,181 +6,123 @@
   <title>Sistema Facção</title>
   <style>
     :root{
-      color-scheme:dark;
-      --bg:#050505;--panel:#1b1b1b;--panel-2:#232323;--text:#f7f7f7;--muted:#a7adba;
-      --line:#353535;--soft:#2f2f2f;--brand:#ffffff;--blue:#216ff5;--green:#07854f;
-      --red:#d7332f;--purple:#a100ff;--field:#080808;--shadow:#0008;
+      --bg:#f4f6f8;--card:#fff;--text:#1f2933;--muted:#667085;--line:#d9dee7;
+      --blue:#1769aa;--red:#b42318;--field:#fff;--nav:#fff;
     }
-    body.light{
-      color-scheme:light;
-      --bg:#f3f5f7;--panel:#ffffff;--panel-2:#eef2f6;--text:#17202a;--muted:#667085;
-      --line:#d8dee8;--soft:#e8edf3;--brand:#111827;--blue:#1769aa;--green:#168351;
-      --red:#b42318;--purple:#7c3aed;--field:#ffffff;--shadow:#0002;
+    body.dark{
+      --bg:#101418;--card:#171c22;--text:#f4f7fb;--muted:#a8b1bf;--line:#303844;
+      --blue:#2f8dd8;--red:#d9423a;--field:#0f141a;--nav:#151a20;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;font-size:14px}
-    button,input,select,textarea{font:inherit}
-    .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-    aside{background:var(--panel);border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:0;height:100vh}
-    .brand{display:flex;align-items:center;gap:10px;height:42px;margin-bottom:12px;font-weight:800;font-size:17px}
-    .brand-icon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:var(--bg);font-weight:900}
-    .nav button{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--text);padding:10px 12px;margin:4px 0;border-radius:14px;cursor:pointer;font-weight:700;text-align:left}
-    .nav button:hover,.nav button.active{background:var(--soft)}
-    .nav .ico{width:20px;text-align:center;opacity:.9}
-    .main{min-width:0}
-    header{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:var(--bg);position:sticky;top:0;z-index:5}
-    .crumb{font-weight:700;color:var(--text)}
-    .head-actions{display:flex;align-items:center;gap:12px}
-    .theme{border:0;background:transparent;color:var(--text);cursor:pointer;font-size:18px}
-    .avatar{width:34px;height:34px;border-radius:50%;background:var(--brand);color:var(--bg);display:grid;place-items:center;font-weight:800}
-    main{padding:28px 54px 42px}
-    .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px}
-    h1{font-size:25px;margin:0 0 4px;color:var(--text)}
-    p{margin:0;color:var(--muted);font-size:16px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{height:36px;border-radius:18px;border:1px solid var(--line);background:var(--field);color:var(--text);padding:0 16px;cursor:pointer;font-weight:800;display:inline-flex;align-items:center;gap:9px}
-    .btn.primary{background:var(--brand);color:var(--bg);border-color:var(--brand)}
-    .btn.soft{background:var(--soft);border-color:var(--soft)}
-    .btn.danger{background:var(--red);border-color:var(--red);color:white}
-    .tabs{display:inline-flex;background:var(--soft);border-radius:18px;padding:3px;margin-bottom:22px}
-    .tabs button{border:0;border-radius:15px;background:transparent;color:var(--muted);height:28px;padding:0 14px;font-weight:800;cursor:pointer}
-    .tabs button.active{background:var(--bg);color:var(--text)}
-    .filters{display:grid;grid-template-columns:1.3fr 170px 170px 170px 1fr;gap:10px;align-items:center;margin-bottom:16px}
-    .field{height:36px;border:1px solid var(--line);background:var(--field);color:var(--text);border-radius:18px;padding:0 12px;outline:none}
-    .search-wrap{position:relative}
-    .search-wrap span{position:absolute;left:12px;top:8px;color:var(--muted)}
-    .search-wrap input{padding-left:34px;width:100%}
-    .table-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;box-shadow:0 16px 40px var(--shadow)}
-    .table-wrap{overflow:auto;max-height:calc(100vh - 260px)}
-    table{border-collapse:collapse;width:100%;min-width:1120px}
-    th,td{border-bottom:1px solid var(--line);padding:11px 9px;text-align:left;vertical-align:middle}
-    th{color:var(--muted);font-weight:800;background:var(--panel);position:sticky;top:0;z-index:1}
-    td{font-weight:700}
-    .sub{display:block;color:var(--muted);font-size:10px;margin-top:2px;font-weight:600}
-    .num{font-variant-numeric:tabular-nums}
-    .chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:900;background:var(--soft);color:var(--text);white-space:nowrap}
-    .chip.blue{background:var(--blue);color:#fff}.chip.green{background:var(--green);color:#001b10}.chip.purple{background:var(--purple);color:#fff}.chip.red{background:var(--red);color:#fff}
-    .row-actions{display:flex;gap:12px;color:var(--text);opacity:.95}
-    .empty{padding:32px;color:var(--muted);font-size:16px}
-    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
-    .card span{display:block;color:var(--muted);margin-bottom:8px}.card strong{font-size:25px}
-    dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);box-shadow:0 20px 70px #000b;width:min(720px,94vw)}
-    dialog::backdrop{background:#000b}
-    form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    label{font-weight:800;color:var(--text);font-size:13px}
-    label.full{grid-column:1/-1}
-    input,select,textarea{width:100%;margin-top:6px;border:1px solid var(--line);background:var(--field);color:var(--text);border-radius:10px;padding:10px;outline:none}
-    textarea{min-height:86px}
-    .form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
-    @media(max-width:980px){
-      .app{grid-template-columns:1fr}aside{position:static;height:auto}.nav{display:flex;overflow:auto}.nav button{min-width:max-content}
-      main{padding:18px}.page-head{flex-direction:column}.filters{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr 1fr}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:var(--card);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;position:sticky;top:0;z-index:2}
+    h1{font-size:20px;margin:0} small,p{color:var(--muted)}
+    .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 62px)}
+    nav{background:var(--nav);border-right:1px solid var(--line);padding:14px}
+    nav button{width:100%;text-align:left;border:0;background:transparent;color:var(--text);padding:11px;border-radius:6px;cursor:pointer;font-weight:700}
+    nav button.active,nav button:hover{background:#1769aa22;color:var(--blue)}
+    main{padding:18px;overflow:auto}
+    .top{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+    h2{margin:0 0 4px;font-size:24px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:1px solid var(--line);background:var(--field);color:var(--text);padding:9px 12px;border-radius:6px;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+    .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .card,.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+    .card span{display:block;color:var(--muted);font-size:13px}.card strong{font-size:24px}
+    .table-wrap{overflow:auto} table{border-collapse:collapse;width:100%;min-width:760px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left} th{font-size:13px;color:var(--muted)}
+    .pill{border-radius:999px;background:#eef8ff;color:#145c8f;font-weight:700;font-size:12px;padding:4px 8px}
+    body.dark .pill{background:#1d3d5a;color:#d8edff}
+    dialog{border:0;border-radius:8px;box-shadow:0 20px 60px #0007;width:min(680px,92vw);background:var(--card);color:var(--text)}
+    dialog::backdrop{background:#0008}
+    form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    label{font-weight:700;font-size:13px}
+    input,select,textarea{width:100%;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:6px;font:inherit;background:var(--field);color:var(--text)}
+    textarea{min-height:76px}.full{grid-column:1/-1}.form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+    .empty{color:var(--muted);padding:18px}
+    @media(max-width:850px){
+      .layout{grid-template-columns:1fr}
+      nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}
+      nav button{white-space:nowrap;width:auto}
+      .grid{grid-template-columns:1fr 1fr}
+      form{grid-template-columns:1fr}
+      .top{flex-direction:column}
     }
-    @media(max-width:640px){.filters,.cards{grid-template-columns:1fr}.actions{width:100%}.btn{justify-content:center}}
   </style>
 </head>
 <body>
-<div class="app">
-  <aside>
-    <div class="brand"><span class="brand-icon">M</span><span>Produção</span></div>
-    <div class="nav" id="menu"></div>
-  </aside>
-  <section class="main">
-    <header>
-      <div class="crumb" id="crumb">Produção</div>
-      <div class="head-actions">
-        <button class="theme" onclick="toggleTheme()" title="Alternar tema">☾</button>
-        <div class="avatar">US</div>
-      </div>
-    </header>
-    <main id="app"></main>
-  </section>
-</div>
+<header>
+  <div><h1>Sistema Facção</h1><small>Operação, estoque, financeiro, colaboradores e terceiros</small></div>
+  <div class="actions">
+    <button class="btn" onclick="alternarTema()">Modo claro/escuro</button>
+    <button class="btn danger" onclick="resetar()">Limpar dados</button>
+  </div>
+</header>
+<div class="layout"><nav id="menu"></nav><main id="app"></main></div>
 <dialog id="modal"><div id="modalContent"></div></dialog>
-
 <script>
-const KEY="sistema_faccao_v2";
+const KEY="sistema_faccao_dados_v1";
 const THEME="sistema_faccao_tema";
-const seedOps=[
-  {id:1,codigo:"183",tipo:"Estoque",modelo:"TSHIRT TRADICIONAL",ref:"TSHIRT-TRAD",parceiro:"LEONARDO DORNELES COSTA DA SILVA LTDA",qtd:1650,status:"Enviada",lanc:"Não lançado",data:"01/05/2026",partida:"-"},
-  {id:2,codigo:"182",tipo:"Estoque",modelo:"MOLETOM TRADICIONAL RAGLAN",ref:"MOLE-TRAD",parceiro:"-",qtd:2232,status:"Criada",lanc:"Não lançado",data:"01/05/2026",partida:"-"},
-  {id:3,codigo:"177",tipo:"Estoque",modelo:"TSHIRT INFANTIL",ref:"TSH-INF",parceiro:"-",qtd:1548,status:"Criada",lanc:"Não lançado",data:"30/04/2026",partida:"-"},
-  {id:4,codigo:"179",tipo:"Estoque",modelo:"CAMISETA OVER",ref:"CAMIS-OVER",parceiro:"LEONARDO DORNELES COSTA DA SILVA LTDA",qtd:2200,status:"Enviada",lanc:"Não lançado",data:"30/04/2026",partida:"-"},
-  {id:5,codigo:"172",tipo:"Estoque",modelo:"TSHIRT TRADICIONAL",ref:"TSHIRT-TRAD",parceiro:"LEONARDO DORNELES COSTA DA SILVA LTDA",qtd:4360,status:"Enviada",lanc:"Não lançado",data:"30/04/2026",partida:"-"},
-  {id:6,codigo:"171",tipo:"Estoque",modelo:"TSHIRT LISTRADA CONFORT",ref:"TSH-CONFORT-LISTR-ETNA",parceiro:"LEONARDO DORNELES COSTA DA SILVA LTDA",qtd:572,status:"Recebida",lanc:"Cross-Docking",data:"28/04/2026",partida:"-"}
-];
-const vazio={ops:[...seedOps],solicitacoes:[],clientes:[],modelos:[],terceiros:[],financeiro:[],estoque:[],historico:[]};
-let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(vazio));
-let tela="Produção";
-let tabProd="Ordens de Produção";
-let filtro="";
+const padrao={clientes:[],modelos:[],colaboradores:[],terceiros:[],ops:[],entregas:[],quebras:[],insumosOp:[],estoque:[],movEstoque:[],contas:[],despesas:[],baixas:[],valesClientes:[],valesColaboradores:[],pagamentosColaboradores:[],enviosTerceiros:[],retornosTerceiros:[],pagamentosTerceiros:[],acertos:[],historico:[]};
+let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(padrao));
+let tela="Dashboard";
 let tema=localStorage.getItem(THEME)||"dark";
-const telas=[["Dashboard","▦"],["Produção","▣"],["Artigos","▱"],["Cadastros","▤"],["Financeiro","▣"],["Relatórios","▥"],["Configurações","⚙"]];
-
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
-function nextId(list){return (db[list].reduce((m,x)=>Math.max(m,x.id||0),0)||0)+1}
-function money(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
-function fmtQtd(v){return Number(v||0).toLocaleString("pt-BR")}
-function setTheme(){document.body.classList.toggle("light",tema==="light");document.querySelector(".theme").textContent=tema==="light"?"☀":"☾";localStorage.setItem(THEME,tema)}
-function toggleTheme(){tema=tema==="dark"?"light":"dark";setTheme()}
-function openTela(t){tela=t;render()}
-function renderMenu(){menu.innerHTML=telas.map(([t,i])=>`<button class="${tela===t?'active':''}" onclick="openTela('${t}')"><span class="ico">${i}</span>${t}</button>`).join("")}
-function page(title,sub,actions,body){crumb.textContent=title;app.innerHTML=`<section class="page-head"><div><h1>${title}</h1><p>${sub||""}</p></div><div class="actions">${actions||""}</div></section>${body}`}
-function btn(text,fn,cls="soft"){return `<button class="btn ${cls}" onclick="${fn}"><span>＋</span>${text}</button>`}
-function table(cols,rows){if(!rows.length)return`<div class="table-card"><div class="empty">Nenhum registro encontrado.</div></div>`;return`<div class="table-card"><div class="table-wrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c??""}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`}
-function chip(text){let c=text==="Enviada"?"blue":text==="Recebida"?"green":text==="Cross-Docking"?"purple":text==="Cancelada"?"red":"";return `<span class="chip ${c}">${text}</span>`}
-function actions(){return `<div class="row-actions"><span title="Visualizar">◉</span><span title="Conferir">▣</span><span title="Imprimir">▤</span><span style="color:var(--red)" title="Excluir">⌫</span></div>`}
-function render(){
-  setTheme();renderMenu();
-  if(tela==="Produção") return renderProducao();
-  if(tela==="Dashboard") return renderDashboard();
-  if(tela==="Cadastros") return renderCadastro();
-  if(tela==="Financeiro") return renderSimples("Financeiro","Contas, pagamentos e acertos",["Tipo","Descrição","Valor","Status"],db.financeiro.map(x=>[x.tipo,x.descricao,money(x.valor),chip(x.status||"Aberto")]),btn("Novo Lançamento","formFinanceiro()","primary"));
-  if(tela==="Artigos") return renderSimples("Artigos","Modelos e peças cadastradas",["Modelo","Referência","Valor Cliente"],db.modelos.map(x=>[x.nome,x.ref||"-",money(x.valor||0)]),btn("Novo Artigo","formModelo()","primary"));
-  if(tela==="Relatórios") return renderRelatorios();
-  if(tela==="Configurações") return page("Configurações","Preferências do sistema","",`<div class="cards"><div class="card"><span>Tema atual</span><strong>${tema==="dark"?"Escuro":"Claro"}</strong></div><div class="card"><span>Registros salvos</span><strong>${db.ops.length}</strong></div></div><button class="btn primary" onclick="toggleTheme()">Alternar tema</button>`);
-}
-function renderDashboard(){
-  const total=db.ops.reduce((s,x)=>s+Number(x.qtd||0),0);
-  const cards=`<div class="cards"><div class="card"><span>OPs listadas</span><strong>${db.ops.length}</strong></div><div class="card"><span>Peças</span><strong>${fmtQtd(total)}</strong></div><div class="card"><span>Enviadas</span><strong>${db.ops.filter(x=>x.status==="Enviada").length}</strong></div><div class="card"><span>Recebidas</span><strong>${db.ops.filter(x=>x.status==="Recebida").length}</strong></div></div>`;
-  page("Dashboard","Resumo rápido da produção","",cards);
-}
-function renderProducao(){
-  const a=`<button class="btn" onclick="alert('Planejador será implementado na próxima etapa')">▦ Planejador</button>${btn("OP Avulsa","formOP()","primary")}${btn("Nova Solicitação","formSolicitacao()","soft")}`;
-  const tabs=`<div class="tabs"><button class="${tabProd==='Ordens de Produção'?'active':''}" onclick="tabProd='Ordens de Produção';render()">Ordens de Produção</button><button class="${tabProd==='Solicitações'?'active':''}" onclick="tabProd='Solicitações';render()">Solicitações</button></div>`;
-  const filtros=`<div class="filters"><div class="search-wrap"><span>⌕</span><input class="field" id="busca" value="${filtro}" oninput="filtro=this.value;renderProducaoTabela()" placeholder="Buscar por número, produto, terceiro..."></div><select class="field" id="st" onchange="renderProducaoTabela()"><option>Status OP</option><option>Enviada</option><option>Criada</option><option>Recebida</option></select><select class="field"><option>Lançamento</option><option>Não lançado</option><option>Cross-Docking</option></select><select class="field"><option>Tipo Ordem</option><option>Estoque</option></select><input class="field" placeholder="Partida..."></div>`;
-  page("Produção","Gerencie ordens de produção e solicitações",a,tabs+filtros+`<div id="prodTable"></div>`);
-  renderProducaoTabela();
-}
-function renderProducaoTabela(){
-  if(tabProd==="Solicitações"){prodTable.innerHTML=table(["Nº","Solicitação","Cliente","Data","Status","Ações"],db.solicitacoes.map(x=>[x.id,x.nome,x.cliente,x.data,chip(x.status),actions()]));return}
-  const termo=(document.getElementById("busca")?.value||filtro||"").toLowerCase();
-  const st=document.getElementById("st")?.value||"Status OP";
-  let rows=db.ops.filter(o=>{
-    const texto=[o.codigo,o.modelo,o.ref,o.parceiro,o.status,o.lanc,o.data,o.tipo].join(" ").toLowerCase();
-    return (!termo||texto.includes(termo)) && (st==="Status OP"||o.status===st);
-  }).map(o=>[o.codigo,chip(o.tipo),`<strong>${o.modelo}</strong><span class="sub">${o.ref||"-"}</span>`,o.parceiro||"-",`<span class="num">${fmtQtd(o.qtd)}</span>`,chip(o.status),chip(o.lanc||"Não lançado"),o.data||"-",o.partida||"-",actions()]);
-  prodTable.innerHTML=table(["Nº","Tipo","Modelo","Parceiro","Qtd","Status","Lanç.","Data","Partida","Ações"],rows);
-}
-function renderCadastro(){
-  const a=btn("Cliente","formCliente()","primary")+btn("Modelo","formModelo()","soft")+btn("Terceiro","formTerceiro()","soft");
-  const rows=[...db.clientes.map(x=>["Cliente",x.nome,x.telefone||"-"]),...db.modelos.map(x=>["Modelo",x.nome,x.ref||"-"]),...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone||"-"])];
-  renderSimples("Cadastros","Clientes, artigos e parceiros",["Tipo","Nome","Detalhe"],rows,a);
-}
-function renderSimples(title,sub,cols,rows,actions=""){page(title,sub,actions,table(cols,rows))}
-function renderRelatorios(){renderSimples("Relatórios","Visão simples dos registros",["Indicador","Total"],[["OPs",db.ops.length],["Clientes",db.clientes.length],["Terceiros",db.terceiros.length],["Lançamentos financeiros",db.financeiro.length]])}
-function modalForm(title,fields,saveFn){
-  modalContent.innerHTML=`<h1>${title}</h1><form id="frm">${fields.map(f=>f.type==="select"?`<label>${f.label}<select name="${f.name}">${f.options}</select></label>`:f.type==="textarea"?`<label class="full">${f.label}<textarea name="${f.name}">${f.value||""}</textarea></label>`:`<label>${f.label}<input name="${f.name}" type="${f.type||"text"}" value="${f.value||""}"></label>`).join("")}<div class="form-actions"><button type="button" class="btn" onclick="modal.close()">Cancelar</button><button class="btn primary">Salvar</button></div></form>`;
-  frm.onsubmit=e=>{e.preventDefault();saveFn(Object.fromEntries(new FormData(frm).entries()));save();modal.close();render()};modal.showModal();
-}
-function options(list,label="nome"){return db[list].map(x=>`<option value="${x.id}">${x[label]}</option>`).join("")}
-function formOP(){modalForm("Nova OP Avulsa",[{label:"Modelo",name:"modelo"},{label:"Referência",name:"ref"},{label:"Parceiro",name:"parceiro",value:"-"},{label:"Quantidade",name:"qtd",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Criada</option><option>Enviada</option><option>Recebida</option>"},{label:"Data",name:"data",type:"date",value:new Date().toISOString().slice(0,10)}],d=>{db.ops.unshift({id:nextId("ops"),codigo:String(100+nextId("ops")),tipo:"Estoque",modelo:d.modelo.toUpperCase(),ref:d.ref,parceiro:d.parceiro,qtd:Number(d.qtd||0),status:d.status,lanc:"Não lançado",data:d.data.split("-").reverse().join("/"),partida:"-"})})}
-function formSolicitacao(){modalForm("Nova Solicitação",[{label:"Nome",name:"nome"},{label:"Cliente",name:"cliente"},{label:"Data",name:"data",type:"date",value:new Date().toISOString().slice(0,10)},{label:"Status",name:"status",type:"select",options:"<option>Criada</option><option>Enviada</option>"}],d=>db.solicitacoes.unshift({id:nextId("solicitacoes"),...d,data:d.data.split("-").reverse().join("/")}))}
-function formCliente(){modalForm("Novo Cliente",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"}],d=>db.clientes.push({id:nextId("clientes"),...d}))}
-function formModelo(){modalForm("Novo Artigo",[{label:"Modelo",name:"nome"},{label:"Referência",name:"ref"},{label:"Valor",name:"valor",type:"number"}],d=>db.modelos.push({id:nextId("modelos"),...d,valor:Number(d.valor||0)}))}
-function formTerceiro(){modalForm("Novo Terceiro",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"}],d=>db.terceiros.push({id:nextId("terceiros"),...d}))}
-function formFinanceiro(){modalForm("Novo Lançamento",[{label:"Tipo",name:"tipo",type:"select",options:"<option>Receita</option><option>Despesa</option>"},{label:"Descrição",name:"descricao"},{label:"Valor",name:"valor",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Aberto</option><option>Pago</option>"}],d=>db.financeiro.push({id:nextId("financeiro"),...d,valor:Number(d.valor||0)}))}
+const telas=["Dashboard","Cadastros","Operação","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
+function aplicarTema(){document.body.classList.toggle("dark",tema==="dark");localStorage.setItem(THEME,tema)}
+function alternarTema(){tema=tema==="dark"?"light":"dark";aplicarTema()}
+function salvar(){localStorage.setItem(KEY,JSON.stringify(db))}
+function id(lista){return(db[lista].reduce((m,x)=>Math.max(m,x.id),0)||0)+1}
+function hoje(){return new Date().toISOString().slice(0,10)}
+function dinheiro(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function hist(modulo,acao,obs=""){db.historico.unshift({id:id("historico"),data:new Date().toLocaleString("pt-BR"),modulo,acao,obs});salvar()}
+function nome(lista,itemId){return(db[lista].find(x=>x.id==itemId)||{}).nome||""}
+function opCodigo(opId){return(db.ops.find(x=>x.id==opId)||{}).codigo||""}
+function resetar(){if(confirm("Apagar todos os dados salvos neste navegador?")){localStorage.removeItem(KEY);db=JSON.parse(JSON.stringify(padrao));render()}}
+function totaisOp(opId){const op=db.ops.find(x=>x.id==opId);if(!op)return{entregue:0,quebra:0,saldo:0,valor:0};const entregue=db.entregas.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);const quebra=db.quebras.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);const saldo=Number(op.recebido||0)-entregue-quebra;const valor=Math.max(entregue-quebra,0)*Number(op.valorPeca||0);return{entregue,quebra,saldo,valor}}
+function atualizarConta(opId){const total=totaisOp(opId).valor;let c=db.contas.find(x=>x.opId==opId);if(!c){c={id:id("contas"),opId,valor:total,status:"Não pago"};db.contas.push(c)}else c.valor=total;atualizarStatusConta(c.id)}
+function saldoConta(cid){const c=db.contas.find(x=>x.id==cid);const pago=db.baixas.filter(x=>x.contaId==cid).reduce((s,x)=>s+Number(x.valor||0),0);return Number(c?.valor||0)-pago}
+function atualizarStatusConta(cid){const c=db.contas.find(x=>x.id==cid);if(!c)return;const saldo=saldoConta(cid),pago=Number(c.valor||0)-saldo;c.status=saldo<=0&&c.valor>0?"Pago":pago>0?"Pago parcial":"Não pago"}
+function atualizarStatusDespesa(despesaId){const desp=db.despesas.find(x=>x.id==despesaId);const pago=db.baixas.filter(x=>x.despesaId==despesaId).reduce((s,x)=>s+Number(x.valor||0),0);desp.status=pago>=desp.valor?"Pago":pago>0?"Pago parcial":"Não pago"}
+function renderMenu(){menu.innerHTML=telas.map(t=>`<button class="${t===tela?'active':''}" onclick="abrir('${t}')">${t}</button>`).join("")}
+function abrir(t){tela=t;render()}
+function page(titulo,subtitulo,botoes,conteudo){app.innerHTML=`<section class="top"><div><h2>${titulo}</h2><p>${subtitulo||""}</p></div><div class="actions">${botoes||""}</div></section>${conteudo}`}
+function tabela(cols,rows){if(!rows.length)return`<div class="panel empty">Nenhum registro.</div>`;return`<div class="panel table-wrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c??""}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+function btn(txt,fn,cls="primary"){return`<button class="btn ${cls}" onclick="${fn}">${txt}</button>`}
+function opts(lista,label="nome"){return db[lista].map(x=>`<option value="${x.id}">${x[label]}</option>`).join("")}
+function abrirForm(titulo,campos,aoSalvar){modalContent.innerHTML=`<h2>${titulo}</h2><form id="formModal">${campos.map(c=>c.type==="select"?`<label class="${c.full?'full':''}">${c.label}<select name="${c.name}">${c.options}</select></label>`:c.type==="textarea"?`<label class="${c.full?'full':''}">${c.label}<textarea name="${c.name}">${c.value||""}</textarea></label>`:`<label class="${c.full?'full':''}">${c.label}<input type="${c.type||"text"}" name="${c.name}" value="${c.value||""}"></label>`).join("")}<div class="form-actions"><button type="button" class="btn" onclick="modal.close()">Cancelar</button><button class="btn primary">Salvar</button></div></form>`;formModal.onsubmit=e=>{e.preventDefault();aoSalvar(Object.fromEntries(new FormData(formModal).entries()));salvar();modal.close();render()};modal.showModal()}
+function render(){aplicarTema();renderMenu();({Dashboard:renderDashboard,Cadastros:renderCadastros,"Operação":renderOperacao,"Insumos OP":renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])()}
+function renderDashboard(){const receber=db.contas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+saldoConta(x.id),0),pagar=db.despesas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+Number(x.valor||0),0),pend=db.insumosOp.filter(x=>x.bloqueia&&!x.resolvida).length;const cards=`<section class="grid"><div class="card"><span>OPs</span><strong>${db.ops.length}</strong></div><div class="card"><span>A receber</span><strong>${dinheiro(receber)}</strong></div><div class="card"><span>A pagar</span><strong>${dinheiro(pagar)}</strong></div><div class="card"><span>Pendências</span><strong>${pend}</strong></div></section>`;const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),`<span class="pill">${op.status}</span>`,t.entregue,t.quebra,t.saldo,dinheiro(t.valor)]});page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor"],rows))}
+function renderCadastros(){const b=btn("Novo cliente","formCliente()")+btn("Novo modelo","formModelo()")+btn("Novo colaborador","formColaborador()")+btn("Novo terceiro","formTerceiro()");const rows=[...db.clientes.map(x=>["Cliente",x.nome,x.telefone,x.status]),...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),x.status]),...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone,x.status]),...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone,x.status])];page("Cadastros","Bases usadas pelo sistema",b,tabela(["Tipo","Nome","Telefone/Valor","Status"],rows))}
+function formCliente(){abrirForm("Novo cliente",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.clientes.push({id:id("clientes"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Cliente cadastrado",d.nome)})}
+function formModelo(){abrirForm("Novo modelo",[{label:"Nome",name:"nome"},{label:"Valor a receber por peça",name:"valorCliente",type:"number"},{label:"Valor base terceiro por peça",name:"valorTerceiro",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.modelos.push({id:id("modelos"),nome:d.nome,valorCliente:Number(d.valorCliente||0),valorTerceiro:Number(d.valorTerceiro||0),status:d.status,obs:d.obs});hist("Cadastros","Modelo cadastrado",d.nome)})}
+function formColaborador(){abrirForm("Novo colaborador",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Valor fixo pagamento",name:"valorFixo",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.colaboradores.push({id:id("colaboradores"),nome:d.nome,telefone:d.telefone,valorFixo:Number(d.valorFixo||0),status:d.status,obs:d.obs});hist("Cadastros","Colaborador cadastrado",d.nome)})}
+function formTerceiro(){abrirForm("Novo terceiro",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.terceiros.push({id:id("terceiros"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Terceiro cadastrado",d.nome)})}
+function renderOperacao(){const b=btn("Nova OP","formOp()")+btn("Registrar entrega","formEntrega()")+btn("Registrar quebra","formQuebra()")+btn("Finalizar OP","formFinalizarOp()");const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),`<span class="pill">${op.status}</span>`]});page("Operação / OPs","Produção, entregas e quebras",b,tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status"],rows))}
+function formOp(){abrirForm("Nova OP",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),codigo=`OP-${String(id("ops")).padStart(5,"0")}`,valor=Number(d.valorPeca||0)||Number(m?.valorCliente||0);db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});hist("Operação","OP criada",codigo)})}
+function formEntrega(){abrirForm("Registrar entrega",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==d.opId),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";atualizarConta(op.id);hist("Operação","Entrega registrada",`${op.codigo} - ${d.qtd}`)})}
+function formQuebra(){abrirForm("Registrar quebra",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Motivo",name:"motivo"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.quebras.push({id:id("quebras"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});atualizarConta(Number(d.opId));hist("Operação","Quebra registrada",d.qtd)})}
+function formFinalizarOp(){abrirForm("Finalizar OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Observação final",name:"obs",type:"textarea",full:true}],d=>{const pend=db.insumosOp.some(x=>x.opId==d.opId&&x.bloqueia&&!x.resolvida);if(pend){alert("Existe insumo da OP com pendência bloqueante.");return}const op=db.ops.find(x=>x.id==d.opId);op.status="Finalizada";op.obs=(op.obs||"")+"\nFechamento: "+d.obs;atualizarConta(op.id);hist("Operação","OP finalizada",op.codigo)})}
+function renderInsumosOp(){const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,x.situacao,x.bloqueia?"Sim":"Não",x.resolvida?"Sim":"Não",x.obs]);page("Insumos da OP","Materiais enviados pelo cliente",btn("Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs"],rows))}
+function formInsumoOp(){abrirForm("Insumo da OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"Situação",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produção",name:"bloqueia",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Pendência resolvida",name:"resolvida",type:"select",options:'<option value="1">Sim</option><option value="0">Não</option>'},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("Operação","Insumo cadastrado",d.item)})}
+function renderEstoque(){const rows=db.estoque.map(x=>[x.nome,x.codigo,x.cor,x.qtd,x.unidade,x.obs]);page("Estoque interno","Controle manual",btn("Novo insumo","formEstoque()")+btn("Entrada / retirada","formMovEstoque()"),tabela(["Material","Código","Cor","Quantidade","Unidade","Obs"],rows))}
+function formEstoque(){abrirForm("Novo insumo",[{label:"Nome",name:"nome"},{label:"Código",name:"codigo"},{label:"Cor",name:"cor"},{label:"Quantidade inicial",name:"qtd",type:"number"},{label:"Unidade",name:"unidade"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.estoque.push({id:id("estoque"),nome:d.nome,codigo:d.codigo,cor:d.cor,qtd:Number(d.qtd||0),unidade:d.unidade,obs:d.obs});hist("Estoque","Insumo cadastrado",d.nome)})}
+function formMovEstoque(){abrirForm("Movimentar estoque",[{label:"Insumo",name:"insumoId",type:"select",options:opts("estoque")},{label:"Tipo",name:"tipo",type:"select",options:"<option>Entrada</option><option>Retirada</option>"},{label:"Quantidade",name:"qtd",type:"number"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const item=db.estoque.find(x=>x.id==d.insumoId),antes=Number(item.qtd||0),qtd=Number(d.qtd||0);item.qtd=d.tipo==="Entrada"?antes+qtd:antes-qtd;db.movEstoque.push({id:id("movEstoque"),insumoId:item.id,tipo:d.tipo,qtd,data:d.data,antes,depois:item.qtd,obs:d.obs});hist("Estoque",d.tipo,`${item.nome}: ${qtd}`)})}
+function renderFinanceiro(){const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),c.status]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"",d.status]),...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),v.status])];page("Financeiro","Contas, despesas, baixas e vales",btn("Nova despesa","formDespesa()")+btn("Nova baixa","formBaixa()")+btn("Vale cliente","formValeCliente()"),tabela(["Tipo","Referência","Valor","Saldo","Status"],rows))}
+function formDespesa(){abrirForm("Nova despesa",[{label:"Descrição",name:"descricao"},{label:"Fornecedor",name:"fornecedor"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:Number(d.valor||0),status:"Não pago",obs:d.obs});hist("Financeiro","Despesa cadastrada",d.descricao)})}
+function formBaixa(){const c=db.contas.map(x=>`<option value="C-${x.id}">Conta ${opCodigo(x.opId)}</option>`).join(""),des=db.despesas.map(x=>`<option value="D-${x.id}">Despesa ${x.descricao}</option>`).join("");abrirForm("Nova baixa",[{label:"Conta ou despesa",name:"alvo",type:"select",options:c+des},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const[t,i]=d.alvo.split("-"),valor=Number(d.valor||0);if(t==="C"){db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusConta(Number(i))}else{db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusDespesa(Number(i))}hist("Financeiro","Baixa lançada",dinheiro(valor))})}
+function formValeCliente(){abrirForm("Vale cliente",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale cliente",dinheiro(valor))})}
+function renderColaboradores(){const rows=[...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),v.status]),...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),"Pago"])];page("Colaboradores","Vales e pagamentos",btn("Vale colaborador","formValeColaborador()")+btn("Pagamento","formPagamentoColaborador()"),tabela(["Tipo","Colaborador","Valor","Saldo/Líquido","Status"],rows))}
+function formValeColaborador(){abrirForm("Vale colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesColaboradores.push({id:id("valesColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale colaborador",dinheiro(valor))})}
+function formPagamentoColaborador(){abrirForm("Pagamento colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor fixo",name:"fixo",type:"number"},{label:"Comissão manual",name:"comissao",type:"number"},{label:"Vales descontados",name:"vales",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const col=db.colaboradores.find(x=>x.id==d.colaboradorId),fixo=Number(d.fixo||0)||Number(col?.valorFixo||0),comissao=Number(d.comissao||0),vales=Number(d.vales||0),liquido=fixo+comissao-vales;db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,fixo,comissao,vales,liquido,obs:d.obs});hist("Financeiro","Pagamento colaborador",dinheiro(liquido))})}
+function renderTerceiros(){const rows=[...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"",""]),...db.retornosTerceiros.map(r=>["Retorno",`Envio ${r.envioId}`,"",r.data,r.recebida,r.boa,r.problema]),...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"",p.data,"","",dinheiro(p.total)])];page("Terceiros","Envios, retornos e pagamentos",btn("Envio","formEnvioTerceiro()")+btn("Retorno","formRetornoTerceiro()")+btn("Pagamento","formPagamentoTerceiro()"),tabela(["Tipo","Terceiro/Envio","OP","Data","Qtd","Boa","Problema/Valor"],rows))}
+function formEnvioTerceiro(){abrirForm("Envio terceiro",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.enviosTerceiros.push({id:id("enviosTerceiros"),opId:Number(d.opId),terceiroId:Number(d.terceiroId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});hist("Operação","Envio terceiro",d.qtd)})}
+function formRetornoTerceiro(){const o=db.enviosTerceiros.map(e=>`<option value="${e.id}">Envio ${e.id} - ${opCodigo(e.opId)}</option>`).join("");abrirForm("Retorno terceiro",[{label:"Envio",name:"envioId",type:"select",options:o},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Recebida",name:"recebida",type:"number"},{label:"Boa",name:"boa",type:"number"},{label:"Problema",name:"problema",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.retornosTerceiros.push({id:id("retornosTerceiros"),envioId:Number(d.envioId),data:d.data,recebida:Number(d.recebida||0),boa:Number(d.boa||0),problema:Number(d.problema||0),obs:d.obs});hist("Operação","Retorno terceiro",d.boa)})}
+function formPagamentoTerceiro(){abrirForm("Pagamento terceiro",[{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Peças boas",name:"boa",type:"number"},{label:"Valor por peça",name:"valorPeca",type:"number"},{label:"Valor fixo",name:"fixo",type:"number"},{label:"Valor manual",name:"manual",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const total=Number(d.boa||0)*Number(d.valorPeca||0)+Number(d.fixo||0)+Number(d.manual||0);db.pagamentosTerceiros.push({id:id("pagamentosTerceiros"),terceiroId:Number(d.terceiroId),data:d.data,boa:Number(d.boa||0),valorPeca:Number(d.valorPeca||0),fixo:Number(d.fixo||0),manual:Number(d.manual||0),total,obs:d.obs});hist("Financeiro","Pagamento terceiro",dinheiro(total))})}
+function renderAcertos(){const rows=db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo)]);page("Acertos quinzenais","Acerto manual por OP",btn("Novo acerto","formAcerto()"),tabela(["Cliente","OP","Data","Vale","Pago","Saldo"],rows))}
+function formAcerto(){abrirForm("Novo acerto",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado",name:"vale",type:"number"},{label:"Pago",name:"pago",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId),vale=Number(d.vale||0),pago=Number(d.pago||0);if(vale)db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs});if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId:Number(d.clienteId),opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
+function renderHistorico(){page("Histórico","Últimas alterações","",tabela(["Data","Módulo","Ação","Obs"],db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs])))}
 render();
 </script>
 </body>

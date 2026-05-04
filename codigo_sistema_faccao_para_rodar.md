@@ -1,0 +1,135 @@
+# Sistema Facção - Código Para Rodar
+
+Arquivo principal: index.html.
+
+`html
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema Facção</title>
+  <style>
+    :root{
+      --bg:#f4f6f8;--card:#fff;--text:#1f2933;--muted:#667085;--line:#d9dee7;
+      --blue:#1769aa;--red:#b42318;--field:#fff;--nav:#fff;
+    }
+    body.dark{
+      --bg:#101418;--card:#171c22;--text:#f4f7fb;--muted:#a8b1bf;--line:#303844;
+      --blue:#2f8dd8;--red:#d9423a;--field:#0f141a;--nav:#151a20;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:var(--card);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;position:sticky;top:0;z-index:2}
+    h1{font-size:20px;margin:0} small,p{color:var(--muted)}
+    .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 62px)}
+    nav{background:var(--nav);border-right:1px solid var(--line);padding:14px}
+    nav button{width:100%;text-align:left;border:0;background:transparent;color:var(--text);padding:11px;border-radius:6px;cursor:pointer;font-weight:700}
+    nav button.active,nav button:hover{background:#1769aa22;color:var(--blue)}
+    main{padding:18px;overflow:auto}
+    .top{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+    h2{margin:0 0 4px;font-size:24px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:1px solid var(--line);background:var(--field);color:var(--text);padding:9px 12px;border-radius:6px;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+    .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .card,.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+    .card span{display:block;color:var(--muted);font-size:13px}.card strong{font-size:24px}
+    .table-wrap{overflow:auto} table{border-collapse:collapse;width:100%;min-width:760px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left} th{font-size:13px;color:var(--muted)}
+    .pill{border-radius:999px;background:#eef8ff;color:#145c8f;font-weight:700;font-size:12px;padding:4px 8px}
+    body.dark .pill{background:#1d3d5a;color:#d8edff}
+    dialog{border:0;border-radius:8px;box-shadow:0 20px 60px #0007;width:min(680px,92vw);background:var(--card);color:var(--text)}
+    dialog::backdrop{background:#0008}
+    form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    label{font-weight:700;font-size:13px}
+    input,select,textarea{width:100%;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:6px;font:inherit;background:var(--field);color:var(--text)}
+    textarea{min-height:76px}.full{grid-column:1/-1}.form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+    .empty{color:var(--muted);padding:18px}
+    @media(max-width:850px){
+      .layout{grid-template-columns:1fr}
+      nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}
+      nav button{white-space:nowrap;width:auto}
+      .grid{grid-template-columns:1fr 1fr}
+      form{grid-template-columns:1fr}
+      .top{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div><h1>Sistema Facção</h1><small>Operação, estoque, financeiro, colaboradores e terceiros</small></div>
+  <div class="actions">
+    <button class="btn" onclick="alternarTema()">Modo claro/escuro</button>
+    <button class="btn danger" onclick="resetar()">Limpar dados</button>
+  </div>
+</header>
+<div class="layout"><nav id="menu"></nav><main id="app"></main></div>
+<dialog id="modal"><div id="modalContent"></div></dialog>
+<script>
+const KEY="sistema_faccao_dados_v1";
+const THEME="sistema_faccao_tema";
+const padrao={clientes:[],modelos:[],colaboradores:[],terceiros:[],ops:[],entregas:[],quebras:[],insumosOp:[],estoque:[],movEstoque:[],contas:[],despesas:[],baixas:[],valesClientes:[],valesColaboradores:[],pagamentosColaboradores:[],enviosTerceiros:[],retornosTerceiros:[],pagamentosTerceiros:[],acertos:[],historico:[]};
+let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(padrao));
+let tela="Dashboard";
+let tema=localStorage.getItem(THEME)||"dark";
+const telas=["Dashboard","Cadastros","Operação","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
+function aplicarTema(){document.body.classList.toggle("dark",tema==="dark");localStorage.setItem(THEME,tema)}
+function alternarTema(){tema=tema==="dark"?"light":"dark";aplicarTema()}
+function salvar(){localStorage.setItem(KEY,JSON.stringify(db))}
+function id(lista){return(db[lista].reduce((m,x)=>Math.max(m,x.id),0)||0)+1}
+function hoje(){return new Date().toISOString().slice(0,10)}
+function dinheiro(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function hist(modulo,acao,obs=""){db.historico.unshift({id:id("historico"),data:new Date().toLocaleString("pt-BR"),modulo,acao,obs});salvar()}
+function nome(lista,itemId){return(db[lista].find(x=>x.id==itemId)||{}).nome||""}
+function opCodigo(opId){return(db.ops.find(x=>x.id==opId)||{}).codigo||""}
+function resetar(){if(confirm("Apagar todos os dados salvos neste navegador?")){localStorage.removeItem(KEY);db=JSON.parse(JSON.stringify(padrao));render()}}
+function totaisOp(opId){const op=db.ops.find(x=>x.id==opId);if(!op)return{entregue:0,quebra:0,saldo:0,valor:0};const entregue=db.entregas.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);const quebra=db.quebras.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);const saldo=Number(op.recebido||0)-entregue-quebra;const valor=Math.max(entregue-quebra,0)*Number(op.valorPeca||0);return{entregue,quebra,saldo,valor}}
+function atualizarConta(opId){const total=totaisOp(opId).valor;let c=db.contas.find(x=>x.opId==opId);if(!c){c={id:id("contas"),opId,valor:total,status:"Não pago"};db.contas.push(c)}else c.valor=total;atualizarStatusConta(c.id)}
+function saldoConta(cid){const c=db.contas.find(x=>x.id==cid);const pago=db.baixas.filter(x=>x.contaId==cid).reduce((s,x)=>s+Number(x.valor||0),0);return Number(c?.valor||0)-pago}
+function atualizarStatusConta(cid){const c=db.contas.find(x=>x.id==cid);if(!c)return;const saldo=saldoConta(cid),pago=Number(c.valor||0)-saldo;c.status=saldo<=0&&c.valor>0?"Pago":pago>0?"Pago parcial":"Não pago"}
+function atualizarStatusDespesa(despesaId){const desp=db.despesas.find(x=>x.id==despesaId);const pago=db.baixas.filter(x=>x.despesaId==despesaId).reduce((s,x)=>s+Number(x.valor||0),0);desp.status=pago>=desp.valor?"Pago":pago>0?"Pago parcial":"Não pago"}
+function renderMenu(){menu.innerHTML=telas.map(t=>`<button class="${t===tela?'active':''}" onclick="abrir('${t}')">${t}</button>`).join("")}
+function abrir(t){tela=t;render()}
+function page(titulo,subtitulo,botoes,conteudo){app.innerHTML=`<section class="top"><div><h2>${titulo}</h2><p>${subtitulo||""}</p></div><div class="actions">${botoes||""}</div></section>${conteudo}`}
+function tabela(cols,rows){if(!rows.length)return`<div class="panel empty">Nenhum registro.</div>`;return`<div class="panel table-wrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c??""}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+function btn(txt,fn,cls="primary"){return`<button class="btn ${cls}" onclick="${fn}">${txt}</button>`}
+function opts(lista,label="nome"){return db[lista].map(x=>`<option value="${x.id}">${x[label]}</option>`).join("")}
+function abrirForm(titulo,campos,aoSalvar){modalContent.innerHTML=`<h2>${titulo}</h2><form id="formModal">${campos.map(c=>c.type==="select"?`<label class="${c.full?'full':''}">${c.label}<select name="${c.name}">${c.options}</select></label>`:c.type==="textarea"?`<label class="${c.full?'full':''}">${c.label}<textarea name="${c.name}">${c.value||""}</textarea></label>`:`<label class="${c.full?'full':''}">${c.label}<input type="${c.type||"text"}" name="${c.name}" value="${c.value||""}"></label>`).join("")}<div class="form-actions"><button type="button" class="btn" onclick="modal.close()">Cancelar</button><button class="btn primary">Salvar</button></div></form>`;formModal.onsubmit=e=>{e.preventDefault();aoSalvar(Object.fromEntries(new FormData(formModal).entries()));salvar();modal.close();render()};modal.showModal()}
+function render(){aplicarTema();renderMenu();({Dashboard:renderDashboard,Cadastros:renderCadastros,"Operação":renderOperacao,"Insumos OP":renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])()}
+function renderDashboard(){const receber=db.contas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+saldoConta(x.id),0),pagar=db.despesas.filter(x=>x.status!=="Pago").reduce((s,x)=>s+Number(x.valor||0),0),pend=db.insumosOp.filter(x=>x.bloqueia&&!x.resolvida).length;const cards=`<section class="grid"><div class="card"><span>OPs</span><strong>${db.ops.length}</strong></div><div class="card"><span>A receber</span><strong>${dinheiro(receber)}</strong></div><div class="card"><span>A pagar</span><strong>${dinheiro(pagar)}</strong></div><div class="card"><span>Pendências</span><strong>${pend}</strong></div></section>`;const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),`<span class="pill">${op.status}</span>`,t.entregue,t.quebra,t.saldo,dinheiro(t.valor)]});page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor"],rows))}
+function renderCadastros(){const b=btn("Novo cliente","formCliente()")+btn("Novo modelo","formModelo()")+btn("Novo colaborador","formColaborador()")+btn("Novo terceiro","formTerceiro()");const rows=[...db.clientes.map(x=>["Cliente",x.nome,x.telefone,x.status]),...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),x.status]),...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone,x.status]),...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone,x.status])];page("Cadastros","Bases usadas pelo sistema",b,tabela(["Tipo","Nome","Telefone/Valor","Status"],rows))}
+function formCliente(){abrirForm("Novo cliente",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.clientes.push({id:id("clientes"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Cliente cadastrado",d.nome)})}
+function formModelo(){abrirForm("Novo modelo",[{label:"Nome",name:"nome"},{label:"Valor a receber por peça",name:"valorCliente",type:"number"},{label:"Valor base terceiro por peça",name:"valorTerceiro",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.modelos.push({id:id("modelos"),nome:d.nome,valorCliente:Number(d.valorCliente||0),valorTerceiro:Number(d.valorTerceiro||0),status:d.status,obs:d.obs});hist("Cadastros","Modelo cadastrado",d.nome)})}
+function formColaborador(){abrirForm("Novo colaborador",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Valor fixo pagamento",name:"valorFixo",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.colaboradores.push({id:id("colaboradores"),nome:d.nome,telefone:d.telefone,valorFixo:Number(d.valorFixo||0),status:d.status,obs:d.obs});hist("Cadastros","Colaborador cadastrado",d.nome)})}
+function formTerceiro(){abrirForm("Novo terceiro",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.terceiros.push({id:id("terceiros"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Terceiro cadastrado",d.nome)})}
+function renderOperacao(){const b=btn("Nova OP","formOp()")+btn("Registrar entrega","formEntrega()")+btn("Registrar quebra","formQuebra()")+btn("Finalizar OP","formFinalizarOp()");const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),`<span class="pill">${op.status}</span>`]});page("Operação / OPs","Produção, entregas e quebras",b,tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status"],rows))}
+function formOp(){abrirForm("Nova OP",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),codigo=`OP-${String(id("ops")).padStart(5,"0")}`,valor=Number(d.valorPeca||0)||Number(m?.valorCliente||0);db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});hist("Operação","OP criada",codigo)})}
+function formEntrega(){abrirForm("Registrar entrega",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==d.opId),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";atualizarConta(op.id);hist("Operação","Entrega registrada",`${op.codigo} - ${d.qtd}`)})}
+function formQuebra(){abrirForm("Registrar quebra",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Motivo",name:"motivo"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.quebras.push({id:id("quebras"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});atualizarConta(Number(d.opId));hist("Operação","Quebra registrada",d.qtd)})}
+function formFinalizarOp(){abrirForm("Finalizar OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Observação final",name:"obs",type:"textarea",full:true}],d=>{const pend=db.insumosOp.some(x=>x.opId==d.opId&&x.bloqueia&&!x.resolvida);if(pend){alert("Existe insumo da OP com pendência bloqueante.");return}const op=db.ops.find(x=>x.id==d.opId);op.status="Finalizada";op.obs=(op.obs||"")+"\nFechamento: "+d.obs;atualizarConta(op.id);hist("Operação","OP finalizada",op.codigo)})}
+function renderInsumosOp(){const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,x.situacao,x.bloqueia?"Sim":"Não",x.resolvida?"Sim":"Não",x.obs]);page("Insumos da OP","Materiais enviados pelo cliente",btn("Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs"],rows))}
+function formInsumoOp(){abrirForm("Insumo da OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"Situação",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produção",name:"bloqueia",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Pendência resolvida",name:"resolvida",type:"select",options:'<option value="1">Sim</option><option value="0">Não</option>'},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("Operação","Insumo cadastrado",d.item)})}
+function renderEstoque(){const rows=db.estoque.map(x=>[x.nome,x.codigo,x.cor,x.qtd,x.unidade,x.obs]);page("Estoque interno","Controle manual",btn("Novo insumo","formEstoque()")+btn("Entrada / retirada","formMovEstoque()"),tabela(["Material","Código","Cor","Quantidade","Unidade","Obs"],rows))}
+function formEstoque(){abrirForm("Novo insumo",[{label:"Nome",name:"nome"},{label:"Código",name:"codigo"},{label:"Cor",name:"cor"},{label:"Quantidade inicial",name:"qtd",type:"number"},{label:"Unidade",name:"unidade"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.estoque.push({id:id("estoque"),nome:d.nome,codigo:d.codigo,cor:d.cor,qtd:Number(d.qtd||0),unidade:d.unidade,obs:d.obs});hist("Estoque","Insumo cadastrado",d.nome)})}
+function formMovEstoque(){abrirForm("Movimentar estoque",[{label:"Insumo",name:"insumoId",type:"select",options:opts("estoque")},{label:"Tipo",name:"tipo",type:"select",options:"<option>Entrada</option><option>Retirada</option>"},{label:"Quantidade",name:"qtd",type:"number"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const item=db.estoque.find(x=>x.id==d.insumoId),antes=Number(item.qtd||0),qtd=Number(d.qtd||0);item.qtd=d.tipo==="Entrada"?antes+qtd:antes-qtd;db.movEstoque.push({id:id("movEstoque"),insumoId:item.id,tipo:d.tipo,qtd,data:d.data,antes,depois:item.qtd,obs:d.obs});hist("Estoque",d.tipo,`${item.nome}: ${qtd}`)})}
+function renderFinanceiro(){const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),c.status]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"",d.status]),...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),v.status])];page("Financeiro","Contas, despesas, baixas e vales",btn("Nova despesa","formDespesa()")+btn("Nova baixa","formBaixa()")+btn("Vale cliente","formValeCliente()"),tabela(["Tipo","Referência","Valor","Saldo","Status"],rows))}
+function formDespesa(){abrirForm("Nova despesa",[{label:"Descrição",name:"descricao"},{label:"Fornecedor",name:"fornecedor"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:Number(d.valor||0),status:"Não pago",obs:d.obs});hist("Financeiro","Despesa cadastrada",d.descricao)})}
+function formBaixa(){const c=db.contas.map(x=>`<option value="C-${x.id}">Conta ${opCodigo(x.opId)}</option>`).join(""),des=db.despesas.map(x=>`<option value="D-${x.id}">Despesa ${x.descricao}</option>`).join("");abrirForm("Nova baixa",[{label:"Conta ou despesa",name:"alvo",type:"select",options:c+des},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const[t,i]=d.alvo.split("-"),valor=Number(d.valor||0);if(t==="C"){db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusConta(Number(i))}else{db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusDespesa(Number(i))}hist("Financeiro","Baixa lançada",dinheiro(valor))})}
+function formValeCliente(){abrirForm("Vale cliente",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale cliente",dinheiro(valor))})}
+function renderColaboradores(){const rows=[...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),v.status]),...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),"Pago"])];page("Colaboradores","Vales e pagamentos",btn("Vale colaborador","formValeColaborador()")+btn("Pagamento","formPagamentoColaborador()"),tabela(["Tipo","Colaborador","Valor","Saldo/Líquido","Status"],rows))}
+function formValeColaborador(){abrirForm("Vale colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesColaboradores.push({id:id("valesColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale colaborador",dinheiro(valor))})}
+function formPagamentoColaborador(){abrirForm("Pagamento colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor fixo",name:"fixo",type:"number"},{label:"Comissão manual",name:"comissao",type:"number"},{label:"Vales descontados",name:"vales",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const col=db.colaboradores.find(x=>x.id==d.colaboradorId),fixo=Number(d.fixo||0)||Number(col?.valorFixo||0),comissao=Number(d.comissao||0),vales=Number(d.vales||0),liquido=fixo+comissao-vales;db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,fixo,comissao,vales,liquido,obs:d.obs});hist("Financeiro","Pagamento colaborador",dinheiro(liquido))})}
+function renderTerceiros(){const rows=[...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"",""]),...db.retornosTerceiros.map(r=>["Retorno",`Envio ${r.envioId}`,"",r.data,r.recebida,r.boa,r.problema]),...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"",p.data,"","",dinheiro(p.total)])];page("Terceiros","Envios, retornos e pagamentos",btn("Envio","formEnvioTerceiro()")+btn("Retorno","formRetornoTerceiro()")+btn("Pagamento","formPagamentoTerceiro()"),tabela(["Tipo","Terceiro/Envio","OP","Data","Qtd","Boa","Problema/Valor"],rows))}
+function formEnvioTerceiro(){abrirForm("Envio terceiro",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.enviosTerceiros.push({id:id("enviosTerceiros"),opId:Number(d.opId),terceiroId:Number(d.terceiroId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});hist("Operação","Envio terceiro",d.qtd)})}
+function formRetornoTerceiro(){const o=db.enviosTerceiros.map(e=>`<option value="${e.id}">Envio ${e.id} - ${opCodigo(e.opId)}</option>`).join("");abrirForm("Retorno terceiro",[{label:"Envio",name:"envioId",type:"select",options:o},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Recebida",name:"recebida",type:"number"},{label:"Boa",name:"boa",type:"number"},{label:"Problema",name:"problema",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.retornosTerceiros.push({id:id("retornosTerceiros"),envioId:Number(d.envioId),data:d.data,recebida:Number(d.recebida||0),boa:Number(d.boa||0),problema:Number(d.problema||0),obs:d.obs});hist("Operação","Retorno terceiro",d.boa)})}
+function formPagamentoTerceiro(){abrirForm("Pagamento terceiro",[{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Peças boas",name:"boa",type:"number"},{label:"Valor por peça",name:"valorPeca",type:"number"},{label:"Valor fixo",name:"fixo",type:"number"},{label:"Valor manual",name:"manual",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const total=Number(d.boa||0)*Number(d.valorPeca||0)+Number(d.fixo||0)+Number(d.manual||0);db.pagamentosTerceiros.push({id:id("pagamentosTerceiros"),terceiroId:Number(d.terceiroId),data:d.data,boa:Number(d.boa||0),valorPeca:Number(d.valorPeca||0),fixo:Number(d.fixo||0),manual:Number(d.manual||0),total,obs:d.obs});hist("Financeiro","Pagamento terceiro",dinheiro(total))})}
+function renderAcertos(){const rows=db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo)]);page("Acertos quinzenais","Acerto manual por OP",btn("Novo acerto","formAcerto()"),tabela(["Cliente","OP","Data","Vale","Pago","Saldo"],rows))}
+function formAcerto(){abrirForm("Novo acerto",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado",name:"vale",type:"number"},{label:"Pago",name:"pago",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId),vale=Number(d.vale||0),pago=Number(d.pago||0);if(vale)db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs});if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId:Number(d.clienteId),opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
+function renderHistorico(){page("Histórico","Últimas alterações","",tabela(["Data","Módulo","Ação","Obs"],db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs])))}
+render();
+</script>
+</body>
+</html>
+`
