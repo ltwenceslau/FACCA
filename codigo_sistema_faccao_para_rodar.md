@@ -1,8 +1,8 @@
-# Sistema Facção - Código Para Rodar
+# Sistema Faccao - codigo completo
 
-Arquivo único principal: index.html.
+Salve este conteudo como `index.html` para rodar no navegador.
 
-`html
+```html
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -27,17 +27,21 @@ Arquivo único principal: index.html.
 
     /* ── LAYOUT ── */
     .shell{display:flex;min-height:100vh}
-    aside{width:220px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+    aside{width:64px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;transition:width .18s ease;z-index:20}
+    aside:hover{width:220px}
     .brand{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
     .brand-ico{width:34px;height:34px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
     .brand h1{font-size:14px;font-weight:700;color:#fff;letter-spacing:.2px}
     .brand small{font-size:11px;color:#64748b;display:block}
+    .brand-text,.nav-label,.footer-label{opacity:0;width:0;overflow:hidden;white-space:nowrap;transition:opacity .12s ease,width .12s ease}
+    aside:hover .brand-text,aside:hover .nav-label,aside:hover .footer-label{opacity:1;width:auto}
     nav{padding:10px 8px;flex:1}
     nav button{
       width:100%;display:flex;align-items:center;gap:9px;padding:8px 10px;
       border:0;background:transparent;color:#94a3b8;border-radius:7px;cursor:pointer;
-      font:500 13px var(--font);text-align:left;transition:all .15s;margin-bottom:2px;
+      font:500 13px var(--font);text-align:left;transition:all .15s;margin-bottom:2px;justify-content:center;
     }
+    aside:hover nav button{justify-content:flex-start}
     nav button:hover{background:rgba(255,255,255,.05);color:#e2e8f0}
     nav button.active{background:rgba(14,165,233,.15);color:#38bdf8;font-weight:700}
     nav button .ico{font-size:15px;flex-shrink:0;width:20px;text-align:center}
@@ -45,8 +49,9 @@ Arquivo único principal: index.html.
     .sidebar-footer button{
       width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;
       border:0;border-radius:7px;cursor:pointer;font:500 12px var(--font);
-      transition:all .15s;margin-bottom:4px;
+      transition:all .15s;margin-bottom:4px;justify-content:center;
     }
+    aside:hover .sidebar-footer button{justify-content:flex-start}
     .btn-theme{background:rgba(255,255,255,.05);color:#94a3b8}
     .btn-theme:hover{color:#e2e8f0;background:rgba(255,255,255,.1)}
     .btn-wipe{background:rgba(220,38,38,.12);color:#fca5a5}
@@ -74,6 +79,10 @@ Arquivo único principal: index.html.
     .btn.secondary:hover{border-color:#cbd5e1}
     .btn.danger{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
     .btn.danger:hover{background:#fecaca}
+    .btn.mini{padding:5px 8px;font-size:12px}
+    .row-actions{display:flex;gap:6px;align-items:center;white-space:nowrap}
+    .inline-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .inline-filter select{width:auto;margin-top:0;min-width:170px}
 
     /* ── KPI CARDS ── */
     .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
@@ -155,6 +164,8 @@ Arquivo único principal: index.html.
     @media(max-width:860px){
       .shell{flex-direction:column}
       aside{width:100%;height:auto;position:sticky;top:0;z-index:10}
+      aside:hover{width:100%}
+      .brand-text,.nav-label,.footer-label{opacity:1;width:auto}
       .brand{padding:12px 14px}
       nav{display:flex;flex-direction:row;overflow-x:auto;padding:6px 8px}
       nav button{white-space:nowrap;flex-shrink:0;width:auto;padding:7px 10px}
@@ -166,6 +177,13 @@ Arquivo único principal: index.html.
       .top{flex-direction:column}
     }
     @media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
+    @media print{
+      aside,.actions,.panel-toolbar,.row-actions,dialog,#toasts{display:none!important}
+      .shell,.content,main{display:block;height:auto;overflow:visible;padding:0}
+      body{background:#fff;color:#111}
+      .panel,.kpi{box-shadow:none;border:1px solid #ddd}
+      table{min-width:0;font-size:11px}
+    }
   </style>
 </head>
 <body>
@@ -173,12 +191,12 @@ Arquivo único principal: index.html.
   <aside>
     <div class="brand">
       <div class="brand-ico">⚙️</div>
-      <div><h1>Sistema Facção</h1><small>Gestão industrial</small></div>
+      <div class="brand-text"><h1>Sistema Facção</h1><small>Gestão industrial</small></div>
     </div>
     <nav id="menu"></nav>
     <div class="sidebar-footer">
-      <button class="btn-theme" onclick="alternarTema()">🌙 Tema</button>
-      <button class="btn-wipe" onclick="resetar()">🗑️ Limpar</button>
+      <button class="btn-theme" onclick="alternarTema()"><span>🌙</span><span class="footer-label">Tema</span></button>
+      <button class="btn-wipe" onclick="resetar()"><span>🗑️</span><span class="footer-label">Limpar</span></button>
     </div>
   </aside>
   <div class="content"><main id="app"></main></div>
@@ -192,6 +210,7 @@ const KEY="sistema_faccao_dados_v1", THEME="sistema_faccao_tema";
 const padrao={clientes:[],modelos:[],colaboradores:[],terceiros:[],ops:[],entregas:[],quebras:[],insumosOp:[],estoque:[],movEstoque:[],contas:[],despesas:[],baixas:[],valesClientes:[],valesColaboradores:[],pagamentosColaboradores:[],enviosTerceiros:[],retornosTerceiros:[],pagamentosTerceiros:[],acertos:[],historico:[]};
 let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(padrao));
 let tela="Dashboard";
+let filtroStatusOperacao="Todos";
 let tema=localStorage.getItem(THEME)||"dark";
 const telas=["Dashboard","Cadastros","Operação","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
 const ICONS={"Dashboard":"📊","Cadastros":"👥","Operação":"🔧","Insumos OP":"📦","Estoque":"🗃️","Financeiro":"💳","Colaboradores":"👤","Terceiros":"🔄","Acertos":"✅","Histórico":"📋"};
@@ -235,7 +254,7 @@ function totaisOp(opId){
   const entregue=db.entregas.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);
   const quebra=db.quebras.filter(x=>x.opId==opId).reduce((s,x)=>s+Number(x.qtd||0),0);
   const saldo=Number(op.recebido||0)-entregue-quebra;
-  const valor=Math.max(entregue-quebra,0)*Number(op.valorPeca||0);
+  const valor=entregue*Number(op.valorPeca||0);
   return{entregue,quebra,saldo,valor};
 }
 function atualizarConta(opId){
@@ -262,6 +281,49 @@ function atualizarStatusDespesa(despesaId){
   desp.status=pago>=desp.valor?"Pago":pago>0?"Pago parcial":"Não pago";
 }
 
+function imprimirModulo(){window.print()}
+function acoes(lista,itemId){return`<div class="row-actions"><button class="btn secondary mini" onclick="editarRegistro('${lista}',${itemId})">Editar</button><button class="btn danger mini" onclick="excluirRegistro('${lista}',${itemId})">Excluir</button></div>`}
+function excluirRegistro(lista,itemId){
+  if(!confirm("Excluir este registro?"))return;
+  db[lista]=db[lista].filter(x=>x.id!==itemId);
+  if(["entregas","quebras"].includes(lista))db.ops.forEach(op=>atualizarConta(op.id));
+  salvar();hist("Sistema","Registro excluído",lista);render();
+}
+function editarRegistro(lista,itemId){
+  const item=db[lista].find(x=>x.id===itemId);if(!item)return;
+  const campos=Object.keys(item).filter(k=>k!=="id").map(k=>{
+    const v=item[k];
+    const type=typeof v==="number"?"number":typeof v==="boolean"?"select":String(v||"").length>60?"textarea":"text";
+    const campo={label:k,name:k,type,value:v??""};
+    if(typeof v==="boolean"){campo.options=`<option value="true"${v?" selected":""}>Sim</option><option value="false"${!v?" selected":""}>Não</option>`}
+    if(type==="textarea")campo.full=true;
+    return campo;
+  });
+  abrirForm("Editar registro",campos,d=>{
+    Object.keys(d).forEach(k=>{
+      const atual=item[k];
+      if(typeof atual==="number")item[k]=Number(d[k]||0);
+      else if(typeof atual==="boolean")item[k]=d[k]==="true";
+      else item[k]=d[k];
+    });
+    if(lista==="ops")atualizarConta(item.id);
+    if(["entregas","quebras"].includes(lista))atualizarConta(item.opId);
+    hist("Sistema","Registro editado",lista);
+  });
+}
+function totalValesCliente(clienteId){return db.valesClientes.filter(v=>v.clienteId==clienteId&&Number(v.saldo||0)>0).reduce((s,v)=>s+Number(v.saldo||0),0)}
+function totalValesColaborador(colaboradorId){return db.valesColaboradores.filter(v=>v.colaboradorId==colaboradorId&&Number(v.saldo||0)>0).reduce((s,v)=>s+Number(v.saldo||0),0)}
+function abaterVales(lista,campo,idPessoa,valor){
+  let restante=Number(valor||0),usado=0;
+  db[lista].filter(v=>v[campo]==idPessoa&&Number(v.saldo||0)>0).sort((a,b)=>String(a.data||"").localeCompare(String(b.data||""))||a.id-b.id).forEach(v=>{
+    if(restante<=0)return;
+    const uso=Math.min(restante,Number(v.saldo||0));
+    v.saldo=Number(v.saldo||0)-uso;usado+=uso;restante-=uso;
+    v.status=v.saldo<=0?"Utilizado":"Parcial";
+  });
+  return usado;
+}
+
 /* ========== PILL COM COR ========== */
 function pill(status){
   const s=String(status||"").toLowerCase();
@@ -278,13 +340,14 @@ function renderMenu(){
   const pend=db.insumosOp.filter(x=>x.bloqueia&&!x.resolvida).length;
   menu.innerHTML=telas.map(t=>{
     const badge=(t==="Insumos OP"&&pend>0)?`<span class="badge">${pend}</span>`:"";
-    return`<button class="${t===tela?"active":""}" onclick="abrir('${t}')"><span class="ico">${ICONS[t]||"•"}</span>${t}${badge}</button>`;
+    return`<button class="${t===tela?"active":""}" onclick="abrir('${t}')"><span class="ico">${ICONS[t]||"•"}</span><span class="nav-label">${t}</span>${badge}</button>`;
   }).join("");
 }
 function abrir(t){tela=t;render()}
 
 function page(titulo,subtitulo,botoes,conteudo){
-  app.innerHTML=`<div class="top"><div class="page-info"><h2>${titulo}</h2><p>${subtitulo||""}</p></div><div class="actions">${botoes||""}</div></div>${conteudo}`;
+  const imprimir=btn("Imprimir PDF","imprimirModulo()","secondary");
+  app.innerHTML=`<div class="top"><div class="page-info"><h2>${titulo}</h2><p>${subtitulo||""}</p></div><div class="actions">${botoes||""}${imprimir}</div></div>${conteudo}`;
 }
 
 let _tid=0;
@@ -356,27 +419,30 @@ function renderDashboard(){
   const rows=db.ops.slice().reverse().map(op=>{
     const t=totaisOp(op.id);
     const vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
-    return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),pill(op.status),t.entregue,t.quebra,t.saldo,dinheiro(t.valor),vencida?`<span class="pill pr">⚠ Vencida</span>`:op.prazo||"—"];
+    return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),pill(op.status),t.entregue,t.quebra,t.saldo,dinheiro(t.valor),vencida?`<span class="pill pr">⚠ Vencida</span>`:op.prazo||"—",acoes("ops",op.id)];
   });
-  page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor","Prazo"],rows));
+  page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor","Prazo","Ações"],rows));
 }
 
 /* ========== CADASTROS ========== */
 function renderCadastros(){
   const b=btn("+ Cliente","formCliente()")+btn("+ Modelo","formModelo()")+btn("+ Colaborador","formColaborador()")+btn("+ Terceiro","formTerceiro()");
-  const rows=[...db.clientes.map(x=>["Cliente",x.nome,x.telefone||"—",pill(x.status)]),...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),pill(x.status)]),...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone||"—",pill(x.status)]),...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone||"—",pill(x.status)])];
-  page("Cadastros","Bases usadas pelo sistema",b,tabela(["Tipo","Nome","Telefone / Valor","Status"],rows));
+  const rows=[...db.clientes.map(x=>["Cliente",x.nome,x.telefone||"—",pill(x.status),acoes("clientes",x.id)]),...db.modelos.map(x=>["Modelo",x.nome,dinheiro(x.valorCliente),pill(x.status),acoes("modelos",x.id)]),...db.colaboradores.map(x=>["Colaborador",x.nome,x.telefone||"—",pill(x.status),acoes("colaboradores",x.id)]),...db.terceiros.map(x=>["Terceiro",x.nome,x.telefone||"—",pill(x.status),acoes("terceiros",x.id)])];
+  page("Cadastros","Bases usadas pelo sistema",b,tabela(["Tipo","Nome","Telefone / Valor","Status","Ações"],rows));
 }
 function formCliente(){abrirForm("Novo cliente",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.clientes.push({id:id("clientes"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Cliente cadastrado",d.nome)})}
 function formModelo(){abrirForm("Novo modelo",[{label:"Nome",name:"nome"},{label:"Valor a receber por peça (R$)",name:"valorCliente",type:"number"},{label:"Valor base terceiro (R$)",name:"valorTerceiro",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.modelos.push({id:id("modelos"),nome:d.nome,valorCliente:Number(d.valorCliente||0),valorTerceiro:Number(d.valorTerceiro||0),status:d.status,obs:d.obs});hist("Cadastros","Modelo cadastrado",d.nome)})}
 function formColaborador(){abrirForm("Novo colaborador",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Valor fixo pagamento (R$)",name:"valorFixo",type:"number"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.colaboradores.push({id:id("colaboradores"),nome:d.nome,telefone:d.telefone,valorFixo:Number(d.valorFixo||0),status:d.status,obs:d.obs});hist("Cadastros","Colaborador cadastrado",d.nome)})}
 function formTerceiro(){abrirForm("Novo terceiro",[{label:"Nome",name:"nome"},{label:"Telefone",name:"telefone"},{label:"Status",name:"status",type:"select",options:"<option>Ativo</option><option>Inativo</option>"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.terceiros.push({id:id("terceiros"),nome:d.nome,telefone:d.telefone,status:d.status,obs:d.obs});hist("Cadastros","Terceiro cadastrado",d.nome)})}
 
-/* ========== OPERAÇÃO ========== */
+/* ========== OPERACAO ========== */
 function renderOperacao(){
   const b=btn("+ Nova OP","formOp()")+btn("Registrar entrega","formEntrega()","secondary")+btn("Registrar quebra","formQuebra()","secondary")+btn("Finalizar OP","formFinalizarOp()","secondary");
-  const rows=db.ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),pill(op.status)]});
-  page("Operação / OPs","Produção, entregas e quebras",b,tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status"],rows));
+  const status=[...new Set(db.ops.map(op=>op.status||"Sem status"))];
+  const filtro=`<div class="inline-filter"><label>Status da OP<select onchange="filtroStatusOperacao=this.value;renderOperacao()"><option${filtroStatusOperacao==="Todos"?" selected":""}>Todos</option>${status.map(s=>`<option${filtroStatusOperacao===s?" selected":""}>${s}</option>`).join("")}</select></label></div>`;
+  const ops=db.ops.filter(op=>filtroStatusOperacao==="Todos"||op.status===filtroStatusOperacao);
+  const rows=ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),pill(op.status),acoes("ops",op.id)]});
+  page("Operação / OPs","Produção, entregas e quebras",b,filtro+tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status","Ações"],rows));
 }
 function formOp(){abrirForm("Nova OP",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),codigo=`OP-${String(id("ops")).padStart(5,"0")}`,valor=Number(d.valorPeca||0)||Number(m?.valorCliente||0);db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});hist("Operação","OP criada",codigo)})}
 function formEntrega(){abrirForm("Registrar entrega",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==d.opId),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";atualizarConta(op.id);hist("Operação","Entrega registrada",`${op.codigo} — ${d.qtd} pç`)})}
@@ -385,23 +451,23 @@ function formFinalizarOp(){abrirForm("Finalizar OP",[{label:"OP",name:"opId",typ
 
 /* ========== INSUMOS OP ========== */
 function renderInsumosOp(){
-  const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,pill(x.situacao),x.bloqueia?`<span class="pill pr">Sim</span>`:`<span class="pill pz">Não</span>`,x.resolvida?`<span class="pill pg">Sim</span>`:`<span class="pill pa">Não</span>`,x.obs||"—"]);
-  page("Insumos da OP","Materiais enviados pelo cliente",btn("+ Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs"],rows));
+  const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,pill(x.situacao),x.bloqueia?`<span class="pill pr">Sim</span>`:`<span class="pill pz">Não</span>`,x.resolvida?`<span class="pill pg">Sim</span>`:`<span class="pill pa">Não</span>`,x.obs||"—",acoes("insumosOp",x.id)]);
+  page("Insumos da OP","Materiais enviados pelo cliente",btn("+ Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs","Ações"],rows));
 }
 function formInsumoOp(){abrirForm("Insumo da OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"Situação",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produção?",name:"bloqueia",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Pendência resolvida?",name:"resolvida",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("Insumos OP","Insumo cadastrado",d.item)})}
 
 /* ========== ESTOQUE ========== */
 function renderEstoque(){
-  const rows=db.estoque.map(x=>[x.nome,x.codigo||"—",x.cor||"—",`<strong>${x.qtd}</strong>`,x.unidade||"—",x.obs||"—"]);
-  page("Estoque interno","Controle manual de insumos",btn("+ Novo insumo","formEstoque()")+btn("Entrada / Retirada","formMovEstoque()","secondary"),tabela(["Material","Código","Cor","Quantidade","Unidade","Obs"],rows));
+  const rows=db.estoque.map(x=>[x.nome,x.codigo||"—",x.cor||"—",`<strong>${x.qtd}</strong>`,x.unidade||"—",x.obs||"—",acoes("estoque",x.id)]);
+  page("Estoque interno","Controle manual de insumos",btn("+ Novo insumo","formEstoque()")+btn("Entrada / Retirada","formMovEstoque()","secondary"),tabela(["Material","Código","Cor","Quantidade","Unidade","Obs","Ações"],rows));
 }
 function formEstoque(){abrirForm("Novo insumo",[{label:"Nome",name:"nome"},{label:"Código",name:"codigo"},{label:"Cor",name:"cor"},{label:"Quantidade inicial",name:"qtd",type:"number"},{label:"Unidade",name:"unidade"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.estoque.push({id:id("estoque"),nome:d.nome,codigo:d.codigo,cor:d.cor,qtd:Number(d.qtd||0),unidade:d.unidade,obs:d.obs});hist("Estoque","Insumo cadastrado",d.nome)})}
 function formMovEstoque(){abrirForm("Movimentar estoque",[{label:"Insumo",name:"insumoId",type:"select",options:opts("estoque")},{label:"Tipo",name:"tipo",type:"select",options:"<option>Entrada</option><option>Retirada</option>"},{label:"Quantidade",name:"qtd",type:"number"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const item=db.estoque.find(x=>x.id==d.insumoId),antes=Number(item.qtd||0),qtd=Number(d.qtd||0);item.qtd=d.tipo==="Entrada"?antes+qtd:antes-qtd;db.movEstoque.push({id:id("movEstoque"),insumoId:item.id,tipo:d.tipo,qtd,data:d.data,antes,depois:item.qtd,obs:d.obs});hist("Estoque",d.tipo,`${item.nome}: ${qtd}`)})}
 
 /* ========== FINANCEIRO ========== */
 function renderFinanceiro(){
-  const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),pill(c.status)]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"—",pill(d.status)]),...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),pill(v.status)])];
-  page("Financeiro","Contas, despesas, baixas e vales",btn("+ Despesa","formDespesa()")+btn("+ Baixa","formBaixa()","secondary")+btn("+ Vale cliente","formValeCliente()","secondary"),tabela(["Tipo","Referência","Valor","Saldo","Status"],rows));
+  const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),pill(c.status),acoes("contas",c.id)]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"—",pill(d.status),acoes("despesas",d.id)]),...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),pill(v.status),acoes("valesClientes",v.id)])];
+  page("Financeiro","Contas, despesas, baixas e vales",btn("+ Despesa","formDespesa()")+btn("+ Baixa","formBaixa()","secondary")+btn("+ Vale cliente","formValeCliente()","secondary"),tabela(["Tipo","Referência","Valor","Saldo","Status","Ações"],rows));
 }
 function formDespesa(){abrirForm("Nova despesa",[{label:"Descrição",name:"descricao"},{label:"Fornecedor",name:"fornecedor"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:Number(d.valor||0),status:"Não pago",obs:d.obs});hist("Financeiro","Despesa cadastrada",d.descricao)})}
 function formBaixa(){const c=db.contas.map(x=>`<option value="C-${x.id}">Conta ${opCodigo(x.opId)}</option>`).join(""),des=db.despesas.map(x=>`<option value="D-${x.id}">Despesa — ${x.descricao}</option>`).join("");abrirForm("Nova baixa",[{label:"Conta ou despesa",name:"alvo",type:"select",options:c+des},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const[t,i]=d.alvo.split("-"),valor=Number(d.valor||0);if(t==="C"){db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusConta(Number(i))}else{db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusDespesa(Number(i))}hist("Financeiro","Baixa lançada",dinheiro(valor))})}
@@ -409,16 +475,16 @@ function formValeCliente(){abrirForm("Vale cliente",[{label:"Cliente",name:"clie
 
 /* ========== COLABORADORES ========== */
 function renderColaboradores(){
-  const rows=[...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),pill(v.status)]),...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),`<span class="pill pg">Pago</span>`])];
-  page("Colaboradores","Vales e pagamentos",btn("+ Vale","formValeColaborador()")+btn("+ Pagamento","formPagamentoColaborador()","secondary"),tabela(["Tipo","Colaborador","Valor","Saldo / Líquido","Status"],rows));
+  const rows=[...db.valesColaboradores.map(v=>["Vale",nome("colaboradores",v.colaboradorId),dinheiro(v.valor),dinheiro(v.saldo),pill(v.status),acoes("valesColaboradores",v.id)]),...db.pagamentosColaboradores.map(p=>["Pagamento",nome("colaboradores",p.colaboradorId),dinheiro(p.fixo+p.comissao),dinheiro(p.liquido),`<span class="pill pg">Pago</span>`,acoes("pagamentosColaboradores",p.id)])];
+  page("Colaboradores","Vales e pagamentos",btn("+ Vale","formValeColaborador()")+btn("+ Pagamento","formPagamentoColaborador()","secondary"),tabela(["Tipo","Colaborador","Valor","Saldo / Líquido","Status","Ações"],rows));
 }
 function formValeColaborador(){abrirForm("Vale colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=Number(d.valor||0);db.valesColaboradores.push({id:id("valesColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Colaboradores","Vale colaborador",dinheiro(valor))})}
-function formPagamentoColaborador(){abrirForm("Pagamento colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:opts("colaboradores")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor fixo (R$)",name:"fixo",type:"number"},{label:"Comissão manual (R$)",name:"comissao",type:"number"},{label:"Vales descontados (R$)",name:"vales",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const col=db.colaboradores.find(x=>x.id==d.colaboradorId),fixo=Number(d.fixo||0)||Number(col?.valorFixo||0),comissao=Number(d.comissao||0),vales=Number(d.vales||0),liquido=fixo+comissao-vales;db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:Number(d.colaboradorId),data:d.data,fixo,comissao,vales,liquido,obs:d.obs});hist("Colaboradores","Pagamento colaborador",dinheiro(liquido))})}
+function formPagamentoColaborador(){abrirForm("Pagamento colaborador",[{label:"Colaborador",name:"colaboradorId",type:"select",options:db.colaboradores.map(x=>`<option value="${x.id}">${x.nome}${totalValesColaborador(x.id)>0?" — vale pendente "+dinheiro(totalValesColaborador(x.id)):""}</option>`).join("")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor fixo (R$)",name:"fixo",type:"number"},{label:"Comissão manual (R$)",name:"comissao",type:"number"},{label:"Vales descontados (R$)",name:"vales",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const colId=Number(d.colaboradorId),col=db.colaboradores.find(x=>x.id==colId),fixo=Number(d.fixo||0)||Number(col?.valorFixo||0),comissao=Number(d.comissao||0),pendente=totalValesColaborador(colId);let vales=Number(d.vales||0);if(pendente>0&&vales<=0)toast("Atenção: este colaborador tem vales pendentes de "+dinheiro(pendente)+".","nf");if(vales>0){const usado=abaterVales("valesColaboradores","colaboradorId",colId,vales);if(usado<vales)toast("Vale descontado limitado ao saldo pendente: "+dinheiro(usado)+".","nf");vales=usado}const liquido=fixo+comissao-vales;db.pagamentosColaboradores.push({id:id("pagamentosColaboradores"),colaboradorId:colId,data:d.data,fixo,comissao,vales,liquido,obs:d.obs});hist("Colaboradores","Pagamento colaborador",dinheiro(liquido))})}
 
 /* ========== TERCEIROS ========== */
 function renderTerceiros(){
-  const rows=[...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"—","—"]),...db.retornosTerceiros.map(r=>["Retorno",`Envio #${r.envioId}`,"—",r.data,r.recebida,r.boa,r.problema]),...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"—",p.data,"—","—",dinheiro(p.total)])];
-  page("Terceiros","Envios, retornos e pagamentos",btn("+ Envio","formEnvioTerceiro()")+btn("+ Retorno","formRetornoTerceiro()","secondary")+btn("+ Pagamento","formPagamentoTerceiro()","secondary"),tabela(["Tipo","Terceiro / Envio","OP","Data","Qtd","Boa","Problema / Valor"],rows));
+  const rows=[...db.enviosTerceiros.map(e=>["Envio",nome("terceiros",e.terceiroId),opCodigo(e.opId),e.data,e.qtd,"—","—",acoes("enviosTerceiros",e.id)]),...db.retornosTerceiros.map(r=>["Retorno",`Envio #${r.envioId}`,"—",r.data,r.recebida,r.boa,r.problema,acoes("retornosTerceiros",r.id)]),...db.pagamentosTerceiros.map(p=>["Pagamento",nome("terceiros",p.terceiroId),"—",p.data,"—","—",dinheiro(p.total),acoes("pagamentosTerceiros",p.id)])];
+  page("Terceiros","Envios, retornos e pagamentos",btn("+ Envio","formEnvioTerceiro()")+btn("+ Retorno","formRetornoTerceiro()","secondary")+btn("+ Pagamento","formPagamentoTerceiro()","secondary"),tabela(["Tipo","Terceiro / Envio","OP","Data","Qtd","Boa","Problema / Valor","Ações"],rows));
 }
 function formEnvioTerceiro(){abrirForm("Envio para terceiro",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Terceiro",name:"terceiroId",type:"select",options:opts("terceiros")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.enviosTerceiros.push({id:id("enviosTerceiros"),opId:Number(d.opId),terceiroId:Number(d.terceiroId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});hist("Terceiros","Envio registrado",`${d.qtd} pç`)})}
 function formRetornoTerceiro(){const o=db.enviosTerceiros.map(e=>`<option value="${e.id}">Envio #${e.id} — ${opCodigo(e.opId)}</option>`).join("");abrirForm("Retorno de terceiro",[{label:"Envio",name:"envioId",type:"select",options:o},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Recebida",name:"recebida",type:"number"},{label:"Boa",name:"boa",type:"number"},{label:"Problema",name:"problema",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.retornosTerceiros.push({id:id("retornosTerceiros"),envioId:Number(d.envioId),data:d.data,recebida:Number(d.recebida||0),boa:Number(d.boa||0),problema:Number(d.problema||0),obs:d.obs});hist("Terceiros","Retorno registrado",`${d.boa} boas`)})}
@@ -426,14 +492,14 @@ function formPagamentoTerceiro(){abrirForm("Pagamento terceiro",[{label:"Terceir
 
 /* ========== ACERTOS ========== */
 function renderAcertos(){
-  const rows=db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo)]);
-  page("Acertos quinzenais","Acerto manual por OP",btn("+ Novo acerto","formAcerto()"),tabela(["Cliente","OP","Data","Vale","Pago","Saldo"],rows));
+  const rows=db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo),acoes("acertos",a.id)]);
+  page("Acertos quinzenais","Acerto manual por OP",btn("+ Novo acerto","formAcerto()"),tabela(["Cliente","OP","Data","Vale","Pago","Saldo","Ações"],rows));
 }
-function formAcerto(){abrirForm("Novo acerto",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado (R$)",name:"vale",type:"number"},{label:"Pago (R$)",name:"pago",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId),vale=Number(d.vale||0),pago=Number(d.pago||0);if(vale)db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs});if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId:Number(d.clienteId),opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
+function formAcerto(){abrirForm("Novo acerto",[{label:"Cliente",name:"clienteId",type:"select",options:db.clientes.map(x=>`<option value="${x.id}">${x.nome}${totalValesCliente(x.id)>0?" — vale disponível "+dinheiro(totalValesCliente(x.id)):""}</option>`).join("")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado (R$)",name:"vale",type:"number"},{label:"Pago (R$)",name:"pago",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const clienteId=Number(d.clienteId),opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId);let vale=Number(d.vale||0);const pago=Number(d.pago||0);if(vale>0){const usado=abaterVales("valesClientes","clienteId",clienteId,vale);if(usado<vale)toast("Vale aplicado limitado ao saldo disponível: "+dinheiro(usado)+".","nf");vale=usado;if(vale>0)db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs})}if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId,opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
 
 /* ========== HISTÓRICO ========== */
 function renderHistorico(){
-  page("Histórico","Últimas alterações registradas","",tabela(["Data","Módulo","Ação","Observação"],db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs||"—"])));
+  page("Histórico","Últimas alterações registradas","",tabela(["Data","Módulo","Ação","Observação","Ações"],db.historico.map(h=>[h.data,h.modulo,h.acao,h.obs||"—",acoes("historico",h.id)])));
 }
 
 render();
@@ -441,4 +507,4 @@ render();
 </body>
 </html>
 
-`
+```
