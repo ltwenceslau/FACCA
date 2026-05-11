@@ -190,6 +190,10 @@
     .prod-log-row small{color:var(--muted)}
     .op-link{background:transparent;border:0;color:var(--text);cursor:pointer;font:800 13px var(--font);padding:0;text-align:left}
     .op-link:hover{text-decoration:underline}
+    .grade-table{border:1px solid var(--line);border-radius:16px;overflow:auto}
+    .grade-table table{min-width:0}
+    .grade-table th,.grade-table td{text-align:center}
+    .grade-table th:first-child,.grade-table td:first-child{text-align:left}
 
     /* ── TOAST ── */
     #toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
@@ -368,6 +372,70 @@ function atualizarStatusDespesa(despesaId){
 
 function imprimirModulo(){window.print()}
 function acoes(lista,itemId){return`<div class="row-actions"><button class="btn secondary mini" onclick="editarRegistro('${lista}',${itemId})">Editar</button><button class="btn danger mini" onclick="excluirRegistro('${lista}',${itemId})">Excluir</button></div>`}
+function listaTexto(v){return String(v||"").split(/[,;\n]/).map(x=>x.trim()).filter(Boolean)}
+function distribuir(total,partes){
+  partes=Math.max(1,partes);
+  const base=Math.floor(Number(total||0)/partes),resto=Number(total||0)%partes;
+  return Array.from({length:partes},(_,i)=>base+(i<resto?1:0));
+}
+function quantidadesPorCor(op){
+  const cores=listaTexto(op.cores||"Única");
+  const mapa={};
+  String(op.qtdPorCor||"").split(/\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    const [cor,valor]=l.split(/[:=]/);
+    if(cor)mapa[cor.trim().toLowerCase()]=numero(valor);
+  });
+  if(Object.keys(mapa).length)return cores.map(c=>({cor:c,qtd:mapa[c.toLowerCase()]||0}));
+  const partes=distribuir(Number(op.recebido||0),cores.length);
+  return cores.map((cor,i)=>({cor,qtd:partes[i]}));
+}
+function totalPorCor(texto){
+  return String(texto||"").split(/\n/).map(l=>l.trim()).filter(Boolean).reduce((s,l)=>{
+    const [,valor]=l.split(/[:=]/);
+    return s+numero(valor);
+  },0);
+}
+function quantidadesPorTamanho(op){
+  const tamanhos=listaTexto(op.tamanhos||op.grade||"Único");
+  const mapa={};
+  String(op.qtdPorTamanho||"").split(/\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    const [tam,valor]=l.split(/[:=]/);
+    if(tam)mapa[tam.trim().toLowerCase()]=numero(valor);
+  });
+  if(Object.keys(mapa).length)return tamanhos.map(tam=>({tam,qtd:mapa[tam.toLowerCase()]||0}));
+  const partes=distribuir(Number(op.recebido||0),tamanhos.length);
+  return tamanhos.map((tam,i)=>({tam,qtd:partes[i]}));
+}
+function totalPorTamanho(texto){
+  return String(texto||"").split(/\n/).map(l=>l.trim()).filter(Boolean).reduce((s,l)=>{
+    const [,valor]=l.split(/[:=]/);
+    return s+numero(valor);
+  },0);
+}
+function distribuirPorPeso(total,pesos){
+  const soma=pesos.reduce((s,x)=>s+Number(x||0),0);
+  if(!soma)return distribuir(total,pesos.length);
+  const brutos=pesos.map(p=>Number(total||0)*Number(p||0)/soma);
+  const inteiros=brutos.map(Math.floor);
+  let resto=Number(total||0)-inteiros.reduce((s,x)=>s+x,0);
+  const ordem=brutos.map((v,i)=>({i,frac:v-Math.floor(v)})).sort((a,b)=>b.frac-a.frac);
+  for(let i=0;i<resto;i++)inteiros[ordem[i%ordem.length].i]++;
+  return inteiros;
+}
+function gradeOp(op){
+  const tamanhos=listaTexto(op.tamanhos||op.grade||"Único");
+  const pesosTamanho=quantidadesPorTamanho(op).map(x=>x.qtd);
+  return quantidadesPorCor(op).map(item=>{
+    const partes=distribuirPorPeso(item.qtd,pesosTamanho);
+    return{cor:item.cor,total:item.qtd,tamanhos:tamanhos.map((tam,i)=>({tam,qtd:partes[i]}))};
+  });
+}
+function gradeHtml(op){
+  const grade=gradeOp(op),tamanhos=listaTexto(op.tamanhos||op.grade||"Único");
+  const head=`<tr><th>Cor</th>${tamanhos.map(t=>`<th>${t}</th>`).join("")}<th>Total</th></tr>`;
+  const body=grade.map(l=>`<tr><td>${l.cor}</td>${l.tamanhos.map(t=>`<td>${t.qtd}</td>`).join("")}<td><strong>${l.total}</strong></td></tr>`).join("");
+  return`<div class="grade-table"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
 function excluirRegistro(lista,itemId){
   if(!confirm("Excluir este registro?"))return;
   db[lista]=db[lista].filter(x=>x.id!==itemId);
@@ -480,6 +548,7 @@ function abrirForm(titulo,campos,aoSalvar){
       </form>
     </div>`;
   formModal.onsubmit=e=>{e.preventDefault();aoSalvar(Object.fromEntries(new FormData(formModal).entries()));salvar();modal.close();render()};
+  if(titulo==="Nova OP")prepararFormOp();
   modal.showModal();
 }
 
@@ -515,7 +584,7 @@ function renderDashboard(){
 /* ========== CADASTROS ========== */
 const cadastroCfg={
   clientes:{titulo:"Fornecedores",icone:"👥",desc:"Razão social, CNPJ/CPF, contato, endereço e status.",novo:"Fornecedor",lista:"clientes",form:"formCliente",busca:["nome","fantasia","documento","telefone","email","endereco"],cols:["Razão social","Fantasia","CNPJ/CPF","Telefone","E-mail","Status"],row:x=>[x.nome,x.fantasia||"—",x.documento||"—",x.telefone||"—",x.email||"—",pill(x.status||"Ativo")]},
-  modelos:{titulo:"Modelos",icone:"🧵",desc:"Valores base por peça e aviamentos usados nas OPs.",novo:"Modelo",lista:"modelos",form:"formModelo",busca:["nome","descricao","aviamentos"],cols:["Modelo","Receber","Pagar terc.","Status"],row:x=>[x.nome,dinheiro(x.valorCliente),dinheiro(x.valorTerceiro),pill(x.status||"Ativo")]},
+  modelos:{titulo:"Modelos",icone:"🧵",desc:"Valores base por peça, tamanhos e aviamentos usados nas OPs.",novo:"Modelo",lista:"modelos",form:"formModelo",busca:["nome","descricao","tamanhos","aviamentos"],cols:["Modelo","Tamanhos","Receber","Pagar terc.","Status"],row:x=>[x.nome,x.tamanhos||"—",dinheiro(x.valorCliente),dinheiro(x.valorTerceiro),pill(x.status||"Ativo")]},
   colaboradores:{titulo:"Colaboradores",icone:"👤",desc:"Equipe interna, função, documento, telefone e PIX.",novo:"Colaborador",lista:"colaboradores",form:"formColaborador",busca:["nome","documento","funcao","telefone","pixChave"],cols:["Nome","Função","Documento","Telefone","PIX","Status"],row:x=>[x.nome,x.funcao||"—",x.documento||"—",x.telefone||"—",x.pixTipo||"—",pill(x.status||"Ativo")]},
   terceiros:{titulo:"Terceiros",icone:"🔄",desc:"Facções externas, contato, endereço, PIX e status.",novo:"Terceiro",lista:"terceiros",form:"formTerceiro",busca:["nome","fantasia","documento","telefone","endereco","pixChave"],cols:["Razão social","Fantasia","CNPJ/CPF","Telefone","PIX","Status"],row:x=>[x.nome,x.fantasia||"—",x.documento||"—",x.telefone||"—",x.pixTipo||"—",pill(x.status||"Ativo")]},
   estoque:{titulo:"Insumos",icone:"🗃️",desc:"Materiais, código, característica, cor, saldo e unidade.",novo:"Insumo",lista:"estoque",form:"formEstoque",busca:["nome","codigo","caracteristica","cor","unidade"],cols:["Material","Código","Característica","Cor","Estoque","Un.","Status"],row:x=>[x.nome,x.codigo||"—",x.caracteristica||"—",x.cor||"—",`<strong>${x.qtd||0}</strong>`,x.unidade||"—",pill(x.status||"Ativo")]}
@@ -523,7 +592,7 @@ const cadastroCfg={
 function normalizarCadastro(lista,item){
   if(!item.status)item.status="Ativo";
   if(lista==="clientes"){item.fantasia=item.fantasia||item.nomeFantasia||"";item.documento=item.documento||item.cnpj||"";item.email=item.email||"";item.endereco=item.endereco||""}
-  if(lista==="modelos"){item.valorColaborador=Number(item.valorColaborador||0);item.valorTerceiro=Number(item.valorTerceiro||0);item.descricao=item.descricao||item.obs||"";item.aviamentos=item.aviamentos||""}
+  if(lista==="modelos"){item.valorColaborador=Number(item.valorColaborador||0);item.valorTerceiro=Number(item.valorTerceiro||0);item.descricao=item.descricao||item.obs||"";item.tamanhos=item.tamanhos||"";item.aviamentos=item.aviamentos||""}
   if(lista==="colaboradores"){item.funcao=item.funcao||"";item.documento=item.documento||"";item.pixTipo=item.pixTipo||"";item.pixChave=item.pixChave||""}
   if(lista==="terceiros"){item.fantasia=item.fantasia||"";item.documento=item.documento||"";item.endereco=item.endereco||"";item.pixTipo=item.pixTipo||"";item.pixChave=item.pixChave||""}
   if(lista==="estoque"){item.caracteristica=item.caracteristica||""}
@@ -579,7 +648,7 @@ function formCliente(itemId){
   abrirForm(itemId?"Editar fornecedor":"Novo fornecedor",[{label:"Razão social / nome",name:"nome",value:x.nome},{label:"Nome fantasia",name:"fantasia",value:x.fantasia},{label:"CNPJ/CPF",name:"documento",value:x.documento},{label:"Telefone",name:"telefone",value:x.telefone},{label:"E-mail",name:"email",value:x.email},{label:"Endereço",name:"endereco",value:x.endereco},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Observação",name:"obs",type:"textarea",full:true,value:x.obs}],d=>salvarCadastro("clientes",itemId,d,(i,v)=>Object.assign(i,v)))}
 function formModelo(itemId){
   const x=itemId?normalizarCadastro("modelos",db.modelos.find(i=>i.id===itemId)):{status:"Ativo"};
-  abrirForm(itemId?"Editar modelo":"Novo modelo",[{label:"Nome",name:"nome",value:x.nome},{label:"Descrição",name:"descricao",type:"textarea",full:true,value:x.descricao},{label:"Valor a receber por peça (R$)",name:"valorCliente",money:true,value:x.valorCliente},{label:"Valor pagar terceiro por peça (R$)",name:"valorTerceiro",money:true,value:x.valorTerceiro},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Aviamentos necessários",name:"aviamentos",type:"textarea",full:true,value:x.aviamentos}],d=>salvarCadastro("modelos",itemId,d,(i,v)=>Object.assign(i,{nome:v.nome,descricao:v.descricao,valorCliente:moeda(v.valorCliente),valorTerceiro:moeda(v.valorTerceiro),status:v.status,aviamentos:v.aviamentos})))}
+  abrirForm(itemId?"Editar modelo":"Novo modelo",[{label:"Nome",name:"nome",value:x.nome},{label:"Descrição",name:"descricao",type:"textarea",full:true,value:x.descricao},{label:"Tamanhos do modelo",name:"tamanhos",value:x.tamanhos||"P, M, G, GG"},{label:"Valor a receber por peça (R$)",name:"valorCliente",money:true,value:x.valorCliente},{label:"Valor pagar terceiro por peça (R$)",name:"valorTerceiro",money:true,value:x.valorTerceiro},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Aviamentos necessários",name:"aviamentos",type:"textarea",full:true,value:x.aviamentos}],d=>salvarCadastro("modelos",itemId,d,(i,v)=>Object.assign(i,{nome:v.nome,descricao:v.descricao,tamanhos:v.tamanhos,valorCliente:moeda(v.valorCliente),valorTerceiro:moeda(v.valorTerceiro),status:v.status,aviamentos:v.aviamentos})))}
 function formColaborador(itemId){
   const x=itemId?normalizarCadastro("colaboradores",db.colaboradores.find(i=>i.id===itemId)):{status:"Ativo"};
   abrirForm(itemId?"Editar colaborador":"Novo colaborador",[{label:"Nome",name:"nome",value:x.nome},{label:"Documento",name:"documento",value:x.documento},{label:"Função",name:"funcao",value:x.funcao},{label:"Telefone",name:"telefone",value:x.telefone},{label:"Tipo PIX",name:"pixTipo",type:"select",options:opcoesPix(x.pixTipo)},{label:"Chave PIX",name:"pixChave",value:x.pixChave},{label:"Valor fixo pagamento (R$)",name:"valorFixo",money:true,value:x.valorFixo},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Observação",name:"obs",type:"textarea",full:true,value:x.obs}],d=>salvarCadastro("colaboradores",itemId,d,(i,v)=>Object.assign(i,{nome:v.nome,documento:v.documento,funcao:v.funcao,telefone:v.telefone,pixTipo:v.pixTipo,pixChave:v.pixChave,valorFixo:moeda(v.valorFixo),status:v.status,obs:v.obs})))}
@@ -620,18 +689,19 @@ function renderOperacao(){
       t.quebra,
       t.saldo,
       vencida?`<span class="pill pr">Vencida</span>`:(op.prazo||"—"),
-      pill(op.status),
-      acoesProducao(op.id)
+      pill(op.status)
     ];
   });
-  const lista=filtro+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Prazo","Status","Ações"],rows);
-  const detalhe=painelProducao();
-  page("Produção / OPs","Acompanhe entrada, andamento, entregas, quebras e fechamento.",b,resumo+`<div class="prod-grid ${detalhe?"":"single"}"><div>${lista}</div>${detalhe}</div>`);
+  const lista=filtro+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Prazo","Status"],rows);
+  page("Produção / OPs","Acompanhe entrada, andamento, entregas, quebras e fechamento.",b,resumo+`<div class="prod-grid single"><div>${lista}</div></div>`);
 }
-function acoesProducao(opId){
-  return`<div class="row-actions"><button class="btn secondary mini" onclick="abrirOpDetalhe(${opId})">Abrir OP</button></div>`;
+function abrirOpDetalhe(opId){
+  opSelecionada=opId;
+  const html=painelProducao();
+  if(!html)return;
+  modalContent.innerHTML=html;
+  modal.showModal();
 }
-function abrirOpDetalhe(opId){opSelecionada=opId;renderOperacao()}
 function painelProducao(){
   const op=db.ops.find(x=>x.id===opSelecionada);
   if(!op)return"";
@@ -656,6 +726,10 @@ function painelProducao(){
         <div class="prod-stat"><span>Quebra</span><strong>${t.quebra}</strong></div>
       </div>
       <div>${pill(op.status)} ${vencida?`<span class="pill pr">Prazo vencido</span>`:""}</div>
+      <div>
+        <strong>Grade de produção</strong>
+        ${gradeHtml(op)}
+      </div>
       <div class="timeline">${timeline}</div>
       <div class="prod-actions">
         <button class="btn secondary" onclick="formEditarOp(${op.id})">Editar OP</button>
@@ -663,6 +737,7 @@ function painelProducao(){
         <button class="btn secondary" onclick="formQuebra(${op.id})">Registrar quebra</button>
         <button class="btn primary" onclick="formFinalizarOp(${op.id})">Finalizar</button>
         <button class="btn secondary" onclick="imprimirOp(${op.id})">Imprimir PDF</button>
+        <button class="btn secondary" onclick="modal.close()">Fechar</button>
       </div>
       <div class="prod-log">
         <strong>Movimentos recentes</strong>
@@ -703,6 +778,7 @@ function imprimirOp(opId){
     </div>
     <p><strong>Entrada:</strong> ${op.entrada||"—"} &nbsp; <strong>Prazo:</strong> ${op.prazo||"—"} &nbsp; <strong>Valor:</strong> ${dinheiro(t.valor)}</p>
     <p><strong>Grade:</strong> ${op.grade||"—"}</p>
+    <h2>Grade de produção</h2>${gradeHtml(op)}
     <p><strong>Observacao:</strong> ${op.obs||"—"}</p>
     <h2>Entregas</h2><table><thead><tr><th>Data</th><th>Quantidade</th><th>Observacao</th></tr></thead><tbody>${linhasEntrega}</tbody></table>
     <h2>Quebras</h2><table><thead><tr><th>Data</th><th>Quantidade</th><th>Motivo</th></tr></thead><tbody>${linhasQuebra}</tbody></table>
@@ -715,15 +791,19 @@ function formEditarOp(opId){
   abrirForm(`Editar ${op.codigo}`,[
     {label:"Fornecedor",name:"clienteId",type:"select",options:optsSelecionado("clientes",op.clienteId)},
     {label:"Modelo",name:"modeloId",type:"select",options:optsSelecionado("modelos",op.modeloId)},
-    {label:"Quantidade recebida",name:"recebido",type:"number",value:op.recebido},
-    {label:"Grade",name:"grade",value:op.grade},
+    {label:"Quantidade total",name:"recebido",type:"number",value:op.recebido},
+    {label:"Grade / tamanhos",name:"tamanhos",value:op.tamanhos||op.grade},
+    {label:"Cores",name:"cores",value:op.cores},
+    {label:"Quantidade individual por cor",name:"qtdPorCor",type:"textarea",full:true,value:op.qtdPorCor},
+    {label:"Quantidade individual por tamanho",name:"qtdPorTamanho",type:"textarea",full:true,value:op.qtdPorTamanho},
     {label:"Entrada",name:"entrada",type:"date",value:op.entrada},
     {label:"Prazo",name:"prazo",type:"date",value:op.prazo},
     {label:"Valor por peça (R$)",name:"valorPeca",money:true,value:op.valorPeca},
     {label:"Status",name:"status",type:"select",options:opcoesStatusOp(op.status)},
     {label:"Observação",name:"obs",type:"textarea",full:true,value:op.obs}
   ],d=>{
-    Object.assign(op,{clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:moeda(d.valorPeca),status:d.status,obs:d.obs});
+    const totalCores=totalPorCor(d.qtdPorCor),totalTamanhos=totalPorTamanho(d.qtdPorTamanho);
+    Object.assign(op,{clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:totalCores||totalTamanhos||Number(d.recebido||0),grade:d.tamanhos,tamanhos:d.tamanhos,cores:d.cores,qtdPorCor:d.qtdPorCor,qtdPorTamanho:d.qtdPorTamanho,entrada:d.entrada,prazo:d.prazo,valorPeca:moeda(d.valorPeca),status:d.status,obs:d.obs});
     opSelecionada=op.id;atualizarConta(op.id);hist("Produção","OP editada",op.codigo);
   });
 }
@@ -733,7 +813,18 @@ function optsSelecionado(lista,selecionado,label="nome"){
 function opcoesStatusOp(atual="Recebida"){
   return["Recebida","Em produção","Conferência","Entregue","Finalizada"].map(v=>`<option${v===atual?" selected":""}>${v}</option>`).join("");
 }
-function formOp(){abrirForm("Nova OP",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0);db.ops.push({id:novoId,codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});opSelecionada=null;hist("Produção","OP criada",codigo)})}
+function tamanhosModelo(modeloId){
+  const m=db.modelos.find(x=>x.id==modeloId);
+  return m?.tamanhos||"P, M, G, GG";
+}
+function prepararFormOp(){
+  const modelo=formModal?.elements?.modeloId,tamanhos=formModal?.elements?.tamanhos;
+  if(!modelo||!tamanhos)return;
+  const aplicar=()=>{const valor=tamanhosModelo(Number(modelo.value));if(valor)tamanhos.value=valor};
+  modelo.addEventListener("change",aplicar);
+  aplicar();
+}
+function formOp(){abrirForm("Nova OP",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade total",name:"recebido",type:"number"},{label:"Grade / tamanhos",name:"tamanhos",value:tamanhosModelo(db.modelos[0]?.id)},{label:"Cores",name:"cores",value:"Preto, Branco"},{label:"Quantidade individual por cor",name:"qtdPorCor",type:"textarea",full:true,value:"Preto=150\nBranco=150"},{label:"Quantidade individual por tamanho",name:"qtdPorTamanho",type:"textarea",full:true,value:"P=60\nM=90\nG=90\nGG=60"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0),totalCores=totalPorCor(d.qtdPorCor),totalTamanhos=totalPorTamanho(d.qtdPorTamanho);db.ops.push({id:novoId,codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:totalCores||totalTamanhos||Number(d.recebido||0),grade:d.tamanhos,tamanhos:d.tamanhos,cores:d.cores,qtdPorCor:d.qtdPorCor,qtdPorTamanho:d.qtdPorTamanho,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});opSelecionada=null;hist("Produção","OP criada",codigo)})}
 function formEntrega(opId=null){
   const campos=opId?[{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}]:[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}];
   abrirForm("Registrar entrega",campos,d=>{const alvo=Number(opId||d.opId);db.entregas.push({id:id("entregas"),opId:alvo,data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==alvo),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";opSelecionada=op.id;atualizarConta(op.id);hist("Produção","Entrega registrada",`${op.codigo} — ${d.qtd} pç`)});
