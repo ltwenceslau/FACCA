@@ -174,6 +174,7 @@ Salve este conteudo como `index.html` para rodar no navegador.
 
     /* ── PRODUÇÃO ── */
     .prod-grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:14px;align-items:start}
+    .prod-grid.single{grid-template-columns:1fr}
     .prod-detail{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);overflow:hidden;position:sticky;top:18px}
     .prod-detail-head{border-bottom:1px solid var(--line);padding:16px 18px}
     .prod-detail-head h3{font-size:18px;margin-bottom:3px}
@@ -294,8 +295,8 @@ let opSelecionada=null;
 let cadastroAtual="";
 let filtroStatusCadastro="Todos";
 let tema=localStorage.getItem(THEME)||"dark";
-const telas=["Dashboard","Cadastros","Produção","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
-const ICONS={"Dashboard":"📊","Cadastros":"👥","Produção":"🔧","Insumos OP":"📦","Estoque":"🗃️","Financeiro":"💳","Colaboradores":"👤","Terceiros":"🔄","Acertos":"✅","Histórico":"📋"};
+const telas=["Dashboard","Cadastros","Produção","Insumos","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
+const ICONS={"Dashboard":"📊","Cadastros":"👥","Produção":"🔧","Insumos":"📦","Estoque":"🗃️","Financeiro":"💳","Colaboradores":"👤","Terceiros":"🔄","Acertos":"✅","Histórico":"📋"};
 
 /* ========== UTILITÁRIOS ========== */
 function aplicarTema(){document.body.classList.toggle("dark",tema==="dark");localStorage.setItem(THEME,tema)}
@@ -428,14 +429,14 @@ function pill(status){
 function renderMenu(){
   const pend=db.insumosOp.filter(x=>x.bloqueia&&!x.resolvida).length;
   menu.innerHTML=telas.map(t=>{
-    const badge=(t==="Insumos OP"&&pend>0)?`<span class="badge">${pend}</span>`:"";
+    const badge=(t==="Insumos"&&pend>0)?`<span class="badge">${pend}</span>`:"";
     return`<button class="${t===tela?"active":""}" onclick="abrir('${t}')"><span class="ico">${ICONS[t]||"•"}</span><span class="nav-label">${t}</span>${badge}</button>`;
   }).join("");
 }
 function abrir(t){tela=t;render()}
 
 function page(titulo,subtitulo,botoes,conteudo){
-  const imprimir=btn("Imprimir PDF","imprimirModulo()","secondary");
+  const imprimir=tela==="Produção"?"":btn("Imprimir PDF","imprimirModulo()","secondary");
   app.innerHTML=`<div class="top"><div class="page-info"><h2>${titulo}</h2><p>${subtitulo||""}</p></div><div class="actions">${botoes||""}${imprimir}</div></div>${conteudo}`;
 }
 
@@ -490,7 +491,7 @@ function abrirForm(titulo,campos,aoSalvar){
 /* ========== RENDER PRINCIPAL ========== */
 function render(){
   aplicarTema();renderMenu();
-  ({Dashboard:renderDashboard,Cadastros:renderCadastros,"Produção":renderOperacao,"Insumos OP":renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])();
+  ({Dashboard:renderDashboard,Cadastros:renderCadastros,"Produção":renderOperacao,Insumos:renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])();
 }
 
 /* ========== DASHBOARD ========== */
@@ -598,7 +599,7 @@ function opcoesPix(atual=""){return["","CPF","CNPJ","E-mail","Telefone","Aleató
 
 /* ========== OPERACAO ========== */
 function renderOperacao(){
-  const b=btn("+ Nova OP","formOp()")+btn("Registrar entrega","formEntrega()","secondary")+btn("Registrar quebra","formQuebra()","secondary")+btn("Finalizar OP","formFinalizarOp()","secondary");
+  const b=btn("+ Nova OP","formOp()");
   const status=[...new Set(db.ops.map(op=>op.status||"Sem status"))];
   const filtro=`<div class="inline-filter"><label>Status da OP<select onchange="filtroStatusOperacao=this.value;renderOperacao()"><option${filtroStatusOperacao==="Todos"?" selected":""}>Todos</option>${status.map(s=>`<option${filtroStatusOperacao===s?" selected":""}>${s}</option>`).join("")}</select></label></div>`;
   const ops=db.ops.filter(op=>filtroStatusOperacao==="Todos"||op.status===filtroStatusOperacao);
@@ -629,15 +630,16 @@ function renderOperacao(){
     ];
   });
   const lista=filtro+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Prazo","Status","Ações"],rows);
-  page("Produção / OPs","Acompanhe entrada, andamento, entregas, quebras e fechamento.",b,resumo+`<div class="prod-grid"><div>${lista}</div>${painelProducao()}</div>`);
+  const detalhe=painelProducao();
+  page("Produção / OPs","Acompanhe entrada, andamento, entregas, quebras e fechamento.",b,resumo+`<div class="prod-grid ${detalhe?"":"single"}"><div>${lista}</div>${detalhe}</div>`);
 }
 function acoesProducao(opId){
-  return`<div class="row-actions"><button class="btn secondary mini" onclick="abrirOpDetalhe(${opId})">Abrir</button><button class="btn secondary mini" onclick="formEntrega(${opId})">Entrega</button><button class="btn secondary mini" onclick="formQuebra(${opId})">Quebra</button></div>`;
+  return`<div class="row-actions"><button class="btn secondary mini" onclick="abrirOpDetalhe(${opId})">Abrir OP</button></div>`;
 }
 function abrirOpDetalhe(opId){opSelecionada=opId;renderOperacao()}
 function painelProducao(){
-  const op=db.ops.find(x=>x.id===opSelecionada)||db.ops[db.ops.length-1];
-  if(!op)return`<aside class="prod-detail"><div class="prod-detail-head"><h3>Nenhuma OP selecionada</h3><p class="muted">Crie uma OP ou abra uma da lista para acompanhar a produção.</p></div></aside>`;
+  const op=db.ops.find(x=>x.id===opSelecionada);
+  if(!op)return"";
   opSelecionada=op.id;
   const t=totaisOp(op.id),vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
   const entregas=db.entregas.filter(x=>x.opId===op.id).slice().reverse();
@@ -661,9 +663,11 @@ function painelProducao(){
       <div>${pill(op.status)} ${vencida?`<span class="pill pr">Prazo vencido</span>`:""}</div>
       <div class="timeline">${timeline}</div>
       <div class="prod-actions">
+        <button class="btn secondary" onclick="formEditarOp(${op.id})">Editar OP</button>
         <button class="btn secondary" onclick="formEntrega(${op.id})">Registrar entrega</button>
         <button class="btn secondary" onclick="formQuebra(${op.id})">Registrar quebra</button>
         <button class="btn primary" onclick="formFinalizarOp(${op.id})">Finalizar</button>
+        <button class="btn secondary" onclick="imprimirOp(${op.id})">Imprimir PDF</button>
       </div>
       <div class="prod-log">
         <strong>Movimentos recentes</strong>
@@ -676,7 +680,65 @@ function mudarStatusOp(opId,status){
   const op=db.ops.find(x=>x.id===opId);if(!op)return;
   op.status=status;atualizarConta(op.id);salvar();hist("Produção","Status atualizado",`${op.codigo} · ${status}`);render();
 }
-function formOp(){abrirForm("Nova OP",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0);db.ops.push({id:novoId,codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});opSelecionada=novoId;hist("Produção","OP criada",codigo)})}
+function imprimirOp(opId){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  const t=totaisOp(op.id);
+  const entregas=db.entregas.filter(x=>x.opId===op.id);
+  const quebras=db.quebras.filter(x=>x.opId===op.id);
+  const linhasEntrega=entregas.length?entregas.map(x=>`<tr><td>${x.data||"—"}</td><td>${x.qtd}</td><td>${x.obs||"—"}</td></tr>`).join(""):`<tr><td colspan="3">Nenhuma entrega registrada.</td></tr>`;
+  const linhasQuebra=quebras.length?quebras.map(x=>`<tr><td>${x.data||"—"}</td><td>${x.qtd}</td><td>${x.motivo||"—"}</td></tr>`).join(""):`<tr><td colspan="3">Nenhuma quebra registrada.</td></tr>`;
+  const doc=window.open("", "_blank");
+  if(!doc){toast("Nao foi possivel abrir a impressao. Verifique o bloqueador de pop-up.","er");return}
+  doc.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${op.codigo}</title><style>
+    body{font-family:Arial,sans-serif;color:#111;margin:32px;line-height:1.45}
+    h1{margin:0 0 4px;font-size:28px} h2{font-size:17px;margin-top:24px}
+    .muted{color:#555}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0}
+    .box{border:1px solid #ddd;border-radius:10px;padding:12px}.box span{display:block;color:#555;font-size:11px;text-transform:uppercase}.box strong{font-size:22px}
+    table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}th{font-size:12px;text-transform:uppercase;color:#555}
+    @media print{body{margin:18mm}.no-print{display:none}}
+  </style></head><body>
+    <button class="no-print" onclick="window.print()">Imprimir PDF</button>
+    <h1>${op.codigo}</h1>
+    <p class="muted">${nome("clientes",op.clienteId)} · ${nome("modelos",op.modeloId)}</p>
+    <div class="grid">
+      <div class="box"><span>Status</span><strong>${op.status}</strong></div>
+      <div class="box"><span>Recebido</span><strong>${op.recebido}</strong></div>
+      <div class="box"><span>Entregue</span><strong>${t.entregue}</strong></div>
+      <div class="box"><span>Saldo</span><strong>${t.saldo}</strong></div>
+    </div>
+    <p><strong>Entrada:</strong> ${op.entrada||"—"} &nbsp; <strong>Prazo:</strong> ${op.prazo||"—"} &nbsp; <strong>Valor:</strong> ${dinheiro(t.valor)}</p>
+    <p><strong>Grade:</strong> ${op.grade||"—"}</p>
+    <p><strong>Observacao:</strong> ${op.obs||"—"}</p>
+    <h2>Entregas</h2><table><thead><tr><th>Data</th><th>Quantidade</th><th>Observacao</th></tr></thead><tbody>${linhasEntrega}</tbody></table>
+    <h2>Quebras</h2><table><thead><tr><th>Data</th><th>Quantidade</th><th>Motivo</th></tr></thead><tbody>${linhasQuebra}</tbody></table>
+  </body></html>`);
+  doc.document.close();
+  doc.focus();
+}
+function formEditarOp(opId){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  abrirForm(`Editar ${op.codigo}`,[
+    {label:"Fornecedor",name:"clienteId",type:"select",options:optsSelecionado("clientes",op.clienteId)},
+    {label:"Modelo",name:"modeloId",type:"select",options:optsSelecionado("modelos",op.modeloId)},
+    {label:"Quantidade recebida",name:"recebido",type:"number",value:op.recebido},
+    {label:"Grade",name:"grade",value:op.grade},
+    {label:"Entrada",name:"entrada",type:"date",value:op.entrada},
+    {label:"Prazo",name:"prazo",type:"date",value:op.prazo},
+    {label:"Valor por peça (R$)",name:"valorPeca",money:true,value:op.valorPeca},
+    {label:"Status",name:"status",type:"select",options:opcoesStatusOp(op.status)},
+    {label:"Observação",name:"obs",type:"textarea",full:true,value:op.obs}
+  ],d=>{
+    Object.assign(op,{clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:moeda(d.valorPeca),status:d.status,obs:d.obs});
+    opSelecionada=op.id;atualizarConta(op.id);hist("Produção","OP editada",op.codigo);
+  });
+}
+function optsSelecionado(lista,selecionado,label="nome"){
+  return db[lista].map(x=>`<option value="${x.id}"${x.id==selecionado?" selected":""}>${x[label]}</option>`).join("");
+}
+function opcoesStatusOp(atual="Recebida"){
+  return["Recebida","Em produção","Conferência","Entregue","Finalizada"].map(v=>`<option${v===atual?" selected":""}>${v}</option>`).join("");
+}
+function formOp(){abrirForm("Nova OP",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0);db.ops.push({id:novoId,codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});opSelecionada=null;hist("Produção","OP criada",codigo)})}
 function formEntrega(opId=null){
   const campos=opId?[{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}]:[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}];
   abrirForm("Registrar entrega",campos,d=>{const alvo=Number(opId||d.opId);db.entregas.push({id:id("entregas"),opId:alvo,data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==alvo),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";opSelecionada=op.id;atualizarConta(op.id);hist("Produção","Entrega registrada",`${op.codigo} — ${d.qtd} pç`)});
@@ -693,9 +755,9 @@ function formFinalizarOp(opId=null){
 /* ========== INSUMOS OP ========== */
 function renderInsumosOp(){
   const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,pill(x.situacao),x.bloqueia?`<span class="pill pr">Sim</span>`:`<span class="pill pz">Não</span>`,x.resolvida?`<span class="pill pg">Sim</span>`:`<span class="pill pa">Não</span>`,x.obs||"—",acoes("insumosOp",x.id)]);
-  page("Insumos da OP","Materiais enviados pelo fornecedor",btn("+ Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs","Ações"],rows));
+  page("Insumos","Controle de insumos dentro da facção",btn("+ Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs","Ações"],rows));
 }
-function formInsumoOp(){abrirForm("Insumo da OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"Situação",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produção?",name:"bloqueia",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Pendência resolvida?",name:"resolvida",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("Insumos OP","Insumo cadastrado",d.item)})}
+function formInsumoOp(){abrirForm("Insumo",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"Situação",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produção?",name:"bloqueia",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Pendência resolvida?",name:"resolvida",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("Insumos","Insumo cadastrado",d.item)})}
 
 /* ========== ESTOQUE ========== */
 function renderEstoque(){
