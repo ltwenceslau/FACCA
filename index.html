@@ -170,6 +170,47 @@
     /* ── PRODUÇÃO ── */
     .prod-grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:14px;align-items:start}
     .prod-grid.single{grid-template-columns:1fr}
+    .op-work{display:grid;gap:16px}
+    .op-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding-top:18px}
+    .op-title{display:flex;align-items:flex-start;gap:12px}
+    .op-title h2{font-size:24px;font-weight:900;line-height:1.15}
+    .op-title p{color:var(--muted);font-size:13px;margin-top:2px;max-width:420px}
+    .op-back{background:transparent;border:1px solid transparent;border-radius:999px;color:var(--text);cursor:pointer;font-size:22px;height:42px;width:42px}
+    .op-back:hover{background:var(--card);border-color:var(--line)}
+    .op-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .op-tools .btn{min-height:38px;padding:8px 13px}
+    .op-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+    .op-metric{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;min-height:78px}
+    .op-metric span{color:var(--muted);display:block;font-size:11px;font-weight:700}
+    .op-metric strong{display:block;font-size:19px;line-height:1.2;margin-top:7px}
+    .op-metric.blue{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.24)}
+    .op-metric.purple{background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.24)}
+    .op-metric.red{background:rgba(239,68,68,.09);border-color:rgba(239,68,68,.26)}
+    .op-metric.amber{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.24)}
+    .op-metric.green{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.24)}
+    .op-metric.cyan{background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.24)}
+    .op-tabs{display:flex;gap:0;background:rgba(148,163,184,.18);border-radius:999px;padding:4px;width:max-content}
+    .op-tabs button{border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;font:800 12px var(--font);padding:7px 13px}
+    .op-tabs button.active{background:#000;color:#fff}
+    body.dark .op-tabs button.active{background:#f8fafc;color:#111827}
+    .op-strip{align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;display:flex;gap:8px;min-height:46px;padding:9px 12px}
+    .op-chip{border:1px solid var(--line);border-radius:999px;color:var(--text);font-size:12px;font-weight:800;padding:4px 10px}
+    .op-color-tabs{align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;display:flex;gap:8px;overflow-x:auto;padding:10px 12px}
+    .op-color-tabs::-webkit-scrollbar{height:6px}
+    .op-color-tabs a{border:1px solid var(--line);border-radius:999px;color:var(--text);flex:0 0 auto;font-size:12px;font-weight:900;padding:7px 12px;text-decoration:none}
+    .op-color-tabs a:hover{background:rgba(148,163,184,.14);border-color:var(--blue)}
+    .op-colors-section{display:grid;gap:14px}
+    .op-color-card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);overflow:hidden}
+    .op-color-head{align-items:center;display:flex;justify-content:space-between;gap:12px;padding:16px 18px}
+    .op-color-head h3{font-size:16px}
+    .op-color-head small{color:var(--muted);font-weight:800}
+    .op-grade-table{overflow-x:auto}
+    .op-grade-table table{min-width:620px}
+    .op-grade-table input{margin:0;max-width:92px;padding:8px 10px;border-radius:999px;text-align:center}
+    .diff-neg{color:#ef4444;font-weight:900}
+    .diff-ok{color:#10b981;font-weight:900}
+    .op-page-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:14px;align-items:start}
+    .op-page-section{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);padding:18px}
     .prod-detail{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);overflow:hidden;position:sticky;top:18px}
     .prod-detail-head{border-bottom:1px solid var(--line);padding:16px 18px}
     .prod-detail-head h3{font-size:18px;margin-bottom:3px}
@@ -190,6 +231,8 @@
     .prod-log-row small{color:var(--muted)}
     .op-link{background:transparent;border:0;color:var(--text);cursor:pointer;font:800 13px var(--font);padding:0;text-align:left}
     .op-link:hover{text-decoration:underline}
+    .click-row{cursor:pointer}
+    .click-row:hover td{background:rgba(148,163,184,.08)}
     .grade-table{border:1px solid var(--line);border-radius:16px;overflow:auto}
     .grade-table table{min-width:0}
     .grade-table th,.grade-table td{text-align:center}
@@ -224,8 +267,13 @@
       nav button .ico{width:auto;font-size:18px}
       main{padding:18px 14px 96px}
       .kpi-grid{grid-template-columns:1fr 1fr}
+      .op-head{flex-direction:column}
+      .op-tools{justify-content:flex-start;width:100%}
+      .op-tools .btn{width:auto}
+      .op-metrics{grid-template-columns:1fr 1fr}
       .cadastro-home{grid-template-columns:1fr}
       .prod-grid{grid-template-columns:1fr}
+      .op-page-grid{grid-template-columns:1fr}
       .prod-detail{position:static}
       .cadastro-list-head{align-items:stretch;flex-direction:column}
       .status-filter{margin-left:0}
@@ -240,6 +288,11 @@
     }
     @media(max-width:620px){
       .kpi-grid{grid-template-columns:1fr}
+      .op-metrics{grid-template-columns:1fr}
+      .op-tools .btn{width:100%}
+      .op-strip{align-items:flex-start;flex-direction:column}
+      .op-tabs{width:100%}
+      .op-tabs button{flex:1}
       .page-info h2{font-size:24px}
       table{min-width:0}
       thead{display:none}
@@ -291,6 +344,7 @@ let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(padrao));
 let tela="Dashboard";
 let filtroStatusOperacao="Todos";
 let opSelecionada=null;
+let telaAnterior="Produção";
 let cadastroAtual="";
 let filtroStatusCadastro="Todos";
 let tema=localStorage.getItem(THEME)||"dark";
@@ -436,6 +490,69 @@ function gradeHtml(op){
   const body=grade.map(l=>`<tr><td>${l.cor}</td>${l.tamanhos.map(t=>`<td>${t.qtd}</td>`).join("")}<td><strong>${l.total}</strong></td></tr>`).join("");
   return`<div class="grade-table"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
 }
+function recebidosGrade(op){
+  try{return JSON.parse(op.recebidoGrade||"{}")||{}}catch(e){return{}}
+}
+function chaveGrade(cor,tamanho){return `${cor}|||${tamanho}`}
+function recebidoGrade(op,cor,tamanho){return Number(recebidosGrade(op)[chaveGrade(cor,tamanho)]||0)}
+function totalRecebidoGrade(op){
+  return Object.values(recebidosGrade(op)).reduce((s,v)=>s+Number(v||0),0);
+}
+function atualizarRecebidoGrade(opId,cor,tamanho,valor){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  const dados=recebidosGrade(op),chave=chaveGrade(cor,tamanho),qtd=numero(valor);
+  if(qtd>0)dados[chave]=qtd;else delete dados[chave];
+  op.recebidoGrade=JSON.stringify(dados);
+  salvar();
+}
+function salvarRecebidosOp(opId){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  salvar();hist("Produção","Grade recebida salva",op.codigo);render();
+}
+function lancarRecebidosOp(opId){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  const total=totalRecebidoGrade(op),jaLancado=totaisOp(op.id).entregue,pendente=total-jaLancado;
+  if(total<=0){toast("Informe as quantidades recebidas na grade antes de lançar.","er");return}
+  if(pendente<=0){toast("As quantidades recebidas desta OP ja foram lançadas.","nf");return}
+  db.entregas.push({id:id("entregas"),opId:op.id,data:hoje(),qtd:pendente,obs:"Lançado pela grade da OP"});
+  atualizarConta(op.id);salvar();hist("Produção","Lançamento registrado",`${op.codigo} · ${pendente} peças`);render();
+}
+function abrirHistoricoOp(opId){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  const entregas=db.entregas.filter(x=>x.opId===op.id).map(x=>({tipo:"Entrega",data:x.data,qtd:x.qtd,obs:x.obs}));
+  const quebras=db.quebras.filter(x=>x.opId===op.id).map(x=>({tipo:"Quebra",data:x.data||"—",qtd:x.qtd,obs:x.motivo||x.obs}));
+  const rows=[...entregas,...quebras].reverse().map(x=>[x.tipo,x.data,x.qtd,x.obs||"—"]);
+  modalContent.innerHTML=`<div class="modal-head"><h2>Histórico ${op.codigo}</h2></div><div class="modal-body">${tabela(["Tipo","Data","Qtd","Observação"],rows)}<div class="form-actions"><button class="btn secondary" onclick="modal.close()">Fechar</button></div></div>`;
+  modal.showModal();
+}
+function idCor(cor){return "cor-"+String(cor||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function abasCoresHtml(op){
+  const grade=gradeOp(op);
+  if(!grade.length)return"";
+  return`<div class="op-color-tabs">${grade.map(cor=>`<a href="#${idCor(cor.cor)}">${cor.cor}</a>`).join("")}</div>`;
+}
+function gradeEdicaoHtml(op){
+  const grade=gradeOp(op);
+  return`<div class="op-colors-section">${grade.map(cor=>{
+    const linhas=cor.tamanhos.map(item=>{
+      const recebido=recebidoGrade(op,cor.cor,item.tam),dif=recebido-item.qtd,cls=dif<0?"diff-neg":"diff-ok";
+      return`<tr>
+        <td><strong>${item.tam}</strong></td>
+        <td>${item.qtd}</td>
+        <td><input type="number" min="0" value="${recebido}" oninput='atualizarRecebidoGrade(${op.id},${JSON.stringify(cor.cor)},${JSON.stringify(item.tam)},this.value)'></td>
+        <td class="${cls}">${dif}</td>
+      </tr>`;
+    }).join("");
+    const recebidoCor=cor.tamanhos.reduce((s,item)=>s+recebidoGrade(op,cor.cor,item.tam),0),difCor=recebidoCor-cor.total,cls=difCor<0?"diff-neg":"diff-ok";
+    return`<section class="op-color-card" id="${idCor(cor.cor)}">
+      <div class="op-color-head"><h3>${cor.cor}</h3><small>Planejado ${cor.total} · Recebido ${recebidoCor} · <span class="${cls}">Dif. ${difCor}</span></small></div>
+      <div class="op-grade-table"><table>
+        <thead><tr><th>Tamanho</th><th>Planejado</th><th>Recebido</th><th>Diferença</th></tr></thead>
+        <tbody>${linhas}<tr><td><strong>Total</strong></td><td><strong>${cor.total}</strong></td><td><strong>${recebidoCor}</strong></td><td class="${cls}">${difCor}</td></tr></tbody>
+      </table></div>
+    </section>`;
+  }).join("")}</div>`;
+}
 function excluirRegistro(lista,itemId){
   if(!confirm("Excluir este registro?"))return;
   db[lista]=db[lista].filter(x=>x.id!==itemId);
@@ -496,19 +613,22 @@ function renderMenu(){
     return`<button class="${t===tela?"active":""}" onclick="abrir('${t}')"><span class="ico">${ICONS[t]||"•"}</span><span class="nav-label">${t}</span>${badge}</button>`;
   }).join("");
 }
-function abrir(t){tela=t;render()}
+function abrir(t){tela=t;if(t!=="OP")opSelecionada=null;render()}
 
 function page(titulo,subtitulo,botoes,conteudo){
-  const imprimir=tela==="Produção"?"":btn("Imprimir PDF","imprimirModulo()","secondary");
+  const imprimir=(tela==="Produção"||tela==="OP")?"":btn("Imprimir PDF","imprimirModulo()","secondary");
   app.innerHTML=`<div class="top"><div class="page-info"><h2>${titulo}</h2><p>${subtitulo||""}</p></div><div class="actions">${botoes||""}${imprimir}</div></div>${conteudo}`;
 }
 
 let _tid=0;
-function tabela(cols,rows){
+function tabela(cols,rows,optsTabela={}){
   if(!rows.length)return`<div class="panel"><div class="empty-state"><div class="ei">📭</div><p>Nenhum registro encontrado.</p></div></div>`;
   const tid="t"+(++_tid);
   const head=cols.map(c=>`<th>${c}</th>`).join("");
-  const body=rows.map(r=>`<tr>${r.map((c,i)=>`<td data-label="${cols[i]||""}">${c==null?"":c}</td>`).join("")}</tr>`).join("");
+  const body=rows.map((r,idx)=>{
+    const attr=optsTabela.rowAttrs?optsTabela.rowAttrs(r,idx):"";
+    return`<tr ${attr}>${r.map((c,i)=>`<td data-label="${cols[i]||""}">${c==null?"":c}</td>`).join("")}</tr>`;
+  }).join("");
   return`<div class="panel">
     <div class="panel-toolbar">
       <input class="search-box" placeholder="🔍  Pesquisar..." oninput="filtrar('${tid}',this.value)">
@@ -555,7 +675,7 @@ function abrirForm(titulo,campos,aoSalvar){
 /* ========== RENDER PRINCIPAL ========== */
 function render(){
   aplicarTema();renderMenu();
-  ({Dashboard:renderDashboard,Cadastros:renderCadastros,"Produção":renderOperacao,Insumos:renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])();
+  ({Dashboard:renderDashboard,Cadastros:renderCadastros,"Produção":renderOperacao,OP:renderOpPagina,Insumos:renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])();
 }
 
 /* ========== DASHBOARD ========== */
@@ -681,7 +801,7 @@ function renderOperacao(){
     const t=totaisOp(op.id),vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
     return[
       op.id,
-      `<button class="op-link" onclick="abrirOpDetalhe(${op.id})">${op.codigo}</button>`,
+      `<strong>${op.codigo}</strong>`,
       nome("clientes",op.clienteId),
       nome("modelos",op.modeloId),
       op.recebido,
@@ -692,15 +812,75 @@ function renderOperacao(){
       pill(op.status)
     ];
   });
-  const lista=filtro+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Prazo","Status"],rows);
+  const lista=filtro+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Prazo","Status"],rows,{rowAttrs:r=>`class="click-row" onclick="abrirOpDetalhe(${r[0]})"`});
   page("Produção / OPs","Acompanhe entrada, andamento, entregas, quebras e fechamento.",b,resumo+`<div class="prod-grid single"><div>${lista}</div></div>`);
 }
 function abrirOpDetalhe(opId){
   opSelecionada=opId;
-  const html=painelProducao();
-  if(!html)return;
-  modalContent.innerHTML=html;
-  modal.showModal();
+  telaAnterior="Produção";
+  tela="OP";
+  render();
+}
+function voltarProducao(){
+  opSelecionada=null;
+  tela="Produção";
+  render();
+}
+function renderOpPagina(){
+  const op=db.ops.find(x=>x.id===opSelecionada);
+  if(!op){voltarProducao();return}
+  const t=totaisOp(op.id),vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
+  const fornecedor=nome("clientes",op.clienteId),modelo=nome("modelos",op.modeloId);
+  const entregas=db.entregas.filter(x=>x.opId===op.id).slice().reverse();
+  const quebras=db.quebras.filter(x=>x.opId===op.id).slice().reverse();
+  const planejado=Number(op.recebido||0),recebidoGradeTotal=totalRecebidoGrade(op),diferenca=recebidoGradeTotal-planejado;
+  const aproveitamento=planejado>0?((recebidoGradeTotal/planejado)*100).toFixed(1):"0.0";
+  const rendimento=planejado>0?(((planejado-t.quebra)/planejado)*100).toFixed(1):"0.0";
+  const movimentos=[...entregas.map(x=>({tipo:"Entrega",data:x.data,qtd:x.qtd,obs:x.obs})),...quebras.map(x=>({tipo:"Quebra",data:x.data||"—",qtd:x.qtd,obs:x.motivo||x.obs}))].slice(0,8);
+  const cores=listaTexto(op.cores||"Única");
+  const head=`<div class="op-head">
+    <div class="op-title">
+      <button class="op-back" onclick="voltarProducao()" title="Voltar">←</button>
+      <div>
+        <h2>OP ${op.codigo.replace(/^OP-?/,"#")}</h2>
+        <p><strong>${modelo}</strong><br>Fornecedor: ${fornecedor}<br>Entrada ${op.entrada||"—"} · Prazo ${op.prazo||"—"} · ${op.status}</p>
+      </div>
+    </div>
+    <div class="op-tools">
+      ${btn("Ver detalhes",`formEditarOp(${op.id})`,"secondary")}
+      ${btn("Hist. lançamentos",`abrirHistoricoOp(${op.id})`,"secondary")}
+      ${btn("Imprimir PDF",`imprimirOp(${op.id})`,"secondary")}
+      ${btn("Quebra",`formQuebra(${op.id})`,"secondary")}
+      ${btn("Salvar",`salvarRecebidosOp(${op.id})`,"primary")}
+      ${btn("Lançar",`lancarRecebidosOp(${op.id})`,"primary")}
+      ${btn("Finalizar",`formFinalizarOp(${op.id})`,"secondary")}
+    </div>
+  </div>`;
+  const metrics=`<div class="op-metrics">
+    <div class="op-metric blue"><span>Planejado</span><strong>${planejado}</strong></div>
+    <div class="op-metric purple"><span>Recebido</span><strong>${recebidoGradeTotal}</strong></div>
+    <div class="op-metric red"><span>Diferença</span><strong>${diferenca}</strong></div>
+    <div class="op-metric amber"><span>Quebra</span><strong>${t.quebra}</strong></div>
+    <div class="op-metric red"><span>Dif. Real</span><strong>${diferenca-t.quebra}</strong></div>
+    <div class="op-metric purple"><span>Entregue</span><strong>${t.entregue}</strong></div>
+    <div class="op-metric green"><span>Status</span><strong>${op.status}</strong></div>
+    <div class="op-metric cyan"><span>Saldo</span><strong>${t.saldo}</strong></div>
+    <div class="op-metric amber"><span>Cores</span><strong>${cores.length}</strong></div>
+    <div class="op-metric red"><span>Prazo</span><strong>${vencida?"Vencida":(op.prazo||"—")}</strong></div>
+    <div class="op-metric red"><span>Rendimento</span><strong>${rendimento}%</strong></div>
+    <div class="op-metric red"><span>Aproveitamento</span><strong>${aproveitamento}%</strong></div>
+  </div>`;
+  const tabs=`<div class="op-tabs"><button class="active">Contagem</button><button>Qualidade (CQ)</button></div>`;
+  const strip=`<div class="op-strip"><span class="op-chip">${cores.length} ${cores.length===1?"cor cadastrada":"cores cadastradas"}</span><span class="muted">${op.tamanhos||op.grade||"Tamanhos não informados"}</span>${op.obs?`<span class="muted">Obs: ${op.obs}</span>`:""}</div>`;
+  const abasCores=abasCoresHtml(op);
+  const grade=gradeEdicaoHtml(op);
+  const log=`<section class="op-page-section">
+    <h3>Últimos lançamentos</h3>
+    <div class="prod-log" style="margin-top:12px">
+      ${movimentos.length?movimentos.map(x=>`<div class="prod-log-row"><span>${x.tipo}<br><small>${x.data} · ${x.obs||"sem obs."}</small></span><strong>${x.qtd}</strong></div>`).join(""):`<p class="muted">Nenhuma entrega ou quebra registrada.</p>`}
+    </div>
+  </section>`;
+  app.innerHTML=`<div class="op-work">${head}${metrics}${tabs}${strip}${abasCores}${grade}${log}</div>`;
 }
 function painelProducao(){
   const op=db.ops.find(x=>x.id===opSelecionada);
