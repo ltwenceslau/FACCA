@@ -8,19 +8,19 @@ Salve este conteudo como `index.html` para rodar no navegador.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sistema Facção</title>
+  <title>FACÇÃO NEXUS</title>
   <style>
     :root {
       --bg:#f0f4f8;--sidebar:#0f172a;--sidebar-hover:#1e293b;--card:#fff;
       --text:#0f172a;--muted:#64748b;--line:#e2e8f0;
-      --blue:#0ea5e9;--blue2:#0284c7;--green:#059669;--amber:#d97706;--red:#dc2626;
+      --blue:#64748b;--blue2:#475569;--green:#4b5563;--amber:#6b7280;--red:#991b1b;
       --field:#f8fafc;--sh:0 1px 3px rgba(0,0,0,.10),0 1px 2px -1px rgba(0,0,0,.08);
       --sh-lg:0 10px 25px -5px rgba(0,0,0,.2),0 4px 10px -6px rgba(0,0,0,.1);
       --r:18px;--pill-r:999px;--font:'Segoe UI',system-ui,sans-serif;
     }
     body.dark {
       --bg:#0d1117;--sidebar:#010409;--sidebar-hover:#161b22;--card:#161b22;
-      --text:#f0f6fc;--muted:#8b949e;--line:#30363d;--field:#0d1117;--blue:#38bdf8;
+      --text:#f4f4f5;--muted:#a1a1aa;--line:#30363d;--field:#111827;--blue:#9ca3af;--blue2:#6b7280;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
@@ -29,10 +29,10 @@ Salve este conteudo como `index.html` para rodar no navegador.
 
     /* ── LAYOUT ── */
     .shell{display:flex;min-height:100vh}
-    aside{width:72px;background:linear-gradient(180deg,#020617 0%,var(--sidebar) 100%);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;transition:width .18s ease;z-index:20;box-shadow:8px 0 30px rgba(0,0,0,.12)}
+    aside{width:72px;background:#060910;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;transition:width .18s ease;z-index:20;box-shadow:8px 0 30px rgba(0,0,0,.12)}
     aside:hover{width:236px}
     .brand{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
-    .brand-ico{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),#22c55e);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 10px 25px rgba(14,165,233,.28)}
+    .brand-ico{width:38px;height:38px;background:#181f2a;border:1px solid rgba(255,255,255,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 10px 25px rgba(0,0,0,.22)}
     .brand h1{font-size:14px;font-weight:700;color:#fff;letter-spacing:.2px}
     .brand small{font-size:11px;color:#64748b;display:block}
     .brand-text,.nav-label,.footer-label{opacity:0;width:0;overflow:hidden;white-space:nowrap;transition:opacity .12s ease,width .12s ease}
@@ -45,7 +45,7 @@ Salve este conteudo como `index.html` para rodar no navegador.
     }
     aside:hover nav button{justify-content:flex-start}
     nav button:hover{background:rgba(255,255,255,.07);color:#e2e8f0;transform:translateX(2px)}
-    nav button.active{background:rgba(14,165,233,.17);color:#38bdf8;font-weight:700;box-shadow:inset 0 0 0 1px rgba(56,189,248,.16)}
+    nav button.active{background:rgba(148,163,184,.14);color:#f8fafc;font-weight:700;box-shadow:inset 0 0 0 1px rgba(148,163,184,.16)}
     nav button .ico{font-size:15px;flex-shrink:0;width:20px;text-align:center}
     .sidebar-footer{padding:10px 8px;border-top:1px solid rgba(255,255,255,.07)}
     .sidebar-footer button{
@@ -75,8 +75,9 @@ Salve este conteudo como `index.html` para rodar no navegador.
       border-radius:var(--pill-r);font:700 13px var(--font);cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s,border-color .15s;
       border:1.5px solid transparent;white-space:nowrap;min-height:42px;
     }
-    .btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-color:rgba(255,255,255,.08);box-shadow:0 10px 22px rgba(14,165,233,.20)}
-    .btn.primary:hover{background:linear-gradient(135deg,#38bdf8,var(--blue2));transform:translateY(-1px)}
+    .btn.primary{background:#e5e7eb;color:#111827;border-color:#e5e7eb;box-shadow:0 10px 22px rgba(0,0,0,.12)}
+    body.dark .btn.primary{background:#f8fafc;color:#111827;border-color:#f8fafc}
+    .btn.primary:hover{background:#f8fafc;transform:translateY(-1px)}
     .btn.secondary{background:var(--card);color:var(--text);border-color:var(--line);box-shadow:var(--sh)}
     .btn.secondary:hover{border-color:var(--blue);transform:translateY(-1px)}
     .btn.danger{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
@@ -93,8 +94,8 @@ Salve este conteudo como `index.html` para rodar no navegador.
       box-shadow:var(--sh);border:1px solid var(--line);position:relative;overflow:hidden;
       transition:transform .16s,box-shadow .16s,border-color .16s;
     }
-    .kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-lg);border-color:rgba(14,165,233,.35)}
-    .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--blue))}
+    .kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-lg);border-color:rgba(148,163,184,.35)}
+    .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#3f4652}
     .kpi-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
     .kpi-val{font-size:24px;font-weight:700;margin-top:6px;letter-spacing:-.5px}
     .kpi-ico{position:absolute;right:14px;top:12px;font-size:20px;opacity:.25}
@@ -108,7 +109,7 @@ Salve este conteudo como `index.html` para rodar no navegador.
       font:13px var(--font);background:var(--field);color:var(--text);
       width:min(280px,100%);transition:border .15s,box-shadow .15s;
     }
-    .search-box:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(14,165,233,.14)}
+    .search-box:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(148,163,184,.14)}
     .rec-count{font-size:12px;color:var(--muted);margin-left:auto}
     .table-wrap{overflow-x:auto}
     table{border-collapse:collapse;width:100%;min-width:580px}
@@ -144,7 +145,7 @@ Salve este conteudo como `index.html` para rodar no navegador.
       border:1.5px solid var(--line);border-radius:14px;font:14px var(--font);
       background:var(--field);color:var(--text);transition:border .15s,box-shadow .15s,background .15s;
     }
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(14,165,233,.14)}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(148,163,184,.14)}
     textarea{min-height:92px;resize:vertical}
     .full{grid-column:1/-1}
     .form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:4px;border-top:1px solid var(--line);padding-top:14px}
@@ -156,8 +157,8 @@ Salve este conteudo como `index.html` para rodar no navegador.
       box-shadow:var(--sh);padding:18px;display:grid;gap:14px;min-height:178px;
       position:relative;overflow:hidden;transition:transform .16s,box-shadow .16s,border-color .16s;
     }
-    .cadastro-card:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);border-color:rgba(14,165,233,.35)}
-    .cadastro-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cc,var(--blue))}
+    .cadastro-card:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);border-color:rgba(148,163,184,.35)}
+    .cadastro-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#3f4652}
     .cadastro-card h3{font-size:17px;letter-spacing:-.2px}
     .cadastro-card p{color:var(--muted);font-size:13px}
     .cadastro-meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;font-weight:700}
@@ -166,10 +167,33 @@ Salve este conteudo como `index.html` para rodar no navegador.
     .cadastro-tabs{display:flex;gap:7px;flex-wrap:wrap}
     .cadastro-tabs button{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:var(--pill-r);cursor:pointer;font:800 12px var(--font);padding:8px 12px;min-height:38px;transition:transform .15s,border-color .15s}
     .cadastro-tabs button:hover{transform:translateY(-1px);border-color:var(--blue)}
-    .cadastro-tabs button.active{background:rgba(14,165,233,.14);border-color:var(--blue);color:var(--blue)}
+    .cadastro-tabs button.active{background:rgba(148,163,184,.14);border-color:var(--blue);color:var(--text)}
     .status-filter{display:flex;align-items:center;gap:8px;margin-left:auto}
     .status-filter select{width:auto;margin:0;min-width:130px}
     .muted{color:var(--muted)}
+
+    /* ── PRODUÇÃO ── */
+    .prod-grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:14px;align-items:start}
+    .prod-detail{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);overflow:hidden;position:sticky;top:18px}
+    .prod-detail-head{border-bottom:1px solid var(--line);padding:16px 18px}
+    .prod-detail-head h3{font-size:18px;margin-bottom:3px}
+    .prod-detail-body{display:grid;gap:14px;padding:16px 18px}
+    .prod-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .prod-stat{background:var(--field);border:1px solid var(--line);border-radius:16px;padding:11px}
+    .prod-stat span{color:var(--muted);display:block;font-size:11px;font-weight:800;text-transform:uppercase}
+    .prod-stat strong{display:block;font-size:18px;margin-top:3px}
+    .timeline{display:grid;gap:8px}
+    .timeline button{align-items:center;background:transparent;border:1px solid var(--line);border-radius:16px;color:var(--text);cursor:pointer;display:flex;font:800 12px var(--font);gap:10px;justify-content:space-between;min-height:40px;padding:8px 11px;text-align:left}
+    .timeline button.done{background:rgba(148,163,184,.12);border-color:var(--blue)}
+    .timeline-dot{background:#71717a;border-radius:999px;display:inline-block;height:9px;width:9px}
+    .timeline button.done .timeline-dot{background:#e5e7eb}
+    .prod-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .prod-actions .btn{flex:1 1 auto}
+    .prod-log{display:grid;gap:8px}
+    .prod-log-row{align-items:center;border:1px solid var(--line);border-radius:14px;display:flex;gap:10px;justify-content:space-between;padding:9px 10px}
+    .prod-log-row small{color:var(--muted)}
+    .op-link{background:transparent;border:0;color:var(--text);cursor:pointer;font:800 13px var(--font);padding:0;text-align:left}
+    .op-link:hover{text-decoration:underline}
 
     /* ── TOAST ── */
     #toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
@@ -201,6 +225,8 @@ Salve este conteudo como `index.html` para rodar no navegador.
       main{padding:18px 14px 96px}
       .kpi-grid{grid-template-columns:1fr 1fr}
       .cadastro-home{grid-template-columns:1fr}
+      .prod-grid{grid-template-columns:1fr}
+      .prod-detail{position:static}
       .cadastro-list-head{align-items:stretch;flex-direction:column}
       .status-filter{margin-left:0}
       .status-filter select{width:100%}
@@ -224,6 +250,8 @@ Salve este conteudo como `index.html` para rodar no navegador.
       td::before{content:attr(data-label);color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;text-align:left}
       .row-actions{justify-content:flex-end;white-space:normal}
       .row-actions .btn{width:auto}
+      .prod-stats{grid-template-columns:1fr}
+      .prod-actions .btn{width:100%}
       .form-actions{flex-direction:column-reverse}
       #toasts{left:12px;right:12px;bottom:86px}
       .toast{max-width:none}
@@ -242,7 +270,7 @@ Salve este conteudo como `index.html` para rodar no navegador.
   <aside>
     <div class="brand">
       <div class="brand-ico">⚙️</div>
-      <div class="brand-text"><h1>Sistema Facção</h1><small>Gestão industrial</small></div>
+      <div class="brand-text"><h1>FACÇÃO NEXUS</h1><small>Gestão industrial</small></div>
     </div>
     <nav id="menu"></nav>
     <div class="sidebar-footer">
@@ -262,11 +290,12 @@ const padrao={clientes:[],modelos:[],colaboradores:[],terceiros:[],ops:[],entreg
 let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(padrao));
 let tela="Dashboard";
 let filtroStatusOperacao="Todos";
+let opSelecionada=null;
 let cadastroAtual="";
 let filtroStatusCadastro="Todos";
 let tema=localStorage.getItem(THEME)||"dark";
-const telas=["Dashboard","Cadastros","Operação","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
-const ICONS={"Dashboard":"📊","Cadastros":"👥","Operação":"🔧","Insumos OP":"📦","Estoque":"🗃️","Financeiro":"💳","Colaboradores":"👤","Terceiros":"🔄","Acertos":"✅","Histórico":"📋"};
+const telas=["Dashboard","Cadastros","Produção","Insumos OP","Estoque","Financeiro","Colaboradores","Terceiros","Acertos","Histórico"];
+const ICONS={"Dashboard":"📊","Cadastros":"👥","Produção":"🔧","Insumos OP":"📦","Estoque":"🗃️","Financeiro":"💳","Colaboradores":"👤","Terceiros":"🔄","Acertos":"✅","Histórico":"📋"};
 
 /* ========== UTILITÁRIOS ========== */
 function aplicarTema(){document.body.classList.toggle("dark",tema==="dark");localStorage.setItem(THEME,tema)}
@@ -347,7 +376,7 @@ function excluirRegistro(lista,itemId){
   if(!confirm("Excluir este registro?"))return;
   db[lista]=db[lista].filter(x=>x.id!==itemId);
   if(["entregas","quebras"].includes(lista))db.ops.forEach(op=>atualizarConta(op.id));
-  salvar();hist("Sistema","Registro excluído",lista);render();
+  salvar();hist("FACÇÃO NEXUS","Registro excluído",lista);render();
 }
 function editarRegistro(lista,itemId){
   const item=db[lista].find(x=>x.id===itemId);if(!item)return;
@@ -368,7 +397,7 @@ function editarRegistro(lista,itemId){
     });
     if(lista==="ops")atualizarConta(item.id);
     if(["entregas","quebras"].includes(lista))atualizarConta(item.opId);
-    hist("Sistema","Registro editado",lista);
+    hist("FACÇÃO NEXUS","Registro editado",lista);
   });
 }
 function totalValesCliente(clienteId){return db.valesClientes.filter(v=>v.clienteId==clienteId&&Number(v.saldo||0)>0).reduce((s,v)=>s+Number(v.saldo||0),0)}
@@ -461,7 +490,7 @@ function abrirForm(titulo,campos,aoSalvar){
 /* ========== RENDER PRINCIPAL ========== */
 function render(){
   aplicarTema();renderMenu();
-  ({Dashboard:renderDashboard,Cadastros:renderCadastros,"Operação":renderOperacao,"Insumos OP":renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])();
+  ({Dashboard:renderDashboard,Cadastros:renderCadastros,"Produção":renderOperacao,"Insumos OP":renderInsumosOp,Estoque:renderEstoque,Financeiro:renderFinanceiro,Colaboradores:renderColaboradores,Terceiros:renderTerceiros,Acertos:renderAcertos,"Histórico":renderHistorico}[tela])();
 }
 
 /* ========== DASHBOARD ========== */
@@ -473,10 +502,10 @@ function renderDashboard(){
   const venc=db.ops.filter(x=>x.status!=="Finalizada"&&x.prazo&&x.prazo<hoje()).length;
 
   const cards=`<div class="kpi-grid">
-    <div class="kpi" style="--kc:#0ea5e9"><span class="kpi-ico">🔧</span><div class="kpi-label">OPs em aberto</div><div class="kpi-val">${opsAb}</div>${venc>0?`<div class="kpi-sub" style="color:var(--red)">⚠ ${venc} vencida${venc>1?"s":""}</div>`:`<div class="kpi-sub" style="color:var(--green)">✓ Sem atraso</div>`}</div>
-    <div class="kpi" style="--kc:#059669"><span class="kpi-ico">💰</span><div class="kpi-label">A receber</div><div class="kpi-val">${dinheiro(receber)}</div></div>
-    <div class="kpi" style="--kc:#d97706"><span class="kpi-ico">💸</span><div class="kpi-label">A pagar</div><div class="kpi-val">${dinheiro(pagar)}</div></div>
-    <div class="kpi" style="--kc:${pend>0?"#dc2626":"#059669"}"><span class="kpi-ico">${pend>0?"🚨":"✅"}</span><div class="kpi-label">Pendências bloqueantes</div><div class="kpi-val" style="${pend>0?"color:var(--red)":""}">${pend}</div></div>
+    <div class="kpi"><span class="kpi-ico">🔧</span><div class="kpi-label">OPs em aberto</div><div class="kpi-val">${opsAb}</div>${venc>0?`<div class="kpi-sub" style="color:var(--red)">⚠ ${venc} vencida${venc>1?"s":""}</div>`:`<div class="kpi-sub muted">✓ Sem atraso</div>`}</div>
+    <div class="kpi"><span class="kpi-ico">💰</span><div class="kpi-label">A receber</div><div class="kpi-val">${dinheiro(receber)}</div></div>
+    <div class="kpi"><span class="kpi-ico">💸</span><div class="kpi-label">A pagar</div><div class="kpi-val">${dinheiro(pagar)}</div></div>
+    <div class="kpi"><span class="kpi-ico">${pend>0?"🚨":"✅"}</span><div class="kpi-label">Pendências bloqueantes</div><div class="kpi-val" style="${pend>0?"color:var(--red)":""}">${pend}</div></div>
   </div>`;
 
   const rows=db.ops.slice().reverse().map(op=>{
@@ -484,16 +513,16 @@ function renderDashboard(){
     const vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
     return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),pill(op.status),t.entregue,t.quebra,t.saldo,dinheiro(t.valor),vencida?`<span class="pill pr">⚠ Vencida</span>`:op.prazo||"—",acoes("ops",op.id)];
   });
-  page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Cliente","Modelo","Status","Entregue","Quebra","Saldo","Valor","Prazo","Ações"],rows));
+  page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Fornecedor","Modelo","Status","Entregue","Quebra","Saldo","Valor","Prazo","Ações"],rows));
 }
 
 /* ========== CADASTROS ========== */
 const cadastroCfg={
-  clientes:{titulo:"Clientes",icone:"👥",cor:"#38bdf8",desc:"Razão social, CNPJ/CPF, contato, endereço e status.",novo:"Cliente",lista:"clientes",form:"formCliente",busca:["nome","fantasia","documento","telefone","email","endereco"],cols:["Razão social","Fantasia","CNPJ/CPF","Telefone","E-mail","Status"],row:x=>[x.nome,x.fantasia||"—",x.documento||"—",x.telefone||"—",x.email||"—",pill(x.status||"Ativo")]},
-  modelos:{titulo:"Modelos",icone:"🧵",cor:"#a78bfa",desc:"Valores base por peça e aviamentos usados nas OPs.",novo:"Modelo",lista:"modelos",form:"formModelo",busca:["nome","descricao","aviamentos"],cols:["Modelo","Receber","Pagar colab.","Pagar terc.","Status"],row:x=>[x.nome,dinheiro(x.valorCliente),dinheiro(x.valorColaborador),dinheiro(x.valorTerceiro),pill(x.status||"Ativo")]},
-  colaboradores:{titulo:"Colaboradores",icone:"👤",cor:"#22c55e",desc:"Equipe interna, função, documento, telefone e PIX.",novo:"Colaborador",lista:"colaboradores",form:"formColaborador",busca:["nome","documento","funcao","telefone","pixChave"],cols:["Nome","Função","Documento","Telefone","PIX","Status"],row:x=>[x.nome,x.funcao||"—",x.documento||"—",x.telefone||"—",x.pixTipo||"—",pill(x.status||"Ativo")]},
-  terceiros:{titulo:"Terceiros",icone:"🔄",cor:"#f59e0b",desc:"Facções externas, contato, endereço, PIX e status.",novo:"Terceiro",lista:"terceiros",form:"formTerceiro",busca:["nome","fantasia","documento","telefone","endereco","pixChave"],cols:["Razão social","Fantasia","CNPJ/CPF","Telefone","PIX","Status"],row:x=>[x.nome,x.fantasia||"—",x.documento||"—",x.telefone||"—",x.pixTipo||"—",pill(x.status||"Ativo")]},
-  estoque:{titulo:"Insumos",icone:"🗃️",cor:"#06b6d4",desc:"Materiais, código, característica, cor, saldo e unidade.",novo:"Insumo",lista:"estoque",form:"formEstoque",busca:["nome","codigo","caracteristica","cor","unidade"],cols:["Material","Código","Característica","Cor","Estoque","Un.","Status"],row:x=>[x.nome,x.codigo||"—",x.caracteristica||"—",x.cor||"—",`<strong>${x.qtd||0}</strong>`,x.unidade||"—",pill(x.status||"Ativo")]}
+  clientes:{titulo:"Fornecedores",icone:"👥",desc:"Razão social, CNPJ/CPF, contato, endereço e status.",novo:"Fornecedor",lista:"clientes",form:"formCliente",busca:["nome","fantasia","documento","telefone","email","endereco"],cols:["Razão social","Fantasia","CNPJ/CPF","Telefone","E-mail","Status"],row:x=>[x.nome,x.fantasia||"—",x.documento||"—",x.telefone||"—",x.email||"—",pill(x.status||"Ativo")]},
+  modelos:{titulo:"Modelos",icone:"🧵",desc:"Valores base por peça e aviamentos usados nas OPs.",novo:"Modelo",lista:"modelos",form:"formModelo",busca:["nome","descricao","aviamentos"],cols:["Modelo","Receber","Pagar terc.","Status"],row:x=>[x.nome,dinheiro(x.valorCliente),dinheiro(x.valorTerceiro),pill(x.status||"Ativo")]},
+  colaboradores:{titulo:"Colaboradores",icone:"👤",desc:"Equipe interna, função, documento, telefone e PIX.",novo:"Colaborador",lista:"colaboradores",form:"formColaborador",busca:["nome","documento","funcao","telefone","pixChave"],cols:["Nome","Função","Documento","Telefone","PIX","Status"],row:x=>[x.nome,x.funcao||"—",x.documento||"—",x.telefone||"—",x.pixTipo||"—",pill(x.status||"Ativo")]},
+  terceiros:{titulo:"Terceiros",icone:"🔄",desc:"Facções externas, contato, endereço, PIX e status.",novo:"Terceiro",lista:"terceiros",form:"formTerceiro",busca:["nome","fantasia","documento","telefone","endereco","pixChave"],cols:["Razão social","Fantasia","CNPJ/CPF","Telefone","PIX","Status"],row:x=>[x.nome,x.fantasia||"—",x.documento||"—",x.telefone||"—",x.pixTipo||"—",pill(x.status||"Ativo")]},
+  estoque:{titulo:"Insumos",icone:"🗃️",desc:"Materiais, código, característica, cor, saldo e unidade.",novo:"Insumo",lista:"estoque",form:"formEstoque",busca:["nome","codigo","caracteristica","cor","unidade"],cols:["Material","Código","Característica","Cor","Estoque","Un.","Status"],row:x=>[x.nome,x.codigo||"—",x.caracteristica||"—",x.cor||"—",`<strong>${x.qtd||0}</strong>`,x.unidade||"—",pill(x.status||"Ativo")]}
 };
 function normalizarCadastro(lista,item){
   if(!item.status)item.status="Ativo";
@@ -515,7 +544,7 @@ function renderCadastros(){
   if(!cadastroAtual){
     const cards=Object.entries(cadastroCfg).map(([tipo,cfg])=>{
       const dados=dadosCadastro(tipo),ativos=dados.filter(x=>(x.status||"Ativo")==="Ativo").length;
-      return`<article class="cadastro-card" style="--cc:${cfg.cor}">
+      return`<article class="cadastro-card">
         <div><h3>${cfg.icone} ${cfg.titulo}</h3><p>${cfg.desc}</p></div>
         <div class="cadastro-meta"><span><strong>${dados.length}</strong> registros</span><span>${ativos} ativos</span></div>
         <button class="btn primary" onclick="abrirCadastro('${tipo}')">Abrir cadastro</button>
@@ -551,10 +580,10 @@ function salvarCadastro(lista,itemId,dados,criar){
 }
 function formCliente(itemId){
   const x=itemId?normalizarCadastro("clientes",db.clientes.find(i=>i.id===itemId)):{status:"Ativo"};
-  abrirForm(itemId?"Editar cliente":"Novo cliente",[{label:"Razão social / nome",name:"nome",value:x.nome},{label:"Nome fantasia",name:"fantasia",value:x.fantasia},{label:"CNPJ/CPF",name:"documento",value:x.documento},{label:"Telefone",name:"telefone",value:x.telefone},{label:"E-mail",name:"email",value:x.email},{label:"Endereço",name:"endereco",value:x.endereco},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Observação",name:"obs",type:"textarea",full:true,value:x.obs}],d=>salvarCadastro("clientes",itemId,d,(i,v)=>Object.assign(i,v)))}
+  abrirForm(itemId?"Editar fornecedor":"Novo fornecedor",[{label:"Razão social / nome",name:"nome",value:x.nome},{label:"Nome fantasia",name:"fantasia",value:x.fantasia},{label:"CNPJ/CPF",name:"documento",value:x.documento},{label:"Telefone",name:"telefone",value:x.telefone},{label:"E-mail",name:"email",value:x.email},{label:"Endereço",name:"endereco",value:x.endereco},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Observação",name:"obs",type:"textarea",full:true,value:x.obs}],d=>salvarCadastro("clientes",itemId,d,(i,v)=>Object.assign(i,v)))}
 function formModelo(itemId){
   const x=itemId?normalizarCadastro("modelos",db.modelos.find(i=>i.id===itemId)):{status:"Ativo"};
-  abrirForm(itemId?"Editar modelo":"Novo modelo",[{label:"Nome",name:"nome",value:x.nome},{label:"Descrição",name:"descricao",type:"textarea",full:true,value:x.descricao},{label:"Valor a receber por peça (R$)",name:"valorCliente",money:true,value:x.valorCliente},{label:"Valor pagar colaborador por peça (R$)",name:"valorColaborador",money:true,value:x.valorColaborador},{label:"Valor pagar terceiro por peça (R$)",name:"valorTerceiro",money:true,value:x.valorTerceiro},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Aviamentos necessários",name:"aviamentos",type:"textarea",full:true,value:x.aviamentos}],d=>salvarCadastro("modelos",itemId,d,(i,v)=>Object.assign(i,{nome:v.nome,descricao:v.descricao,valorCliente:moeda(v.valorCliente),valorColaborador:moeda(v.valorColaborador),valorTerceiro:moeda(v.valorTerceiro),status:v.status,aviamentos:v.aviamentos})))}
+  abrirForm(itemId?"Editar modelo":"Novo modelo",[{label:"Nome",name:"nome",value:x.nome},{label:"Descrição",name:"descricao",type:"textarea",full:true,value:x.descricao},{label:"Valor a receber por peça (R$)",name:"valorCliente",money:true,value:x.valorCliente},{label:"Valor pagar terceiro por peça (R$)",name:"valorTerceiro",money:true,value:x.valorTerceiro},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Aviamentos necessários",name:"aviamentos",type:"textarea",full:true,value:x.aviamentos}],d=>salvarCadastro("modelos",itemId,d,(i,v)=>Object.assign(i,{nome:v.nome,descricao:v.descricao,valorCliente:moeda(v.valorCliente),valorTerceiro:moeda(v.valorTerceiro),status:v.status,aviamentos:v.aviamentos})))}
 function formColaborador(itemId){
   const x=itemId?normalizarCadastro("colaboradores",db.colaboradores.find(i=>i.id===itemId)):{status:"Ativo"};
   abrirForm(itemId?"Editar colaborador":"Novo colaborador",[{label:"Nome",name:"nome",value:x.nome},{label:"Documento",name:"documento",value:x.documento},{label:"Função",name:"funcao",value:x.funcao},{label:"Telefone",name:"telefone",value:x.telefone},{label:"Tipo PIX",name:"pixTipo",type:"select",options:opcoesPix(x.pixTipo)},{label:"Chave PIX",name:"pixChave",value:x.pixChave},{label:"Valor fixo pagamento (R$)",name:"valorFixo",money:true,value:x.valorFixo},{label:"Status",name:"status",type:"select",options:opcoesStatus(x.status)},{label:"Observação",name:"obs",type:"textarea",full:true,value:x.obs}],d=>salvarCadastro("colaboradores",itemId,d,(i,v)=>Object.assign(i,{nome:v.nome,documento:v.documento,funcao:v.funcao,telefone:v.telefone,pixTipo:v.pixTipo,pixChave:v.pixChave,valorFixo:moeda(v.valorFixo),status:v.status,obs:v.obs})))}
@@ -573,18 +602,98 @@ function renderOperacao(){
   const status=[...new Set(db.ops.map(op=>op.status||"Sem status"))];
   const filtro=`<div class="inline-filter"><label>Status da OP<select onchange="filtroStatusOperacao=this.value;renderOperacao()"><option${filtroStatusOperacao==="Todos"?" selected":""}>Todos</option>${status.map(s=>`<option${filtroStatusOperacao===s?" selected":""}>${s}</option>`).join("")}</select></label></div>`;
   const ops=db.ops.filter(op=>filtroStatusOperacao==="Todos"||op.status===filtroStatusOperacao);
-  const rows=ops.slice().reverse().map(op=>{const t=totaisOp(op.id);return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,dinheiro(t.valor),pill(op.status),acoes("ops",op.id)]});
-  page("Operação / OPs","Produção, entregas e quebras",b,filtro+tabela(["ID","OP","Cliente","Modelo","Recebido","Entregue","Quebra","Saldo","Valor","Status","Ações"],rows));
+  const abertas=db.ops.filter(op=>op.status!=="Finalizada").length;
+  const entregues=db.entregas.reduce((s,x)=>s+Number(x.qtd||0),0);
+  const saldoTotal=db.ops.reduce((s,op)=>s+totaisOp(op.id).saldo,0);
+  const atrasadas=db.ops.filter(op=>op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje()).length;
+  const resumo=`<div class="kpi-grid">
+    <div class="kpi"><span class="kpi-ico">🧾</span><div class="kpi-label">OPs abertas</div><div class="kpi-val">${abertas}</div></div>
+    <div class="kpi"><span class="kpi-ico">📦</span><div class="kpi-label">Peças entregues</div><div class="kpi-val">${entregues}</div></div>
+    <div class="kpi"><span class="kpi-ico">🧮</span><div class="kpi-label">Saldo em produção</div><div class="kpi-val">${saldoTotal}</div></div>
+    <div class="kpi"><span class="kpi-ico">⏱️</span><div class="kpi-label">Prazos vencidos</div><div class="kpi-val" style="${atrasadas?"color:var(--red)":""}">${atrasadas}</div></div>
+  </div>`;
+  const rows=ops.slice().reverse().map(op=>{
+    const t=totaisOp(op.id),vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
+    return[
+      op.id,
+      `<button class="op-link" onclick="abrirOpDetalhe(${op.id})">${op.codigo}</button>`,
+      nome("clientes",op.clienteId),
+      nome("modelos",op.modeloId),
+      op.recebido,
+      t.entregue,
+      t.quebra,
+      t.saldo,
+      vencida?`<span class="pill pr">Vencida</span>`:(op.prazo||"—"),
+      pill(op.status),
+      acoesProducao(op.id)
+    ];
+  });
+  const lista=filtro+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Prazo","Status","Ações"],rows);
+  page("Produção / OPs","Acompanhe entrada, andamento, entregas, quebras e fechamento.",b,resumo+`<div class="prod-grid"><div>${lista}</div>${painelProducao()}</div>`);
 }
-function formOp(){abrirForm("Nova OP",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),codigo=`OP-${String(id("ops")).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0);db.ops.push({id:id("ops"),codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});hist("Operação","OP criada",codigo)})}
-function formEntrega(){abrirForm("Registrar entrega",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.entregas.push({id:id("entregas"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==d.opId),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";atualizarConta(op.id);hist("Operação","Entrega registrada",`${op.codigo} — ${d.qtd} pç`)})}
-function formQuebra(){abrirForm("Registrar quebra",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Motivo",name:"motivo"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.quebras.push({id:id("quebras"),opId:Number(d.opId),data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});atualizarConta(Number(d.opId));hist("Operação","Quebra registrada",`${d.qtd} pç`)})}
-function formFinalizarOp(){abrirForm("Finalizar OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Observação final",name:"obs",type:"textarea",full:true}],d=>{const pend=db.insumosOp.some(x=>x.opId==d.opId&&x.bloqueia&&!x.resolvida);if(pend){modal.close();toast("Existe insumo com pendência bloqueante nesta OP.","er");return}const op=db.ops.find(x=>x.id==d.opId);op.status="Finalizada";op.obs=(op.obs||"")+"\nFechamento: "+d.obs;atualizarConta(op.id);hist("Operação","OP finalizada",op.codigo)})}
+function acoesProducao(opId){
+  return`<div class="row-actions"><button class="btn secondary mini" onclick="abrirOpDetalhe(${opId})">Abrir</button><button class="btn secondary mini" onclick="formEntrega(${opId})">Entrega</button><button class="btn secondary mini" onclick="formQuebra(${opId})">Quebra</button></div>`;
+}
+function abrirOpDetalhe(opId){opSelecionada=opId;renderOperacao()}
+function painelProducao(){
+  const op=db.ops.find(x=>x.id===opSelecionada)||db.ops[db.ops.length-1];
+  if(!op)return`<aside class="prod-detail"><div class="prod-detail-head"><h3>Nenhuma OP selecionada</h3><p class="muted">Crie uma OP ou abra uma da lista para acompanhar a produção.</p></div></aside>`;
+  opSelecionada=op.id;
+  const t=totaisOp(op.id),vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
+  const entregas=db.entregas.filter(x=>x.opId===op.id).slice().reverse();
+  const quebras=db.quebras.filter(x=>x.opId===op.id).slice().reverse();
+  const etapas=["Recebida","Em produção","Conferência","Entregue","Finalizada"];
+  const idx=Math.max(0,etapas.indexOf(op.status));
+  const timeline=etapas.map((etapa,i)=>`<button class="${i<=idx?"done":""}" onclick="mudarStatusOp(${op.id},'${etapa}')"><span><span class="timeline-dot"></span> ${etapa}</span><span>${i<=idx?"✓":""}</span></button>`).join("");
+  const log=[...entregas.map(x=>({tipo:"Entrega",data:x.data,qtd:x.qtd,obs:x.obs})),...quebras.map(x=>({tipo:"Quebra",data:x.data||"—",qtd:x.qtd,obs:x.motivo||x.obs}))].slice(0,6);
+  return`<aside class="prod-detail">
+    <div class="prod-detail-head">
+      <h3>${op.codigo}</h3>
+      <p class="muted">${nome("clientes",op.clienteId)} · ${nome("modelos",op.modeloId)}</p>
+    </div>
+    <div class="prod-detail-body">
+      <div class="prod-stats">
+        <div class="prod-stat"><span>Recebido</span><strong>${op.recebido}</strong></div>
+        <div class="prod-stat"><span>Saldo</span><strong>${t.saldo}</strong></div>
+        <div class="prod-stat"><span>Entregue</span><strong>${t.entregue}</strong></div>
+        <div class="prod-stat"><span>Quebra</span><strong>${t.quebra}</strong></div>
+      </div>
+      <div>${pill(op.status)} ${vencida?`<span class="pill pr">Prazo vencido</span>`:""}</div>
+      <div class="timeline">${timeline}</div>
+      <div class="prod-actions">
+        <button class="btn secondary" onclick="formEntrega(${op.id})">Registrar entrega</button>
+        <button class="btn secondary" onclick="formQuebra(${op.id})">Registrar quebra</button>
+        <button class="btn primary" onclick="formFinalizarOp(${op.id})">Finalizar</button>
+      </div>
+      <div class="prod-log">
+        <strong>Movimentos recentes</strong>
+        ${log.length?log.map(x=>`<div class="prod-log-row"><span>${x.tipo}<br><small>${x.data} · ${x.obs||"sem obs."}</small></span><strong>${x.qtd}</strong></div>`).join(""):`<p class="muted">Nenhuma entrega ou quebra registrada.</p>`}
+      </div>
+    </div>
+  </aside>`;
+}
+function mudarStatusOp(opId,status){
+  const op=db.ops.find(x=>x.id===opId);if(!op)return;
+  op.status=status;atualizarConta(op.id);salvar();hist("Produção","Status atualizado",`${op.codigo} · ${status}`);render();
+}
+function formOp(){abrirForm("Nova OP",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade recebida",name:"recebido",type:"number"},{label:"Grade",name:"grade"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0);db.ops.push({id:novoId,codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:Number(d.recebido||0),grade:d.grade,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});opSelecionada=novoId;hist("Produção","OP criada",codigo)})}
+function formEntrega(opId=null){
+  const campos=opId?[{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}]:[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}];
+  abrirForm("Registrar entrega",campos,d=>{const alvo=Number(opId||d.opId);db.entregas.push({id:id("entregas"),opId:alvo,data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==alvo),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";opSelecionada=op.id;atualizarConta(op.id);hist("Produção","Entrega registrada",`${op.codigo} — ${d.qtd} pç`)});
+}
+function formQuebra(opId=null){
+  const campos=opId?[{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Motivo",name:"motivo"},{label:"Observação",name:"obs",type:"textarea",full:true}]:[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Motivo",name:"motivo"},{label:"Observação",name:"obs",type:"textarea",full:true}];
+  abrirForm("Registrar quebra",campos,d=>{const alvo=Number(opId||d.opId);db.quebras.push({id:id("quebras"),opId:alvo,data:d.data,qtd:Number(d.qtd||0),motivo:d.motivo,obs:d.obs});opSelecionada=alvo;atualizarConta(alvo);hist("Produção","Quebra registrada",`${d.qtd} pç`)});
+}
+function formFinalizarOp(opId=null){
+  const campos=opId?[{label:"Observação final",name:"obs",type:"textarea",full:true}]:[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Observação final",name:"obs",type:"textarea",full:true}];
+  abrirForm("Finalizar OP",campos,d=>{const alvo=Number(opId||d.opId);const pend=db.insumosOp.some(x=>x.opId==alvo&&x.bloqueia&&!x.resolvida);if(pend){modal.close();toast("Existe insumo com pendência bloqueante nesta OP.","er");return}const op=db.ops.find(x=>x.id==alvo);op.status="Finalizada";op.obs=(op.obs||"")+"\nFechamento: "+d.obs;opSelecionada=op.id;atualizarConta(op.id);hist("Produção","OP finalizada",op.codigo)});
+}
 
 /* ========== INSUMOS OP ========== */
 function renderInsumosOp(){
   const rows=db.insumosOp.map(x=>[opCodigo(x.opId),x.item,x.esperado,x.recebido,pill(x.situacao),x.bloqueia?`<span class="pill pr">Sim</span>`:`<span class="pill pz">Não</span>`,x.resolvida?`<span class="pill pg">Sim</span>`:`<span class="pill pa">Não</span>`,x.obs||"—",acoes("insumosOp",x.id)]);
-  page("Insumos da OP","Materiais enviados pelo cliente",btn("+ Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs","Ações"],rows));
+  page("Insumos da OP","Materiais enviados pelo fornecedor",btn("+ Adicionar insumo","formInsumoOp()"),tabela(["OP","Item","Esperado","Recebido","Situação","Bloqueia","Resolvida","Obs","Ações"],rows));
 }
 function formInsumoOp(){abrirForm("Insumo da OP",[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Item",name:"item"},{label:"Esperado",name:"esperado",type:"number"},{label:"Recebido",name:"recebido",type:"number"},{label:"Situação",name:"situacao",type:"select",options:"<option>Completo</option><option>Faltando</option><option>Sobrando</option><option>Divergente</option>"},{label:"Bloqueia produção?",name:"bloqueia",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Pendência resolvida?",name:"resolvida",type:"select",options:'<option value="0">Não</option><option value="1">Sim</option>'},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.insumosOp.push({id:id("insumosOp"),opId:Number(d.opId),item:d.item,esperado:Number(d.esperado||0),recebido:Number(d.recebido||0),situacao:d.situacao,bloqueia:d.bloqueia=="1",resolvida:d.resolvida=="1",obs:d.obs});hist("Insumos OP","Insumo cadastrado",d.item)})}
 
@@ -597,12 +706,12 @@ function formMovEstoque(){abrirForm("Movimentar estoque",[{label:"Insumo",name:"
 
 /* ========== FINANCEIRO ========== */
 function renderFinanceiro(){
-  const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),pill(c.status),acoes("contas",c.id)]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"—",pill(d.status),acoes("despesas",d.id)]),...db.valesClientes.map(v=>["Vale cliente",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),pill(v.status),acoes("valesClientes",v.id)])];
-  page("Financeiro","Contas, despesas, baixas e vales",btn("+ Despesa","formDespesa()")+btn("+ Baixa","formBaixa()","secondary")+btn("+ Vale cliente","formValeCliente()","secondary"),tabela(["Tipo","Referência","Valor","Saldo","Status","Ações"],rows));
+  const rows=[...db.contas.map(c=>["Conta OP",opCodigo(c.opId),dinheiro(c.valor),dinheiro(saldoConta(c.id)),pill(c.status),acoes("contas",c.id)]),...db.despesas.map(d=>["Despesa",d.descricao,dinheiro(d.valor),"—",pill(d.status),acoes("despesas",d.id)]),...db.valesClientes.map(v=>["Vale fornecedor",nome("clientes",v.clienteId),dinheiro(v.valor),dinheiro(v.saldo),pill(v.status),acoes("valesClientes",v.id)])];
+  page("Financeiro","Contas, despesas, baixas e vales",btn("+ Despesa","formDespesa()")+btn("+ Baixa","formBaixa()","secondary")+btn("+ Vale fornecedor","formValeCliente()","secondary"),tabela(["Tipo","Referência","Valor","Saldo","Status","Ações"],rows));
 }
 function formDespesa(){abrirForm("Nova despesa",[{label:"Descrição",name:"descricao"},{label:"Fornecedor",name:"fornecedor"},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{db.despesas.push({id:id("despesas"),descricao:d.descricao,fornecedor:d.fornecedor,data:d.data,valor:moeda(d.valor),status:"Não pago",obs:d.obs});hist("Financeiro","Despesa cadastrada",d.descricao)})}
 function formBaixa(){const c=db.contas.map(x=>`<option value="C-${x.id}">Conta ${opCodigo(x.opId)}</option>`).join(""),des=db.despesas.map(x=>`<option value="D-${x.id}">Despesa — ${x.descricao}</option>`).join("");abrirForm("Nova baixa",[{label:"Conta ou despesa",name:"alvo",type:"select",options:c+des},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const[t,i]=d.alvo.split("-"),valor=moeda(d.valor);if(t==="C"){db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusConta(Number(i))}else{db.baixas.push({id:id("baixas"),tipo:"Pagamento",despesaId:Number(i),data:d.data,valor,obs:d.obs});atualizarStatusDespesa(Number(i))}hist("Financeiro","Baixa lançada",dinheiro(valor))})}
-function formValeCliente(){abrirForm("Vale cliente",[{label:"Cliente",name:"clienteId",type:"select",options:opts("clientes")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=moeda(d.valor);db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale cliente cadastrado",dinheiro(valor))})}
+function formValeCliente(){abrirForm("Vale fornecedor",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Valor (R$)",name:"valor",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const valor=moeda(d.valor);db.valesClientes.push({id:id("valesClientes"),clienteId:Number(d.clienteId),data:d.data,valor,saldo:valor,status:"Pendente",obs:d.obs});hist("Financeiro","Vale fornecedor cadastrado",dinheiro(valor))})}
 
 /* ========== COLABORADORES ========== */
 function renderColaboradores(){
@@ -624,9 +733,9 @@ function formPagamentoTerceiro(){abrirForm("Pagamento terceiro",[{label:"Terceir
 /* ========== ACERTOS ========== */
 function renderAcertos(){
   const rows=db.acertos.map(a=>[nome("clientes",a.clienteId),opCodigo(a.opId),a.data,dinheiro(a.vale),dinheiro(a.pago),dinheiro(a.saldo),acoes("acertos",a.id)]);
-  page("Acertos quinzenais","Acerto manual por OP",btn("+ Novo acerto","formAcerto()"),tabela(["Cliente","OP","Data","Vale","Pago","Saldo","Ações"],rows));
+  page("Acertos quinzenais","Acerto manual por OP",btn("+ Novo acerto","formAcerto()"),tabela(["Fornecedor","OP","Data","Vale","Pago","Saldo","Ações"],rows));
 }
-function formAcerto(){abrirForm("Novo acerto",[{label:"Cliente",name:"clienteId",type:"select",options:db.clientes.map(x=>`<option value="${x.id}">${x.nome}${totalValesCliente(x.id)>0?" — vale disponível "+dinheiro(totalValesCliente(x.id)):""}</option>`).join("")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado (R$)",name:"vale",type:"number"},{label:"Pago (R$)",name:"pago",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const clienteId=Number(d.clienteId),opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId);let vale=moeda(d.vale);const pago=moeda(d.pago);if(vale>0){const usado=abaterVales("valesClientes","clienteId",clienteId,vale);if(usado<vale)toast("Vale aplicado limitado ao saldo disponível: "+dinheiro(usado)+".","nf");vale=usado;if(vale>0)db.baixas.push({id:id("baixas"),tipo:"Vale cliente",contaId:conta.id,data:d.data,valor:vale,obs:d.obs})}if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId,opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
+function formAcerto(){abrirForm("Novo acerto",[{label:"Fornecedor",name:"clienteId",type:"select",options:db.clientes.map(x=>`<option value="${x.id}">${x.nome}${totalValesCliente(x.id)>0?" — vale disponível "+dinheiro(totalValesCliente(x.id)):""}</option>`).join("")},{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Vale aplicado (R$)",name:"vale",type:"number"},{label:"Pago (R$)",name:"pago",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const clienteId=Number(d.clienteId),opId=Number(d.opId);atualizarConta(opId);const conta=db.contas.find(x=>x.opId==opId);let vale=moeda(d.vale);const pago=moeda(d.pago);if(vale>0){const usado=abaterVales("valesClientes","clienteId",clienteId,vale);if(usado<vale)toast("Vale aplicado limitado ao saldo disponível: "+dinheiro(usado)+".","nf");vale=usado;if(vale>0)db.baixas.push({id:id("baixas"),tipo:"Vale fornecedor",contaId:conta.id,data:d.data,valor:vale,obs:d.obs})}if(pago)db.baixas.push({id:id("baixas"),tipo:"Recebimento",contaId:conta.id,data:d.data,valor:pago,obs:d.obs});atualizarStatusConta(conta.id);db.acertos.push({id:id("acertos"),clienteId,opId,data:d.data,vale,pago,saldo:saldoConta(conta.id),obs:d.obs});hist("Financeiro","Acerto quinzenal",opCodigo(opId))})}
 
 /* ========== HISTÓRICO ========== */
 function renderHistorico(){
