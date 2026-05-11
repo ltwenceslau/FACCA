@@ -314,6 +314,55 @@ Salve este conteudo como `index.html` para rodar no navegador.
       #toasts{left:12px;right:12px;bottom:86px}
       .toast{max-width:none}
     }
+    /* ── WIZARD ── */
+    .wiz-steps{display:flex;align-items:center;margin:14px 0 6px}
+    .wiz-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;min-width:0}
+    .wiz-dot{width:30px;height:30px;border-radius:50%;background:var(--line);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:all .2s;flex-shrink:0}
+    .wiz-step.on .wiz-dot{background:#3b82f6;color:#fff;box-shadow:0 0 0 4px rgba(59,130,246,.18)}
+    .wiz-step.done .wiz-dot{background:#22c55e;color:#fff}
+    .wiz-step-lbl{font-size:10px;color:var(--muted);font-weight:700;text-align:center;white-space:nowrap}
+    .wiz-step.on .wiz-step-lbl{color:var(--text)}
+    .wiz-line{flex:1;height:2px;background:var(--line);margin-bottom:20px;min-width:8px}
+    .wiz-line.done{background:#22c55e}
+    .wiz-sub{color:var(--muted);font-size:13px;margin-top:3px}
+    .wiz-sect{margin-bottom:18px}
+    .wiz-lbl{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px}
+    .wiz-srch{width:100%;padding:12px 15px;border:1.5px solid var(--line);border-radius:var(--pill-r);font:14px var(--font);background:var(--field);color:var(--text);transition:border .15s}
+    .wiz-srch:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.12)}
+    .wiz-plist{max-height:260px;overflow-y:auto;border:1px solid var(--line);border-radius:18px;margin-top:8px}
+    .wiz-pitem{padding:13px 17px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;user-select:none}
+    .wiz-pitem:last-child{border-bottom:0}
+    .wiz-pitem:hover{background:rgba(148,163,184,.07)}
+    .wiz-pitem.sel{background:rgba(59,130,246,.09);border-left:3px solid #3b82f6}
+    .wiz-pname{font-weight:700;font-size:14px}
+    .wiz-pmeta{font-size:12px;color:var(--muted);margin-top:3px}
+    .wiz-empty{padding:22px;text-align:center;color:var(--muted);font-size:13px}
+    .wiz-row{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}
+    .wiz-in{flex:1;padding:11px 14px;border:1.5px solid var(--line);border-radius:14px;font:14px var(--font);background:var(--field);color:var(--text);transition:border .15s;min-width:0}
+    .wiz-in:focus{outline:none;border-color:#3b82f6}
+    .wiz-in-sm{width:90px;padding:11px 14px;border:1.5px solid var(--line);border-radius:14px;font:14px var(--font);background:var(--field);color:var(--text);flex-shrink:0}
+    .wiz-in-sm:focus{outline:none;border-color:#3b82f6}
+    .wiz-in-full{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:14px;font:14px var(--font);background:var(--field);color:var(--text);display:block;transition:border .15s}
+    .wiz-in-full:focus{outline:none;border-color:#3b82f6}
+    .wiz-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;min-height:12px}
+    .wiz-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(148,163,184,.1);border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600}
+    .wiz-tag button{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:0;line-height:1;display:flex;align-items:center}
+    .wiz-tag button:hover{color:#ef4444}
+    .wiz-hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
+    .wiz-calc{display:flex;gap:16px;margin-top:12px;padding:11px 16px;background:rgba(148,163,184,.06);border-radius:14px;border:1px solid var(--line);font-size:13px;flex-wrap:wrap}
+    .wiz-calc span{color:var(--muted)}
+    .wiz-calc strong{color:var(--text)}
+    .wiz-grade{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:14px}
+    .wiz-grade table{width:100%;border-collapse:collapse;font-size:13px}
+    .wiz-grade th,.wiz-grade td{padding:9px 13px;border-bottom:1px solid var(--line);text-align:center}
+    .wiz-grade th{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700}
+    .wiz-grade td:first-child,.wiz-grade th:first-child{text-align:left}
+    .wiz-grade tbody tr:last-child td{border-bottom:0}
+    .wiz-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .wiz-select{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:14px;font:14px var(--font);background:var(--field);color:var(--text);display:block;margin-top:0}
+    .wiz-select:focus{outline:none;border-color:#3b82f6}
+    .wiz-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.28);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;color:#3b82f6;margin-bottom:8px}
+
     @media print{
       aside,.actions,.panel-toolbar,.row-actions,dialog,#toasts{display:none!important}
       .shell,.content,main{display:block;height:auto;overflow:visible;padding:0}
@@ -701,9 +750,9 @@ function renderDashboard(){
   const rows=db.ops.slice().reverse().map(op=>{
     const t=totaisOp(op.id);
     const vencida=op.status!=="Finalizada"&&op.prazo&&op.prazo<hoje();
-    return[op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),pill(op.status),t.entregue,t.quebra,t.saldo,dinheiro(t.valor),vencida?`<span class="pill pr">⚠ Vencida</span>`:op.prazo||"—",acoes("ops",op.id)];
+    return[op.id,op.codigo,nome("clientes",op.clienteId),nome("modelos",op.modeloId),op.recebido,t.entregue,t.quebra,t.saldo,pill(op.status),vencida?`<span class="pill pr">⚠ Vencida</span>`:op.prazo||"—"];
   });
-  page("Dashboard","Resumo geral dos módulos","",cards+tabela(["OP","Fornecedor","Modelo","Status","Entregue","Quebra","Saldo","Valor","Prazo","Ações"],rows));
+  page("Dashboard","Clique em qualquer OP para ver detalhes e lançamentos.","",cards+tabela(["ID","OP","Fornecedor","Modelo","Recebido","Entregue","Quebra","Saldo","Status","Prazo"],rows,{rowAttrs:r=>`class="click-row" style="cursor:pointer" onclick="abrirOpDetalhe(${r[0]})"`}));
 }
 
 /* ========== CADASTROS ========== */
@@ -788,7 +837,7 @@ function opcoesPix(atual=""){return["","CPF","CNPJ","E-mail","Telefone","Aleató
 
 /* ========== OPERACAO ========== */
 function renderOperacao(){
-  const b=btn("+ Nova OP","formOp()");
+  const b=btn("+ Nova OP","abrirWizardOp()");
   const status=[...new Set(db.ops.map(op=>op.status||"Sem status"))];
   const filtro=`<div class="inline-filter"><label>Status da OP<select onchange="filtroStatusOperacao=this.value;renderOperacao()"><option${filtroStatusOperacao==="Todos"?" selected":""}>Todos</option>${status.map(s=>`<option${filtroStatusOperacao===s?" selected":""}>${s}</option>`).join("")}</select></label></div>`;
   const ops=db.ops.filter(op=>filtroStatusOperacao==="Todos"||op.status===filtroStatusOperacao);
@@ -1009,7 +1058,205 @@ function prepararFormOp(){
   modelo.addEventListener("change",aplicar);
   aplicar();
 }
-function formOp(){abrirForm("Nova OP",[{label:"Fornecedor",name:"clienteId",type:"select",options:opts("clientes")},{label:"Modelo",name:"modeloId",type:"select",options:opts("modelos")},{label:"Quantidade total",name:"recebido",type:"number"},{label:"Grade / tamanhos",name:"tamanhos",value:tamanhosModelo(db.modelos[0]?.id)},{label:"Cores",name:"cores",value:"Preto, Branco"},{label:"Quantidade individual por cor",name:"qtdPorCor",type:"textarea",full:true,value:"Preto=150\nBranco=150"},{label:"Quantidade individual por tamanho",name:"qtdPorTamanho",type:"textarea",full:true,value:"P=60\nM=90\nG=90\nGG=60"},{label:"Entrada",name:"entrada",type:"date",value:hoje()},{label:"Prazo",name:"prazo",type:"date",value:hoje()},{label:"Valor por peça (R$)",name:"valorPeca",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}],d=>{const m=db.modelos.find(x=>x.id==d.modeloId),novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`,valor=moeda(d.valorPeca)||Number(m?.valorCliente||0),totalCores=totalPorCor(d.qtdPorCor),totalTamanhos=totalPorTamanho(d.qtdPorTamanho);db.ops.push({id:novoId,codigo,clienteId:Number(d.clienteId),modeloId:Number(d.modeloId),recebido:totalCores||totalTamanhos||Number(d.recebido||0),grade:d.tamanhos,tamanhos:d.tamanhos,cores:d.cores,qtdPorCor:d.qtdPorCor,qtdPorTamanho:d.qtdPorTamanho,entrada:d.entrada,prazo:d.prazo,valorPeca:valor,status:"Recebida",obs:d.obs});opSelecionada=null;hist("Produção","OP criada",codigo)})}
+/* ========== WIZARD NOVA OP ========== */
+let wiz=null;
+function novoWiz(){return{step:1,clienteId:null,modeloId:null,busca:"",tamanhos:[],nomeTam:"",multTam:1,cores:[],corInput:"",totalPecas:0,entrada:hoje(),prazo:hoje(),valorPeca:"",obs:""}}
+function abrirWizardOp(){wiz=novoWiz();renderWiz();modal.showModal()}
+function renderWiz(){if(!wiz)return;[,,renderWiz1,renderWiz2,renderWiz3,renderWiz4][wiz.step]()}
+
+function wizDots(){
+  const ns=["Produto","Grade","Cores","Finalizar"];
+  const parts=ns.map((n,i)=>{
+    const idx=i+1,cls=idx===wiz.step?"on":idx<wiz.step?"done":"";
+    const dot=idx<wiz.step?"✓":idx;
+    return`<div class="wiz-step ${cls}"><div class="wiz-dot">${dot}</div><div class="wiz-step-lbl">${n}</div></div>`;
+  });
+  let h="";parts.forEach((p,i)=>{h+=p;if(i<parts.length-1)h+=`<div class="wiz-line${wiz.step>i+1?" done":""}"></div>`});
+  return`<div class="wiz-steps">${h}</div>`;
+}
+
+function renderWiz1(){
+  const sel=wiz.modeloId?db.modelos.find(m=>m.id==wiz.modeloId):null;
+  const lista=db.modelos.filter(m=>!wiz.busca||m.nome.toLowerCase().includes(wiz.busca.toLowerCase()));
+  const clienteOk=!!wiz.clienteId,modeloOk=!!wiz.modeloId;
+  modalContent.innerHTML=`
+  <div class="modal-head"><h2>Nova OP</h2>${wizDots()}</div>
+  <div class="modal-body">
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Fornecedor</div>
+      <select class="wiz-select" onchange="wiz.clienteId=Number(this.value)">
+        <option value="">Selecionar fornecedor...</option>
+        ${db.clientes.map(c=>`<option value="${c.id}"${c.id==wiz.clienteId?" selected":""}>${c.nome}</option>`).join("")}
+      </select>
+    </div>
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Modelo / Produto</div>
+      ${sel?`<div class="wiz-badge">✓ ${sel.nome}</div>`:``}
+      <input class="wiz-srch" placeholder="🔍  Buscar modelo..." value="${wiz.busca}" oninput="wiz.busca=this.value;renderWiz()">
+      <div class="wiz-plist">
+        ${lista.length?lista.map(m=>`<div class="wiz-pitem${m.id==wiz.modeloId?" sel":""}" onclick="wiz.modeloId=${m.id};wiz.busca='';renderWiz()">
+          <div class="wiz-pname">${m.nome}</div>
+          <div class="wiz-pmeta">${m.tamanhos||"—"} &nbsp;·&nbsp; ${dinheiro(m.valorCliente)}/pç</div>
+        </div>`).join(""):`<div class="wiz-empty">Nenhum modelo encontrado</div>`}
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" onclick="modal.close()">Cancelar</button>
+      <button class="btn primary" onclick="wizAvancar()" ${clienteOk&&modeloOk?"":"disabled"}>Próximo →</button>
+    </div>
+  </div>`;
+}
+
+function renderWiz2(){
+  const modelo=db.modelos.find(m=>m.id==wiz.modeloId);
+  const totalMult=wiz.tamanhos.reduce((s,t)=>s+Number(t.mult),0);
+  modalContent.innerHTML=`
+  <div class="modal-head"><h2>Grade de tamanhos</h2>${wizDots()}<p class="wiz-sub">${modelo?.nome||""}</p></div>
+  <div class="modal-body">
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Adicionar tamanho</div>
+      <div class="wiz-row">
+        <input class="wiz-in" placeholder="Nome (P, M, G, GG...)" id="wiz-tn" value="${wiz.nomeTam}"
+          onkeydown="if(event.key==='Enter'){wizAddTam();event.preventDefault()}">
+        <input class="wiz-in-sm" type="number" min="1" placeholder="Qtd" id="wiz-tm" value="${wiz.multTam||1}">
+        <button class="btn primary" onclick="wizAddTam()">+ Adicionar</button>
+      </div>
+      <div class="wiz-tags">
+        ${wiz.tamanhos.map((t,i)=>`<span class="wiz-tag">${t.nome} <strong>×${t.mult}</strong><button onclick="wizRemTam(${i})">✕</button></span>`).join("")}
+      </div>
+      ${wiz.tamanhos.length?`<div class="wiz-calc">
+        <span>Total de riscos: <strong>${totalMult}</strong></span>
+        <span>· cada risco = 1 unidade de proporção</span>
+      </div>`:""}
+      <p class="wiz-hint">O multiplicador indica a proporção de cada tamanho na grade. Ex: 1P 2M 2G 1GG = 6 riscos.</p>
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" onclick="wiz.step=1;renderWiz()">← Voltar</button>
+      <button class="btn primary" onclick="wizAvancar()" ${wiz.tamanhos.length?"":"disabled"}>Próximo →</button>
+    </div>
+  </div>`;
+}
+
+function renderWiz3(){
+  modalContent.innerHTML=`
+  <div class="modal-head"><h2>Cores do corte</h2>${wizDots()}</div>
+  <div class="modal-body">
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Adicionar cor</div>
+      <div class="wiz-row">
+        <input class="wiz-in" placeholder="Nome da cor (Preto, Branco, Azul Royal...)" id="wiz-ci" value="${wiz.corInput}"
+          onkeydown="if(event.key==='Enter'){wizAddCor();event.preventDefault()}">
+        <button class="btn primary" onclick="wizAddCor()">+ Adicionar</button>
+      </div>
+      <div class="wiz-tags">
+        ${wiz.cores.map((c,i)=>`<span class="wiz-tag">${c}<button onclick="wizRemCor(${i})">✕</button></span>`).join("")}
+      </div>
+      ${!wiz.cores.length?`<p class="wiz-hint">Adicione pelo menos uma cor. Pode digitar livremente — não precisa estar cadastrada.</p>`:""}
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" onclick="wiz.step=2;renderWiz()">← Voltar</button>
+      <button class="btn primary" onclick="wizAvancar()" ${wiz.cores.length?"":"disabled"}>Próximo →</button>
+    </div>
+  </div>`;
+}
+
+function renderWiz4(){
+  const totalMult=wiz.tamanhos.reduce((s,t)=>s+Number(t.mult),0);
+  const total=Number(wiz.totalPecas)||0;
+  const porRisco=totalMult>0?Math.floor(total/totalMult):0;
+  let gradeHtml2="";
+  if(total>0&&totalMult>0&&wiz.cores.length){
+    const qtdPorCor=Math.round(total/wiz.cores.length);
+    const head=`<tr><th>Cor</th>${wiz.tamanhos.map(t=>`<th>${t.nome}</th>`).join("")}<th>Total</th></tr>`;
+    let restoTotal=total;
+    const body=wiz.cores.map((cor,ci)=>{
+      const isLastCor=ci===wiz.cores.length-1;
+      const qtdCor=isLastCor?restoTotal:qtdPorCor;restoTotal-=qtdCor;
+      const porRiscoCor=Math.floor(qtdCor/totalMult);let resto=qtdCor;
+      const cells=wiz.tamanhos.map((t,ti)=>{
+        const isLast=ti===wiz.tamanhos.length-1;
+        const q=isLast?resto:porRiscoCor*Number(t.mult);resto-=isLast?0:q;
+        return`<td>${q}</td>`;
+      });
+      return`<tr><td><strong>${cor}</strong></td>${cells.join("")}<td><strong>${qtdCor}</strong></td></tr>`;
+    }).join("");
+    gradeHtml2=`<div class="wiz-grade"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+  }
+  modalContent.innerHTML=`
+  <div class="modal-head"><h2>Confirmar e criar</h2>${wizDots()}</div>
+  <div class="modal-body">
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Total de peças do lote</div>
+      <input class="wiz-in-full" type="number" min="1" placeholder="Ex: 300"
+        value="${wiz.totalPecas||""}" oninput="wiz.totalPecas=Number(this.value);renderWiz4()">
+      ${total>0&&totalMult>0?`<p class="wiz-hint">📐 ${totalMult} riscos · ${porRisco} peças por risco · ${wiz.cores.length} cor${wiz.cores.length>1?"es":""}</p>`:""}
+    </div>
+    ${gradeHtml2}
+    <div class="wiz-2col">
+      <div class="wiz-sect">
+        <div class="wiz-lbl">Data de entrada</div>
+        <input class="wiz-in-full" type="date" value="${wiz.entrada}" onchange="wiz.entrada=this.value">
+      </div>
+      <div class="wiz-sect">
+        <div class="wiz-lbl">Prazo de entrega</div>
+        <input class="wiz-in-full" type="date" value="${wiz.prazo}" onchange="wiz.prazo=this.value">
+      </div>
+    </div>
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Valor por peça (R$)</div>
+      <input class="wiz-in-full" type="text" inputmode="decimal" placeholder="0,00"
+        value="${wiz.valorPeca}" oninput="wiz.valorPeca=this.value">
+    </div>
+    <div class="wiz-sect">
+      <div class="wiz-lbl">Observação</div>
+      <textarea class="wiz-in-full" rows="3" oninput="wiz.obs=this.value">${wiz.obs}</textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" onclick="wiz.step=3;renderWiz()">← Voltar</button>
+      <button class="btn primary" onclick="wizCriar()" ${total>0?"":"disabled"}>✓ Criar OP</button>
+    </div>
+  </div>`;
+}
+
+function wizAvancar(){
+  if(wiz.step===2&&!wiz.tamanhos.length){
+    const modelo=db.modelos.find(m=>m.id==wiz.modeloId);
+    const tams=listaTexto(modelo?.tamanhos||"P, M, G, GG");
+    wiz.tamanhos=tams.map(t=>({nome:t.trim(),mult:1}));
+  }
+  wiz.step++;renderWiz();
+}
+function wizAddTam(){
+  const nEl=document.getElementById("wiz-tn"),mEl=document.getElementById("wiz-tm");
+  const n=(nEl?.value||"").trim().toUpperCase(),m=Math.max(1,Number(mEl?.value||1));
+  if(!n){toast("Informe o nome do tamanho","er");return}
+  if(wiz.tamanhos.find(t=>t.nome.toLowerCase()===n.toLowerCase())){toast("Tamanho já adicionado","er");return}
+  wiz.tamanhos.push({nome:n,mult:m});wiz.nomeTam="";wiz.multTam=1;renderWiz();
+}
+function wizRemTam(i){wiz.tamanhos.splice(i,1);renderWiz()}
+function wizAddCor(){
+  const el=document.getElementById("wiz-ci");const c=(el?.value||wiz.corInput||"").trim();
+  if(!c)return;if(wiz.cores.includes(c)){toast("Cor já adicionada","er");return}
+  wiz.cores.push(c);wiz.corInput="";renderWiz();
+}
+function wizRemCor(i){wiz.cores.splice(i,1);renderWiz()}
+function wizCriar(){
+  if(!wiz.totalPecas||wiz.totalPecas<=0){toast("Informe o total de peças","er");return}
+  const modelo=db.modelos.find(m=>m.id==wiz.modeloId);
+  const novoId=id("ops"),codigo=`OP-${String(novoId).padStart(5,"0")}`;
+  const valorPeca=moeda(wiz.valorPeca)||Number(modelo?.valorCliente||0);
+  const tamanhos=wiz.tamanhos.map(t=>t.nome).join(", ");
+  const totalMult=wiz.tamanhos.reduce((s,t)=>s+Number(t.mult),0);
+  const porRisco=totalMult>0?wiz.totalPecas/totalMult:wiz.totalPecas;
+  // qtdPorTamanho: multipliers
+  const qtdPorTamanho=wiz.tamanhos.map(t=>`${t.nome}=${t.mult}`).join("\n");
+  // qtdPorCor: distribute total evenly
+  const qtdPorCor_base=Math.round(wiz.totalPecas/wiz.cores.length);let resto=wiz.totalPecas;
+  const qtdPorCor=wiz.cores.map((c,i)=>{const isLast=i===wiz.cores.length-1;const q=isLast?resto:qtdPorCor_base;resto-=q;return`${c}=${q}`}).join("\n");
+  db.ops.push({id:novoId,codigo,clienteId:Number(wiz.clienteId),modeloId:Number(wiz.modeloId),recebido:Number(wiz.totalPecas),grade:tamanhos,tamanhos,cores:wiz.cores.join(", "),qtdPorCor,qtdPorTamanho,entrada:wiz.entrada,prazo:wiz.prazo,valorPeca,status:"Recebida",obs:wiz.obs});
+  wiz=null;hist("Produção","OP criada",codigo);modal.close();render();
+}
+function formOp(){abrirWizardOp()}}
 function formEntrega(opId=null){
   const campos=opId?[{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}]:[{label:"OP",name:"opId",type:"select",options:opts("ops","codigo")},{label:"Data",name:"data",type:"date",value:hoje()},{label:"Quantidade",name:"qtd",type:"number"},{label:"Observação",name:"obs",type:"textarea",full:true}];
   abrirForm("Registrar entrega",campos,d=>{const alvo=Number(opId||d.opId);db.entregas.push({id:id("entregas"),opId:alvo,data:d.data,qtd:Number(d.qtd||0),obs:d.obs});const op=db.ops.find(x=>x.id==alvo),t=totaisOp(op.id);op.status=t.saldo<=0?"Entregue":"Entregue parcial";opSelecionada=op.id;atualizarConta(op.id);hist("Produção","Entrega registrada",`${op.codigo} — ${d.qtd} pç`)});
